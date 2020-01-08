@@ -1,0 +1,37 @@
+# Menu Tree on Sidebar on Data module
+- name: Menu Item 1
+  icon: paste
+  url: '#'
+- name: Menu Item 2
+  icon: paste
+  url: '#'
+- name: Sidebar Alternate Menu
+  icon: paste
+  url: '#'
+  children:
+    - name: Menu Item
+      url: '/data/models/demo-form'
+      icon: file-alt
+    - name: Menu Item 2
+      url: '/data/models/demo-form'
+      icon: file-alt
+- name: Sidebar Alternate
+  icon: paste
+  url: '#'
+  children:
+    - name: Menu Item
+      url: '/data/models/demo-form'
+      icon: file-alt
+    - name: Menu Item 2
+      url: '/data/models/demo-form'
+      icon: file-alt
+- name: Sidebar Alternate
+  icon: paste
+  url: '#'
+  children:
+    - name: Menu Item
+      url: '/data/models/demo-form'
+      icon: file-alt
+    - name: Menu Item 2
+      url: '/data/models/demo-form'
+      icon: file-alt

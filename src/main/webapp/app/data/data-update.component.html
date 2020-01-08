@@ -1,0 +1,28 @@
+<div class="container-fluid" *ngIf="isReady">
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-9">
+                    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+                        <h2 id="jhi-data-heading" [jhiTranslate]="title"></h2>
+                        <div>
+                            <jhi-alert-error></jhi-alert-error>
+                            <formly-form [model]="model" [fields]="fields" [options]="options" [form]="editForm"></formly-form>
+                        </div>
+                        <div class="my-3">
+                            <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                                <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                            </button>
+                            <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary float-right">
+                                <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-3" *ngIf="debug">
+                    <pre>{{ model | json }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

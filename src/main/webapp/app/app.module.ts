@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import './vendor';
-import { GatewaySharedModule } from 'app/shared/shared.module';
+// import { GatewaySharedModule } from 'app/shared/shared.module';
+import { GatewayCommonModule } from 'app/common/common.module';
 import { GatewayCoreModule } from 'app/core/core.module';
 import { GatewayAppRoutingModule } from './app-routing.module';
 import { GatewayHomeModule } from './home/home.module';
@@ -18,7 +19,8 @@ import { ErrorComponent } from './layouts/error/error.component';
 @NgModule({
   imports: [
     BrowserModule,
-    GatewaySharedModule,
+    // GatewaySharedModule,
+    GatewayCommonModule,
     GatewayCoreModule,
     GatewayHomeModule,
     // jhipster-needle-angular-add-module JHipster will add new module here

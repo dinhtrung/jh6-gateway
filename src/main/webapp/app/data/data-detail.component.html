@@ -1,0 +1,22 @@
+<div class="row justify-content-center" *ngIf="isReady">
+    <div class="col-8">
+        <div *ngIf="model">
+            <h2><span jhiTranslate="gatewayApp.entity.detail.title">Data</span> {{model.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <formly-form [model]="model" [fields]="fields" [options]="options"></formly-form>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/data', svc, prop, model.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
