@@ -17,7 +17,6 @@ import { ButtonTypeComponent } from './fields/button.type';
 import { TimeTypeComponent } from './fields/timepicker.type';
 import { DateTypeComponent } from './fields/datepicker.type';
 import { DateTimeTypeComponent } from './fields/datetimepicker.type';
-import { CrudTableTypeComponent } from './fields/crud-table.type';
 import { NgselectTypeComponent } from './fields/ng-select.type';
 import { TagsTypeComponent } from './fields/tags.type';
 import { RepeatTypeComponent } from './fields/repeat-section.type';
@@ -75,7 +74,6 @@ import { AppValidators } from './util/app-validators';
       types: [
         { name: 'remote-form', component: RemoteFormTypeComponent },
         { name: 'template', component: TemplateTypeComponent },
-        { name: 'crud-table', component: CrudTableTypeComponent },
         { name: 'button', component: ButtonTypeComponent },
         { name: 'time', component: TimeTypeComponent },
         { name: 'date', component: DateTypeComponent },
@@ -130,6 +128,7 @@ import { AppValidators } from './util/app-validators';
     JhiYamlFormComponent
   ],
   declarations: [
+    SafePipe,
     // + app widgets
     DetailWidgetComponent,
     GridWidgetComponent,
@@ -137,7 +136,6 @@ import { AppValidators } from './util/app-validators';
     // + ngx-formly
     RemoteFormTypeComponent,
     TemplateTypeComponent,
-    CrudTableTypeComponent,
     ButtonTypeComponent,
     TimeTypeComponent,
     DateTypeComponent,
