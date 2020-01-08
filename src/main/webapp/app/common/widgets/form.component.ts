@@ -11,11 +11,12 @@ import * as jsyaml from 'js-yaml';
 
 @Component({
   selector: 'jhi-yaml-form',
-  template: ` <formly-form *ngIf="isReady" [model]="model" [options]="options" [fields]="formFields" [form]="form"></formly-form> `
+  template: `
+    <formly-form [model]="model" [options]="options" [fields]="formFields" [form]="form"></formly-form>
+  `
 })
 export class JhiYamlFormComponent implements OnInit, OnDestroy {
   // Abs path for the YAML
-  isReady = false;
   @Input() src = '';
   @Input() model: any = {};
   @Input() form: FormGroup = new FormGroup({});
@@ -33,7 +34,6 @@ export class JhiYamlFormComponent implements OnInit, OnDestroy {
         this.formFields = _.get(jsyaml.load(res.body), 'fields', []);
         // + apiEndpoint and params
         this.apiEndpoint = _.get(res.body, 'apiEndpoint', res.body.apiEndpoint);
-        this.isReady = true;
       });
   }
 
