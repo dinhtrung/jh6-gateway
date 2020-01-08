@@ -12,6 +12,8 @@ import com.ft.service.dto.UserDTO;
 import com.ft.service.mapper.UserMapper;
 import com.ft.web.rest.errors.ExceptionTranslator;
 import com.ft.web.rest.vm.ManagedUserVM;
+import com.google.common.collect.ImmutableList;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -138,7 +140,7 @@ public class UserResourceIT {
 
     @Test
     public void createUser() throws Exception {
-        int databaseSizeBeforeCreate = userRepository.findAll().size();
+        int databaseSizeBeforeCreate = (int) userRepository.count();
 
         // Create the User
         ManagedUserVM managedUserVM = new ManagedUserVM();
@@ -158,7 +160,7 @@ public class UserResourceIT {
             .andExpect(status().isCreated());
 
         // Validate the User in the database
-        List<User> userList = userRepository.findAll();
+        List<User> userList = ImmutableList.copyOf(userRepository.findAll());
         assertThat(userList).hasSize(databaseSizeBeforeCreate + 1);
         User testUser = userList.get(userList.size() - 1);
         assertThat(testUser.getLogin()).isEqualTo(DEFAULT_LOGIN);
@@ -171,7 +173,7 @@ public class UserResourceIT {
 
     @Test
     public void createUserWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = userRepository.findAll().size();
+        int databaseSizeBeforeCreate = (int) userRepository.count();
 
         ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setId("1L");
@@ -192,7 +194,7 @@ public class UserResourceIT {
             .andExpect(status().isBadRequest());
 
         // Validate the User in the database
-        List<User> userList = userRepository.findAll();
+        List<User> userList = ImmutableList.copyOf(userRepository.findAll());
         assertThat(userList).hasSize(databaseSizeBeforeCreate);
     }
 
@@ -201,7 +203,7 @@ public class UserResourceIT {
         // Initialize the database
         userRepository.save(user);
         mockUserSearchRepository.save(user);
-        int databaseSizeBeforeCreate = userRepository.findAll().size();
+        int databaseSizeBeforeCreate = (int) userRepository.count();
 
         ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setLogin(DEFAULT_LOGIN);// this login should already be used
@@ -221,7 +223,7 @@ public class UserResourceIT {
             .andExpect(status().isBadRequest());
 
         // Validate the User in the database
-        List<User> userList = userRepository.findAll();
+        List<User> userList = ImmutableList.copyOf(userRepository.findAll());
         assertThat(userList).hasSize(databaseSizeBeforeCreate);
     }
 
@@ -230,7 +232,7 @@ public class UserResourceIT {
         // Initialize the database
         userRepository.save(user);
         mockUserSearchRepository.save(user);
-        int databaseSizeBeforeCreate = userRepository.findAll().size();
+        int databaseSizeBeforeCreate = (int) userRepository.count();
 
         ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setLogin("anotherlogin");
@@ -250,7 +252,7 @@ public class UserResourceIT {
             .andExpect(status().isBadRequest());
 
         // Validate the User in the database
-        List<User> userList = userRepository.findAll();
+        List<User> userList = ImmutableList.copyOf(userRepository.findAll());
         assertThat(userList).hasSize(databaseSizeBeforeCreate);
     }
 
@@ -306,7 +308,7 @@ public class UserResourceIT {
         // Initialize the database
         userRepository.save(user);
         mockUserSearchRepository.save(user);
-        int databaseSizeBeforeUpdate = userRepository.findAll().size();
+        int databaseSizeBeforeUpdate = (int) userRepository.count();
 
         // Update the user
         User updatedUser = userRepository.findById(user.getId()).get();
@@ -333,7 +335,7 @@ public class UserResourceIT {
             .andExpect(status().isOk());
 
         // Validate the User in the database
-        List<User> userList = userRepository.findAll();
+        List<User> userList = ImmutableList.copyOf(userRepository.findAll());
         assertThat(userList).hasSize(databaseSizeBeforeUpdate);
         User testUser = userList.get(userList.size() - 1);
         assertThat(testUser.getFirstName()).isEqualTo(UPDATED_FIRSTNAME);
@@ -348,7 +350,7 @@ public class UserResourceIT {
         // Initialize the database
         userRepository.save(user);
         mockUserSearchRepository.save(user);
-        int databaseSizeBeforeUpdate = userRepository.findAll().size();
+        int databaseSizeBeforeUpdate = (int) userRepository.count();
 
         // Update the user
         User updatedUser = userRepository.findById(user.getId()).get();
@@ -375,7 +377,7 @@ public class UserResourceIT {
             .andExpect(status().isOk());
 
         // Validate the User in the database
-        List<User> userList = userRepository.findAll();
+        List<User> userList = ImmutableList.copyOf(userRepository.findAll());
         assertThat(userList).hasSize(databaseSizeBeforeUpdate);
         User testUser = userList.get(userList.size() - 1);
         assertThat(testUser.getLogin()).isEqualTo(UPDATED_LOGIN);
@@ -477,7 +479,7 @@ public class UserResourceIT {
         // Initialize the database
         userRepository.save(user);
         mockUserSearchRepository.save(user);
-        int databaseSizeBeforeDelete = userRepository.findAll().size();
+        int databaseSizeBeforeDelete = (int) userRepository.count();
 
         // Delete the user
         restUserMockMvc.perform(delete("/api/users/{login}", user.getLogin())
@@ -487,7 +489,7 @@ public class UserResourceIT {
         assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).get(user.getLogin())).isNull();
 
         // Validate the database is empty
-        List<User> userList = userRepository.findAll();
+        List<User> userList = ImmutableList.copyOf(userRepository.findAll());
         assertThat(userList).hasSize(databaseSizeBeforeDelete - 1);
     }
 

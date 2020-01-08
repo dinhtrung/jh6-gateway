@@ -2,32 +2,45 @@ package com.ft.config.dbmigrations;
 
 import com.ft.domain.Authority;
 import com.ft.domain.User;
+import com.ft.repository.AuthorityRepository;
+import com.ft.repository.UserRepository;
 import com.ft.security.AuthoritiesConstants;
 
-import com.github.mongobee.changeset.ChangeLog;
-import com.github.mongobee.changeset.ChangeSet;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
 import java.time.Instant;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Creates the initial database setup.
  */
-@ChangeLog(order = "001")
+@Configuration
 public class InitialSetupMigration {
+	
+	@Autowired
+	UserRepository userRepository;
+	
+	@Autowired
+	AuthorityRepository authorityRepository;
+	
+	@PostConstruct
+	public void initialize() {
+		addAuthorities();
+		addUsers();
+	}
 
-    @ChangeSet(order = "01", author = "initiator", id = "01-addAuthorities")
-    public void addAuthorities(MongoTemplate mongoTemplate) {
+    public void addAuthorities() {
         Authority adminAuthority = new Authority();
         adminAuthority.setName(AuthoritiesConstants.ADMIN);
         Authority userAuthority = new Authority();
         userAuthority.setName(AuthoritiesConstants.USER);
-        mongoTemplate.save(adminAuthority);
-        mongoTemplate.save(userAuthority);
+        authorityRepository.save(adminAuthority);
+        authorityRepository.save(userAuthority);
     }
 
-    @ChangeSet(order = "02", author = "initiator", id = "02-addUsers")
-    public void addUsers(MongoTemplate mongoTemplate) {
+    public void addUsers() {
         Authority adminAuthority = new Authority();
         adminAuthority.setName(AuthoritiesConstants.ADMIN);
         Authority userAuthority = new Authority();
@@ -46,7 +59,7 @@ public class InitialSetupMigration {
         systemUser.setCreatedDate(Instant.now());
         systemUser.getAuthorities().add(adminAuthority);
         systemUser.getAuthorities().add(userAuthority);
-        mongoTemplate.save(systemUser);
+        userRepository.save(systemUser);
 
         User anonymousUser = new User();
         anonymousUser.setId("user-1");
@@ -59,7 +72,7 @@ public class InitialSetupMigration {
         anonymousUser.setLangKey("en");
         anonymousUser.setCreatedBy(systemUser.getLogin());
         anonymousUser.setCreatedDate(Instant.now());
-        mongoTemplate.save(anonymousUser);
+        userRepository.save(anonymousUser);
 
         User adminUser = new User();
         adminUser.setId("user-2");
@@ -74,7 +87,7 @@ public class InitialSetupMigration {
         adminUser.setCreatedDate(Instant.now());
         adminUser.getAuthorities().add(adminAuthority);
         adminUser.getAuthorities().add(userAuthority);
-        mongoTemplate.save(adminUser);
+        userRepository.save(adminUser);
 
         User userUser = new User();
         userUser.setId("user-3");
@@ -88,6 +101,6 @@ public class InitialSetupMigration {
         userUser.setCreatedBy(systemUser.getLogin());
         userUser.setCreatedDate(Instant.now());
         userUser.getAuthorities().add(userAuthority);
-        mongoTemplate.save(userUser);
+        userRepository.save(userUser);
     }
 }

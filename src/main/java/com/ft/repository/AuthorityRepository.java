@@ -1,10 +1,13 @@
 package com.ft.repository;
 
+import org.springframework.data.elasticsearch.repository.ElasticsearchCrudRepository;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+
 import com.ft.domain.Authority;
-import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
  * Spring Data MongoDB repository for the {@link Authority} entity.
  */
-public interface AuthorityRepository extends MongoRepository<Authority, String> {
+public interface AuthorityRepository extends ElasticsearchCrudRepository<Authority, String>, ElasticsearchRepository<Authority, String> {
+
 }

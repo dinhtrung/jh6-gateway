@@ -1,8 +1,9 @@
 package com.ft.domain;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
@@ -14,22 +15,21 @@ import java.util.Map;
  *
  * @see org.springframework.boot.actuate.audit.AuditEvent
  */
-@Document(collection = "jhi_persistent_audit_event")
+@Document(indexName = "jhi_persistent_audit_event")
 public class PersistentAuditEvent implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Field("event_id")
     private String id;
 
     @NotNull
+    @Field(type = FieldType.Keyword)
     private String principal;
 
-    @Field("event_date")
     private Instant auditEventDate;
 
-    @Field("event_type")
+    @Field(type = FieldType.Keyword)
     private String auditEventType;
 
     private Map<String, String> data = new HashMap<>();

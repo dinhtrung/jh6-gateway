@@ -6,7 +6,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.elasticsearch.repository.ElasticsearchCrudRepository;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,13 +18,15 @@ import java.time.Instant;
  * Spring Data MongoDB repository for the {@link User} entity.
  */
 @Repository
-public interface UserRepository extends MongoRepository<User, String> {
+public interface UserRepository extends ElasticsearchCrudRepository<User, String>, ElasticsearchRepository<User, String> {
 
-    String USERS_BY_LOGIN_CACHE = "usersByLogin";
+	String USERS_BY_LOGIN_CACHE = "usersByLogin";
 
     String USERS_BY_EMAIL_CACHE = "usersByEmail";
 
     Optional<User> findOneByActivationKey(String activationKey);
+
+    List<User> findAllByActivatedIsFalseAndCreatedDateBefore(Instant dateTime);
 
     List<User> findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant dateTime);
 

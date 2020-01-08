@@ -1,9 +1,11 @@
 package com.ft.repository;
 
+import com.ft.domain.Authority;
 import com.ft.domain.PersistentAuditEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.elasticsearch.repository.ElasticsearchCrudRepository;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import java.time.Instant;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.List;
 /**
  * Spring Data MongoDB repository for the {@link PersistentAuditEvent} entity.
  */
-public interface PersistenceAuditEventRepository extends MongoRepository<PersistentAuditEvent, String> {
+public interface PersistenceAuditEventRepository extends ElasticsearchCrudRepository<PersistentAuditEvent, String>, ElasticsearchRepository<PersistentAuditEvent, String> {
 
     List<PersistentAuditEvent> findByPrincipal(String principal);
 

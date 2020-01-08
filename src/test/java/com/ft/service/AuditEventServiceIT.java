@@ -60,7 +60,7 @@ public class AuditEventServiceIT {
         
         auditEventService.removeOldAuditEvents();
         
-        assertThat(persistenceAuditEventRepository.findAll().size()).isEqualTo(2);
+        assertThat(persistenceAuditEventRepository.count()).isEqualTo(2);
         assertThat(persistenceAuditEventRepository.findByPrincipal("test-user-old")).isEmpty();
         assertThat(persistenceAuditEventRepository.findByPrincipal("test-user-retention")).isNotEmpty();
         assertThat(persistenceAuditEventRepository.findByPrincipal("test-user-new")).isNotEmpty();
