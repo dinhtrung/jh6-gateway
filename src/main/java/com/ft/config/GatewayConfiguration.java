@@ -3,8 +3,11 @@ package com.ft.config;
 import io.github.jhipster.config.JHipsterProperties;
 
 import com.ft.gateway.accesscontrol.AccessControlFilter;
+import com.ft.gateway.logging.LoggingFilter;
 import com.ft.gateway.responserewriting.SwaggerBasePathRewritingFilter;
 import com.ft.gateway.ratelimiting.RateLimitingFilter;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.netflix.zuul.filters.RouteLocator;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class GatewayConfiguration {
-
+	
     @Configuration
     public static class SwaggerBasePathRewritingConfiguration {
 
@@ -49,5 +52,17 @@ public class GatewayConfiguration {
         public RateLimitingFilter rateLimitingFilter() {
             return new RateLimitingFilter(jHipsterProperties);
         }
+    }
+    
+    @Configuration
+    public static class LoggingFilterConfiguration {
+    	
+    	@Value("${gateway.logging.excludePattern:}")
+    	private String excludePattern;
+    	
+    	@Bean
+    	public LoggingFilter loggingFilter() {
+    		return new LoggingFilter(excludePattern);
+    	}
     }
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router, ActivatedRouteSnapshot, NavigationEnd, NavigationError } from '@angular/router';
+import { Router, ActivatedRouteSnapshot, Event, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
+// + ngx-spinner
+import { NgxSpinnerService } from 'ngx-spinner';
 import { TranslateService } from '@ngx-translate/core';
 
 import { AccountService } from 'app/core/auth/account.service';
@@ -11,11 +13,31 @@ import { AccountService } from 'app/core/auth/account.service';
 })
 export class MainComponent implements OnInit {
   constructor(
+    private spinner: NgxSpinnerService,
     private accountService: AccountService,
     private translateService: TranslateService,
     private titleService: Title,
     private router: Router
-  ) {}
+  ) {
+    this.router.events.subscribe((event: Event) => {
+      switch (true) {
+        case event instanceof NavigationStart: {
+          this.spinner.show();
+          break;
+        }
+
+        case event instanceof NavigationEnd:
+        case event instanceof NavigationCancel:
+        case event instanceof NavigationError: {
+          this.spinner.hide();
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    });
+  }
 
   ngOnInit(): void {
     // try to log in automatically

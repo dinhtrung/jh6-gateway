@@ -131,3 +131,7 @@ jhipster:
 # ===================================================================
 
 # application:
+
+gateway:
+  logging:
+    excludePattern: /services/microapp/api /services/vnpti-msu
