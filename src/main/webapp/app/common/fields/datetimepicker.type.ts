@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FieldType } from '@ngx-formly/core';
 import { FormControl } from '@angular/forms';
-import { NgbTimeStruct, NgbDateStruct, NgbPopoverConfig, NgbPopover, NgbDatepicker } from '@ng-bootstrap/ng-bootstrap';
 import { DATE_FORMAT, DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import * as moment from 'moment';
 
@@ -40,25 +39,30 @@ import * as moment from 'moment';
   `
 })
 export class DateTimeTypeComponent extends FieldType implements OnInit {
+  defaultOptions = {
+    templateOptions: {
+      wrappers: ['form-field']
+    }
+  };
   showTimePickerToggle = false;
   date: FormControl = new FormControl();
   time: FormControl = new FormControl();
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.date.setValue(this.formControl.value ? moment(this.formControl.value) : moment());
     this.time.setValue((this.formControl.value ? moment(this.formControl.value) : moment()).format('HH:mm:00'));
   }
 
-  toggleDateTimeState($event: any) {
+  toggleDateTimeState($event: any): void {
     this.showTimePickerToggle = !this.showTimePickerToggle;
     $event.stopPropagation();
   }
 
-  onDateSelect() {
+  onDateSelect(): void {
     this.formControl.setValue(moment(this.date.value).format(this.to.format || DATE_FORMAT));
     this.showTimePickerToggle = !this.showTimePickerToggle;
   }
-  onDateTimeSelected() {
+  onDateTimeSelected(): void {
     const tmp = moment(this.time.value, 'HH:mm');
     const dt = this.date.value.set({
       hour: tmp.get('hour'),

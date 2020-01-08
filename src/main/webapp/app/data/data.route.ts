@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse, HttpClient } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map, concatMap } from 'rxjs/operators';
@@ -18,7 +18,7 @@ import { DataUpdateComponent } from './data-update.component';
 export class TemplateFilenameResolve implements Resolve<string> {
   constructor(private service: HttpClient) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
+  resolve(route: ActivatedRouteSnapshot): Observable<any> {
     const prop = _.get(route.params, 'prop');
     const svc = _.get(route.params, 'svc');
     return this.service.get(`assets/${svc}/${prop}.yaml?time=` + new Date().getTime(), { responseType: 'text', observe: 'response' }).pipe(
@@ -33,7 +33,7 @@ export class TemplateFilenameResolve implements Resolve<string> {
 export class DataResolve implements Resolve<any> {
   constructor(private service: HttpClient) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
+  resolve(route: ActivatedRouteSnapshot): Observable<any> {
     const id = _.get(route.params, 'id');
     const prop = _.get(route.params, 'prop');
     const svc = _.get(route.params, 'svc');
@@ -70,8 +70,8 @@ export const dataRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      defaultSort: 'id,asc',
-      pageTitle: 'gatewayApp.data.home.title'
+      defaultSort: '_id,asc',
+      pageTitle: 'data.title'
     },
     canActivate: [UserRouteAccessService]
   },
@@ -84,7 +84,7 @@ export const dataRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'gatewayApp.data.home.title'
+      pageTitle: 'data.title'
     },
     canActivate: [UserRouteAccessService]
   },
@@ -97,7 +97,7 @@ export const dataRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'gatewayApp.data.home.title'
+      pageTitle: 'data.title'
     },
     canActivate: [UserRouteAccessService]
   },
@@ -110,7 +110,7 @@ export const dataRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'gatewayApp.data.home.title'
+      pageTitle: 'data.title'
     },
     canActivate: [UserRouteAccessService]
   }
