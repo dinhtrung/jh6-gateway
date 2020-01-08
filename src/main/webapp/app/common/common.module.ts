@@ -130,6 +130,7 @@ import { AppValidators } from './util/app-validators';
     JhiYamlFormComponent
   ],
   declarations: [
+    SafePipe,
     // + app widgets
     DetailWidgetComponent,
     GridWidgetComponent,

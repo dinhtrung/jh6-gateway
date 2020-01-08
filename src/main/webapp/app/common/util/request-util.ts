@@ -1,10 +1,9 @@
-import { HttpParams } from '@angular/common/http';
 import * as _ from 'lodash';
 
 export const plainToFlattenObject = (object: any) => {
   const result = {};
 
-  function flatten(obj: any, prefix = '') {
+  function flatten(obj: any, prefix = ''): any {
     _.forEach(obj, (value, key) => {
       if (_.isObject(value)) {
         flatten(value, `${prefix}${key}.`);
@@ -13,7 +12,6 @@ export const plainToFlattenObject = (object: any) => {
       }
     });
   }
-
   flatten(object);
 
   return result;

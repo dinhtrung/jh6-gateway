@@ -1,15 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 // + Formly Support
-import { FormGroup } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { filter, map } from 'rxjs/operators';
 // + HTTP support
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { FieldType } from '@ngx-formly/core';
 // + look for anything
 import * as _ from 'lodash';
 import * as jsyaml from 'js-yaml';
-import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-remote-form-type',
@@ -19,7 +17,7 @@ import { AccountService } from 'app/core/auth/account.service';
     </div>
   `
 })
-export class RemoteFormTypeComponent extends FieldType implements OnInit, OnDestroy {
+export class RemoteFormTypeComponent extends FieldType implements OnInit {
   formFields: FormlyFieldConfig[] = [];
   ready = false;
   constructor(private httpClient: HttpClient) {
@@ -27,7 +25,7 @@ export class RemoteFormTypeComponent extends FieldType implements OnInit, OnDest
     this.ready = false;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.to.fields) {
       this.formFields = this.to.fields;
       this.ready = true;
@@ -36,9 +34,7 @@ export class RemoteFormTypeComponent extends FieldType implements OnInit, OnDest
     }
   }
 
-  ngOnDestroy() {}
-
-  loadRemoteForm() {
+  loadRemoteForm(): void {
     // FIXME: Load existings value from formControl to populate into of
     this.httpClient
       .get(this.to.yamlResource + '?ts=' + new Date().getTime(), { responseType: 'text', observe: 'response' })

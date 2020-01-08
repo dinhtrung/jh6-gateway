@@ -5,7 +5,6 @@ import { FormlyFieldConfig } from '@ngx-formly/core';
 
 // + HTTP support
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { FieldType } from '@ngx-formly/core';
 // + look for anything
 import * as _ from 'lodash';
 import * as jsyaml from 'js-yaml';
@@ -18,16 +17,16 @@ import * as jsyaml from 'js-yaml';
 })
 export class JhiYamlFormComponent implements OnInit, OnDestroy {
   // Abs path for the YAML
-  @Input() src: string = '';
+  @Input() src = '';
   @Input() model: any = {};
   @Input() form: FormGroup = new FormGroup({});
   @Input() options: any = {};
   formFields: FormlyFieldConfig[] = [];
   // + apiEndpoint and params
-  apiEndpoint: string = '';
+  apiEndpoint = '';
   constructor(private httpClient: HttpClient) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     // FIXME: Load existings value from formControl to populate into of
     this.httpClient
       .get(this.src + '?ts=' + new Date().getTime(), { responseType: 'text', observe: 'response' })
@@ -38,5 +37,5 @@ export class JhiYamlFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy(): void {}
 }

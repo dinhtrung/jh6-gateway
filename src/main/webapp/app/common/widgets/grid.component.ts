@@ -1,15 +1,15 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 import { HttpErrorResponse, HttpHeaders, HttpResponse, HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router, NavigationEnd, RouterLink } from '@angular/router';
-import { Subscription, combineLatest } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { EntityService } from 'app/common/model/entity.service';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { AccountService } from 'app/core/auth/account.service';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 // + Modal
-import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // + search
 import * as _ from 'lodash';
@@ -21,7 +21,7 @@ import * as jsyaml from 'js-yaml';
 })
 export class GridWidgetComponent implements OnInit, OnDestroy {
   // Abs path for the YAML
-  @Input() src: string = '';
+  @Input() src = '';
   _ = _;
   isReady = false;
   currentAccount: any;
@@ -32,9 +32,9 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
   columnKeys: string[] = [];
   columnNames: string[] = [];
   displayColumns: any = {};
-  @Input() prop: string = '';
-  @Input() svc: string = '';
-  apiEndpoint: string = '';
+  @Input() prop = '';
+  @Input() svc = '';
+  apiEndpoint = '';
   queryParams: any;
   // + states
   error: any;
@@ -71,7 +71,7 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
     this.itemsPerPage = ITEMS_PER_PAGE;
   }
 
-  loadAll() {
+  loadAll(): void {
     this.dataService
       .query(
         _.assign(
@@ -91,14 +91,14 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
       );
   }
 
-  loadPage(page: number) {
+  loadPage(page: number): void {
     if (page !== this.previousPage) {
       this.previousPage = page;
       this.transition();
     }
   }
 
-  transition() {
+  transition(): void {
     this.router.navigate([], {
       queryParams: _.assign(
         {},
@@ -113,7 +113,7 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
     this.loadAll();
   }
 
-  clear() {
+  clear(): void {
     this.page = 0;
     this.router.navigate([
       '',
@@ -125,17 +125,17 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
     this.loadAll();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.isReady = false;
     combineLatest(this.resolvePagingParams(), this.resolveSrcFile(), this.resolveSearchModel()).subscribe(() => this.loadAll());
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
     this.registerChangeInData();
   }
 
-  resolveSearchModel() {
+  resolveSearchModel(): any {
     return this.activatedRoute.queryParams.pipe(map(params => (this.searchModel = _.omit(params, ['size', 'sort', 'page']))));
   }
-  resolvePagingParams() {
+  resolvePagingParams(): any {
     return this.activatedRoute.queryParams.pipe(
       map(data => {
         this.page = _.get(data, 'page', 0);
@@ -145,7 +145,7 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
       })
     );
   }
-  resolveSrcFile() {
+  resolveSrcFile(): any {
     return this.httpClient
       .get(this.src, { params: createRequestOption({ ts: new Date().getTime() }), responseType: 'text', observe: 'response' })
       .pipe(
@@ -160,7 +160,6 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
           this.queryParams = _.get(data, 'templateFile.config.queryParams', {});
           // + fields
           this.fields = _.get(data, 'templateFile.config.fields', []);
-          console.log('Fields', JSON.stringify(this.fields));
           this.columns = _.get(data, 'templateFile.config.columns', ['id']);
           this.columnKeys = _.map(this.columns, c => _.get(c, 'prop', c));
           this.columnNames = _.map(this.columns, c => _.get(c, 'label', c));
@@ -183,19 +182,19 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
       );
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.eventManager.destroy(this.eventSubscriber);
   }
 
-  trackId(index: number, item: any) {
+  trackId(index: number, item: any): string {
     return item.id;
   }
 
-  registerChangeInData() {
+  registerChangeInData(): void {
     this.eventSubscriber = this.eventManager.subscribe('dataListModification', () => this.loadAll());
   }
 
-  sort() {
+  sort(): string[] {
     const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
     if (this.predicate !== 'id') {
       result.push('id');
@@ -203,14 +202,13 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  protected paginate(data: any[], headers: HttpHeaders) {
+  protected paginate(data: any[], headers: HttpHeaders): void {
     if (headers.get('link')) {
       this.links = this.parseLinks.parse(headers.get('link') || '');
       this.totalItems = parseInt(headers.get('X-Total-Count') || '0', 10);
     }
     this.rows = data;
     // + load reference remote entities based on apiEndpoint
-    console.log('Reference Enpoint', JSON.stringify(this.referenceEndpoint));
     _.each(this.referenceEndpoint, (templateOptions, fieldKey) => {
       const ids = _.uniq(
         _.flatMap(
@@ -218,7 +216,6 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
           values => (_.isArray(values) ? _.values(values) : values)
         )
       );
-      console.log('Gotta find all related info for key = ' + fieldKey, ids);
       const q = {};
       _.set(q, templateOptions.key, ids);
       this.dataService
@@ -230,29 +227,25 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
     this.isReady = true;
   }
 
-  protected onError(errorMessage: string) {
+  protected onError(errorMessage: string): void {
     this.jhiAlertService.error(errorMessage);
   }
 
   // Add search modifier
-  setSearchOperator(field: string, operator: string) {
+  setSearchOperator(field: string, operator: string): void {
     _.set(this.searchModel, field, `${operator}(${_.get(this.searchModel, field)})`);
   }
-  toggleView(column: string) {
+  toggleView(column: string): void {
     this.displayColumns[column] = !this.displayColumns[column];
   }
   // + delete confirm
-  delete(t: any) {
+  delete(t: any): void {
     this.modalService.open(this.deleteModal).result.then(
-      result => {
-        this.dataService.delete(t.id, this.apiEndpoint).subscribe(res => this.loadAll());
-      },
-      reason => {
-        this.modalService.dismissAll();
-      }
+      () => this.dataService.delete(t.id, this.apiEndpoint).subscribe(() => this.loadAll()),
+      () => this.modalService.dismissAll()
     );
   }
-  navigate(link: any[]) {
+  navigate(link: any[]): void {
     this.router.navigate(link);
   }
 }
