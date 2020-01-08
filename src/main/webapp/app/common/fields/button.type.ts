@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { FieldType } from '@ngx-formly/core';
-import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { JhiAlertService } from 'ng-jhipster';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { plainToFlattenObject } from 'app/common/util/request-util';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'jhi-formly-button',
@@ -21,22 +23,27 @@ export class ButtonTypeComponent extends FieldType {
   constructor(protected httpClient: HttpClient, private alertService: JhiAlertService) {
     super();
   }
-  onClick($event: any) {
+  onClick($event: any): void {
     if (this.to.onClick) {
       this.to.onClick($event);
     } else if (this.to.apiEndpoint) {
-      this.createRequest().subscribe(
-        res => this.formControl.setValue(res.body),
-        err => this.alertService.error(err.message)
-      );
+      this.createRequest()
+        .pipe(
+          filter(res => res.ok),
+          map(res => res.body)
+        )
+        .subscribe(
+          res => this.formControl.setValue(res),
+          err => this.alertService.error(err.message)
+        );
     }
   }
 
-  createRequest() {
-    const params = _.omitBy(plainToFlattenObject(this.to.params), _.isNull);
-    const body = _.omitBy(plainToFlattenObject(this.to.body), _.isNull);
+  createRequest(): Observable<HttpResponse<any>> {
+    const params = createRequestOption(_.omitBy(plainToFlattenObject(this.to.params), _.isNull));
+    const body = _.omitBy(this.to.body, _.isNull);
     if (_.isEmpty(body)) {
-      return this.httpClient.get<HttpResponse<any[]>>(SERVER_API_URL + this.to.apiEndpoint, {
+      return this.httpClient.get<HttpResponse<any>>(SERVER_API_URL + this.to.apiEndpoint, {
         params,
         observe: 'response'
       });

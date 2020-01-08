@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
-import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { FormlyFieldConfig } from '@ngx-formly/core';
+import { HttpResponse } from '@angular/common/http';
 
-import { FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, combineLatest, from } from 'rxjs';
-import { tap, map, filter } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 // + Form Builder
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -19,21 +19,21 @@ import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 })
 export class DataUpdateComponent implements OnInit {
   _ = _;
-  title: string = '';
+  title = '';
   isReady = false;
   isSaving = false;
   model: any = {};
   fields: FormlyFieldConfig[] = [];
-  prop: string = '';
-  svc: string = '';
+  prop = '';
+  svc = '';
   debug = DEBUG_INFO_ENABLED;
-  apiEndpoint: string = '';
+  apiEndpoint = '';
   editForm = new FormGroup({});
   options: any;
 
   constructor(protected accountService: AccountService, protected dataService: EntityService, protected activatedRoute: ActivatedRoute) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.isSaving = false;
     combineLatest(
       from(this.accountService.identity()).pipe(
@@ -61,14 +61,14 @@ export class DataUpdateComponent implements OnInit {
           this.model = model;
         })
       )
-    ).subscribe(res => (this.isReady = true));
+    ).subscribe(() => (this.isReady = true));
   }
 
-  previousState() {
+  previousState(): void {
     window.history.back();
   }
 
-  save() {
+  save(): void {
     this.isSaving = true;
     if (_.get(this.model, 'id') !== undefined) {
       this.subscribeToSaveResponse(this.dataService.update(this.model, this.apiEndpoint));
@@ -77,19 +77,19 @@ export class DataUpdateComponent implements OnInit {
     }
   }
 
-  protected subscribeToSaveResponse(result: Observable<HttpResponse<any>>) {
+  protected subscribeToSaveResponse(result: Observable<HttpResponse<any>>): void {
     result.subscribe(
       () => this.onSaveSuccess(),
       () => this.onSaveError()
     );
   }
 
-  protected onSaveSuccess() {
+  protected onSaveSuccess(): void {
     this.isSaving = false;
     this.previousState();
   }
 
-  protected onSaveError() {
+  protected onSaveError(): void {
     this.isSaving = false;
   }
 }

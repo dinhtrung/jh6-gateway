@@ -5,7 +5,7 @@ import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { plainToFlattenObject } from 'app/common/util/request-util';
 // + ng-select
-import { Subject, Observable, of, concat } from 'rxjs';
+import { Subject, of, concat } from 'rxjs';
 import { FieldType } from '@ngx-formly/core';
 import { distinctUntilChanged, filter, debounceTime, switchMap, tap, catchError, map } from 'rxjs/operators';
 import * as _ from 'lodash';
@@ -69,7 +69,7 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // FIXME: Load existings value from formControl to populate into of
     // Support TypeAhed
     if (this.to.itemEndpoint) {
@@ -90,7 +90,8 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
           ),
           switchMap((term: string) =>
             this.loadSeachResult(term).pipe(
-              map(res => this.parseResult(res.body)), // The original array
+              filter((res: HttpResponse<any[]>) => res.ok),
+              map((res: HttpResponse<any[]>) => this.parseResult(res.body || [])), // The original array
               catchError(() => of([])), // empty list on error
               tap(() => (this.isLoading = false))
             )
@@ -101,11 +102,11 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.onDestroy$.complete();
   }
 
-  loadSelected() {
+  loadSelected(): any {
     return this.httpClient
       .get<any>(SERVER_API_URL + this.to.apiEndpoint, {
         params: createRequestOption(
@@ -120,7 +121,7 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
       );
   }
 
-  loadSeachResult(term: string) {
+  loadSeachResult(term: string): any {
     const query = _.assign({}, this.to.params);
     if (this.to.termPattern) {
       _.set(query, this.to.val, this.to.termPattern ? this.to.termPattern.replace('${term}', term) : term);
@@ -142,7 +143,7 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
     }
   }
 
-  parseResult(res: any[]) {
+  parseResult(res: any[]): any {
     if (this.to.key) {
       res = _.map(res, item => plainToFlattenObject(item)); // Convert nested one into path
       res = _.map(res, obj => _.mapKeys(obj, (v, k) => _.replace(k, '.', '$')));
