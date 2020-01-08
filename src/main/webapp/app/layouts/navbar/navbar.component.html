@@ -30,6 +30,38 @@
                     <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
                 </ul>
             </li>
+
+            <!-- + Dynamic Menu Items -->
+            <ng-template ngFor let-item [ngForOf]="menuItems">
+              <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" *ngIf="!item.children">
+                  <a class="nav-link" (click)="collapseNavbar(); downloadSidebarFile(item)">
+                      <span>
+                          <fa-icon [icon]="item.icon"></fa-icon>
+                          <span *ngIf="item.jhiTranslate" [jhiTranslate]="item.jhiTranslate"></span>
+                          <span *ngIf="!item.jhiTranslate" [innerHTML]="item.name"></span>
+                      </span>
+                  </a>
+              </li>
+              <li class="nav-item dropdown pointer" ngbDropdown routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" *ngIf="item.children">
+                  <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="entity-menu">
+                      <span>
+                          <fa-icon [icon]="item.icon"></fa-icon>
+                          <span *ngIf="item.jhiTranslate" [jhiTranslate]="item.jhiTranslate"></span>
+                          <span *ngIf="!item.jhiTranslate" [innerHTML]="item.name"></span>
+                      </span>
+                  </a>
+                  <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
+                      <li *ngFor="let child of item.children">
+                          <a class="dropdown-item" href="javascript:void(0);" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="collapseNavbar(); downloadSidebarFile(child)" [ngbTooltip]="item.title">
+                              <fa-icon [icon]="child.icon" fixedWidth="true"></fa-icon>
+                              <span *ngIf="child.jhiTranslate" [jhiTranslate]="child.jhiTranslate"></span>
+                              <span *ngIf="!child.jhiTranslate" [innerHTML]="child.name"></span>
+                          </a>
+                      </li>
+                  </ul>
+              </li>
+            </ng-template>
+
             <li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="admin-menu">
                     <span>
