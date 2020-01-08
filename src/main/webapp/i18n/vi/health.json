@@ -18,6 +18,7 @@
       "consul": "Consul",
       "diskSpace": "Dung lượng trống",
       "mail": "Email",
+      "elasticsearch": "Elasticsearch",
       "mongo": "MongoDB"
     },
     "table": {

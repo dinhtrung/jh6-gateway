@@ -18,6 +18,7 @@
       "consul": "Consul",
       "diskSpace": "Disk space",
       "mail": "Email",
+      "elasticsearch": "Elasticsearch",
       "mongo": "MongoDB"
     },
     "table": {

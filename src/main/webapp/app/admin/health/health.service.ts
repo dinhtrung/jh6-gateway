@@ -14,6 +14,7 @@ export type HealthKey =
   | 'consul'
   | 'diskSpace'
   | 'mail'
+  | 'elasticsearch'
   | 'mongo';
 
 export interface Health {

@@ -19,6 +19,11 @@ logging:
     io.github.jhipster: DEBUG
     com.ft: DEBUG
 
+management:
+  health:
+    elasticsearch:
+      enabled: false
+
 spring:
   profiles:
     active: dev
@@ -44,7 +49,11 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017
-      database: exp_gateway
+      database: Gateway
+    elasticsearch:
+      properties:
+        path:
+          home: target/elasticsearch
   mail:
     host: localhost
     port: 25

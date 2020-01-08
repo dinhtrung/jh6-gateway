@@ -3,6 +3,7 @@ package com.ft.service;
 import com.ft.GatewayApp;
 import com.ft.config.Constants;
 import com.ft.domain.User;
+import com.ft.repository.search.UserSearchRepository;
 import com.ft.repository.UserRepository;
 import com.ft.service.dto.UserDTO;
 
@@ -22,6 +23,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  * Integration tests for {@link UserService}.
@@ -46,6 +50,14 @@ public class UserServiceIT {
 
     @Autowired
     private UserService userService;
+
+    /**
+     * This repository is mocked in the com.ft.repository.search test package.
+     *
+     * @see com.ft.repository.search.UserSearchRepositoryMockConfiguration
+     */
+    @Autowired
+    private UserSearchRepository mockUserSearchRepository;
 
     private User user;
 
@@ -145,6 +157,9 @@ public class UserServiceIT {
         userService.removeNotActivatedUsers();
         users = userRepository.findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(now.minus(3, ChronoUnit.DAYS));
         assertThat(users).isEmpty();
+
+        // Verify Elasticsearch mock
+        verify(mockUserSearchRepository, times(1)).delete(user);
     }
 
     @Test
@@ -159,6 +174,9 @@ public class UserServiceIT {
         userService.removeNotActivatedUsers();
         Optional<User> maybeDbUser = userRepository.findById(dbUser.getId());
         assertThat(maybeDbUser).contains(dbUser);
+
+        // Verify Elasticsearch mock
+        verify(mockUserSearchRepository, never()).delete(user);
     }
 
     @Test

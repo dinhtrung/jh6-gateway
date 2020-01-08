@@ -1,0 +1,38 @@
+apiEndpoint: /api/nodes
+fields:
+  - key: name
+    type: input
+    templateOptions:
+      label: Node Name
+  - key: state
+    type: select
+    templateOptions:
+      label: Status
+      options:
+        - value: 200
+          label: Published
+        - value: 403
+          label: Unpublished
+        - value: 100
+          label: Need Review
+  - key: type
+    defaultValue: BLOG
+    hideExpression: true
+  - key: meta
+    fieldGroup:
+      - key: body
+        type: quill
+        templateOptions:
+          label: Content
+      - key: tags
+        type: tags
+        templateOptions:
+          label: Tags
+      - key: category
+        type: ng-select
+        templateOptions:
+          apiEndpoint: /api/nodes
+          params:
+            type: CATEGORY
+          key: id
+          val: name
