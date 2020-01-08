@@ -10,6 +10,15 @@ import { LoginModalService } from 'app/core/login/login-modal.service';
 import { LoginService } from 'app/core/login/login.service';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
 
+// + HttpClient
+import { JhiEventManager } from 'ng-jhipster';
+import { HttpClient } from '@angular/common/http';
+import { SERVER_API_URL } from 'app/app.constants';
+import { filter, map, tap } from 'rxjs/operators';
+import { createRequestOption } from 'app/shared/util/request-util';
+import * as jsyaml from 'js-yaml';
+import * as _ from 'lodash';
+
 @Component({
   selector: 'jhi-navbar',
   templateUrl: './navbar.component.html',
@@ -21,8 +30,15 @@ export class NavbarComponent implements OnInit {
   languages = LANGUAGES;
   swaggerEnabled?: boolean;
   version: string;
+  // + Extra menu items
+  _ = _;
+  public navItems: any;
+  public menuItems: any;
 
   constructor(
+    private httpClient: HttpClient,
+    private eventManager: JhiEventManager,
+    // + jhipster
     private loginService: LoginService,
     private languageService: JhiLanguageService,
     private sessionStorage: SessionStorageService,
@@ -39,6 +55,11 @@ export class NavbarComponent implements OnInit {
       this.inProduction = profileInfo.inProduction;
       this.swaggerEnabled = profileInfo.swaggerEnabled;
     });
+    this.accountService
+      .identity()
+      .pipe(filter(account => account !== null))
+      .subscribe(() => this.loadExtraMenu());
+    this.eventManager.subscribe('authenticationSuccess', () => this.loadExtraMenu());
   }
 
   changeLanguage(languageKey: string): void {
@@ -70,5 +91,30 @@ export class NavbarComponent implements OnInit {
 
   getImageUrl(): string {
     return this.isAuthenticated() ? this.accountService.getImageUrl() : '';
+  }
+
+  // + Load Extra Menu
+  loadExtraMenu(): void {
+    // Retrieve the navbar
+    this.httpClient
+      .get(SERVER_API_URL + 'assets/config/navbar.yml', { params: createRequestOption({ ts: new Date().getTime() }), responseType: 'text' })
+      .subscribe(res => (this.menuItems = jsyaml.load(res)));
+  }
+
+  // + Download the sidebar if need
+  downloadSidebarFile(file: any): void {
+    this.router.navigate([file.url]).then(() => {
+      if (file.sidebarUrl) {
+        this.httpClient
+          .get(`${file.sidebarUrl}?ts=` + new Date().getTime(), { responseType: 'text' })
+          .pipe(
+            map(res => jsyaml.load(res)),
+            tap(menuItems => this.sessionStorage.store('sidebarMenuItems', menuItems))
+          )
+          .subscribe(res => {
+            this.eventManager.broadcast({ name: 'reloadSidebar', content: res });
+          });
+      }
+    });
   }
 }

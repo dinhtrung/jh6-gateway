@@ -1,4 +1,15 @@
 apiEndpoint: /api/nodes
+columns:
+  - name
+  - prop: state
+    label: Status
+    options:
+      - value: 200
+        label: Published
+      - value: 403
+        label: Unpublished
+      - value: 100
+        label: Need Review
 fields:
   - key: name
     type: input
