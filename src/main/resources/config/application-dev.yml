@@ -45,7 +45,6 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017
       database: exp_gateway
-      auto-index-creation: true
   mail:
     host: localhost
     port: 25
@@ -89,7 +88,7 @@ jhipster:
       management-center: # Full reference is available at: http://docs.hazelcast.org/docs/management-center/3.9/manual/html/Deploying_and_Starting.html
         enabled: false
         update-interval: 3
-        url: http://localhost:8180/hazelcast-mancenter
+        url: http://localhost:8180/mancenter
   # CORS is only enabled by default with the "dev" profile, so BrowserSync can access the API
   cors:
     allowed-origins: '*'
@@ -133,19 +132,6 @@ jhipster:
 
 # application:
 
-# Logging all request / response to microservices, excludes following
 gateway:
   logging:
     excludePattern: /services/microapp/api /services/vnpti-msu
-
-# Support AWS S3 Storage
-minio:
-  endpoint: 'https://play.min.io'
-  accessKey: 'Q3AM3UQ867SPQQA43P2F'
-  secretKey: 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG'
-  bucketName: jh6-gateway
-
-# Document converter using pandoc
-pandoc:
-  path: /usr/bin/pandoc
-  options: '--reference-doc=/tmp/custom-reference.docx'

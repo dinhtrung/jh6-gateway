@@ -13,6 +13,7 @@ export class MainComponent implements OnInit {
   private renderer: Renderer2;
 
   constructor(
+    private spinner: NgxSpinnerService,
     private accountService: AccountService,
     private titleService: Title,
     private router: Router,
@@ -27,6 +28,12 @@ export class MainComponent implements OnInit {
     this.accountService.identity().subscribe();
 
     this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.spinner.show();
+      } else {
+        this.spinner.hide();
+      }
+
       if (event instanceof NavigationEnd) {
         this.updateTitle();
       }
