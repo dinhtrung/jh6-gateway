@@ -24,24 +24,24 @@ export class DataComponent implements OnInit, OnDestroy {
   isReady = false;
   currentAccount: any;
   // + data
-  tasks: any[]; // List of available task from this UI
-  actions: any[]; // List of available options for each row
+  tasks: any[] = []; // List of available task from this UI
+  actions: any[] = []; // List of available options for each row
   fields: any;
-  rows: any[];
-  columns: any[];
-  columnKeys: string[];
-  columnNames: string[];
+  rows: any[] = [];
+  columns: any[] = [];
+  columnKeys: string[] = [];
+  columnNames: string[] = [];
   displayColumns: any = {};
   // How to display the table
-  title: string; // page title
-  prop: string; // entity namespace
-  svc: string; // service namespace
-  apiEndpoint: string;
+  title: string = ''; // page title
+  prop: string = ''; // entity namespace
+  svc: string = ''; // service namespace
+  apiEndpoint: string = '';
   queryParams: any;
   // + states
   error: any;
   success: any;
-  eventSubscriber: Subscription;
+  eventSubscriber: any;
   // + pagination
   links: any;
   totalItems: any;
@@ -51,10 +51,10 @@ export class DataComponent implements OnInit, OnDestroy {
   previousPage: any;
   reverse: any;
   // + search support
-  filterOperators: string[];
+  filterOperators: string[] = [];
   searchModel: any;
   // + delete Modal
-  @ViewChild('deleteModal', { static: true }) deleteModal: NgbModalRef;
+  @ViewChild('deleteModal', { static: true }) deleteModal: any;
   // + references
   referenceMap: any = {};
   referenceEndpoint: any = {};
@@ -88,7 +88,7 @@ export class DataComponent implements OnInit, OnDestroy {
         this.apiEndpoint
       )
       .subscribe(
-        (res: HttpResponse<any[]>) => this.paginate(res.body, res.headers),
+        (res: HttpResponse<any[]>) => this.paginate(res.body || [], res.headers),
         (res: HttpErrorResponse) => this.onError(res.message)
       );
   }
@@ -141,7 +141,7 @@ export class DataComponent implements OnInit, OnDestroy {
           this.prop = data.templateFile.prop;
           this.svc = data.templateFile.svc;
           this.title = _.get(data.templateFile, 'config.title', 'app.title.' + this.prop);
-          this.languageHelper.updateTitle(this.title);
+          // this.languageHelper.updateTitle(this.title);
           // + apiEndpoint and params
           this.tasks = _.get(data.templateFile, 'config.tasks', []);
           this.actions = _.get(data.templateFile, 'config.actions', []);
@@ -172,9 +172,7 @@ export class DataComponent implements OnInit, OnDestroy {
       ),
       this.activatedRoute.queryParams.pipe(map(params => (this.searchModel = _.omit(params, ['size', 'sort', 'page']))))
     ).subscribe(() => this.loadAll());
-    this.accountService.identity().then(account => {
-      this.currentAccount = account;
-    });
+    this.accountService.identity().subscribe(account => (this.currentAccount = account));
     this.registerChangeInData();
   }
 
@@ -187,7 +185,7 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   registerChangeInData() {
-    this.eventSubscriber = this.eventManager.subscribe('dataListModification', response => this.loadAll());
+    this.eventSubscriber = this.eventManager.subscribe('dataListModification', () => this.loadAll());
   }
 
   sort() {
@@ -199,10 +197,8 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   protected paginate(data: any[], headers: HttpHeaders) {
-    if (headers.get('link')) {
-      this.links = this.parseLinks.parse(headers.get('link'));
-      this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
-    }
+    this.links = this.parseLinks.parse(headers.get('link') || '');
+    this.totalItems = parseInt(headers.get('X-Total-Count') || '0', 10);
     this.rows = data;
     this.loadReferences();
     this.isReady = true;
@@ -230,18 +226,18 @@ export class DataComponent implements OnInit, OnDestroy {
 
   protected onError(errorMessage: string) {
     console.error(errorMessage);
-    this.jhiAlertService.error(errorMessage, null, null);
+    this.jhiAlertService.error(errorMessage);
   }
 
   // Add search modifier
-  setSearchOperator(field, operator) {
+  setSearchOperator(field: string, operator: string) {
     _.set(this.searchModel, field, `${operator}(${_.get(this.searchModel, field)})`);
   }
-  toggleView(column) {
+  toggleView(column: string) {
     this.displayColumns[column] = !this.displayColumns[column];
   }
   // + delete confirm
-  delete(t) {
+  delete(t: any) {
     this.modalService.open(this.deleteModal).result.then(
       result => {
         this.dataService.delete(t.id, this.apiEndpoint).subscribe(
@@ -256,7 +252,7 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   // Render cell value based on current reference map
-  renderCell(row, col) {
+  renderCell(row: any, col: string) {
     // {{ _.get(referenceMap, [c, _.get(val, c)], _.get(val, c)) }}
     const val = _.get(row, col);
     if (_.isArray(val)) {

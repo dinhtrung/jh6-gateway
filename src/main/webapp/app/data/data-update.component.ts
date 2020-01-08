@@ -11,7 +11,6 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { AccountService } from 'app/core/auth/account.service';
 import { EntityService } from 'app/common/model/entity.service';
-import { LanguageHelper } from 'app/core/language/language.helper';
 import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 
 @Component({
@@ -20,24 +19,19 @@ import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 })
 export class DataUpdateComponent implements OnInit {
   _ = _;
-  title: string;
+  title: string = '';
   isReady = false;
-  isSaving: boolean;
+  isSaving = false;
   model: any = {};
-  fields: FormlyFieldConfig[];
-  prop: string;
-  svc: string;
+  fields: FormlyFieldConfig[] = [];
+  prop: string = '';
+  svc: string = '';
   debug = DEBUG_INFO_ENABLED;
-  apiEndpoint: string;
+  apiEndpoint: string = '';
   editForm = new FormGroup({});
   options: any;
 
-  constructor(
-    private languageHelper: LanguageHelper,
-    protected accountService: AccountService,
-    protected dataService: EntityService,
-    protected activatedRoute: ActivatedRoute
-  ) {}
+  constructor(protected accountService: AccountService, protected dataService: EntityService, protected activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     this.isSaving = false;
@@ -57,7 +51,7 @@ export class DataUpdateComponent implements OnInit {
       this.activatedRoute.data.pipe(
         tap(({ templateFile, model }) => {
           this.title = _.get(templateFile, 'title', 'createOrEditData');
-          this.languageHelper.updateTitle(this.title);
+          // this.languageHelper.updateTitle(this.title);
           this.svc = templateFile.svc;
           this.prop = templateFile.prop;
           // + apiEndpoint and params

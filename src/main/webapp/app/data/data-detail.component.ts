@@ -14,11 +14,11 @@ export class DataDetailComponent implements OnInit {
   _ = _;
   isReady = false;
   model: any;
-  columns: string[];
-  prop: string;
-  svc: string;
+  columns: any[] = [];
+  prop: string = '';
+  svc: string = '';
   account: any;
-  fields: any[];
+  fields: any[] = [];
   options: any;
 
   constructor(protected activatedRoute: ActivatedRoute, private accountService: AccountService) {}
@@ -33,7 +33,7 @@ export class DataDetailComponent implements OnInit {
           console.log('Fields', JSON.stringify(this.fields));
         })
       ),
-      from(this.accountService.identity()).pipe(
+      this.accountService.identity().pipe(
         tap(
           account =>
             (this.options = {
