@@ -75,10 +75,11 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
 	private Instant resetDate = null;
 	
-	private Map<String, Object> meta = new HashMap<String, Object>();
-
-	
 	private Set<Authority> authorities = new HashSet<>();
+
+	private Map<String, Object> meta = new HashMap<String, Object>();
+	
+	private Map<String, Object> preferences = new HashMap<String, Object>();
 
 	public String getId() {
 		return id;
@@ -215,8 +216,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
 	public void setMeta(Map<String, Object> meta) {
 		this.meta = meta;
 	}
-
-	private Map<String, Object> preferences = new HashMap<String, Object>();
 
 	public Map<String, Object> getPreferences() {
 		return preferences;
