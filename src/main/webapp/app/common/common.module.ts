@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { GatewaySharedModule } from 'app/shared/shared.module';
+// + ngx-markdown
 import { MarkdownModule } from 'ngx-markdown';
 // + ng-select
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -33,7 +34,12 @@ import { TemplateTypeComponent } from './fields/template.type';
 import { FormlyWrapperFormFieldComponent } from './fields/form-field.wrapper';
 // + formBuilder
 import { FormBuilderService } from './fields/form-builder.service';
-// + missing translation handle
+// + app widgets
+import { DetailWidgetComponent } from './widgets/detail.component';
+import { GridWidgetComponent } from './widgets/grid.component';
+import { JhiYamlFormComponent } from './widgets/form.component';
+// + utils
+import { SafePipe } from './util/safe.pipe';
 import { AppValidators } from './util/app-validators';
 
 @NgModule({
@@ -117,9 +123,18 @@ import { AppValidators } from './util/app-validators';
     NgSelectModule,
     FormlyModule,
     FormlyBootstrapModule,
-    QuillModule
+    QuillModule,
+    // + app widgets
+    DetailWidgetComponent,
+    GridWidgetComponent,
+    JhiYamlFormComponent
   ],
   declarations: [
+    // + app widgets
+    DetailWidgetComponent,
+    GridWidgetComponent,
+    JhiYamlFormComponent,
+    // + ngx-formly
     RemoteFormTypeComponent,
     TemplateTypeComponent,
     CrudTableTypeComponent,
@@ -140,6 +155,6 @@ import { AppValidators } from './util/app-validators';
     FormlyTabsetTypeComponent,
     FormlyWrapperFormFieldComponent
   ],
-  providers: [FormBuilderService]
+  providers: [SafePipe, FormBuilderService]
 })
 export class GatewayCommonModule {}
