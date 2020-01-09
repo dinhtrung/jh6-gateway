@@ -1,0 +1,19 @@
+fields:
+  - fieldGroupClassName: row
+    fieldGroup:
+      - key: templateOptions.cols
+        type: input
+        className: col-md-3
+        defaultValue: 80
+        templateOptions:
+          label: Columns
+          type: number
+          description: Number of columns
+      - key: templateOptions.rows
+        type: input
+        className: col-md-3
+        defaultValue: 5
+        templateOptions:
+          label: Rows
+          type: number
+          description: Number of rows

@@ -1,0 +1,134 @@
+title: Content Types
+apiEndpoint: /api/nodes
+params:
+  type: CONTENT_TYPE
+columns:
+  - name
+  - prop: state
+    lable: Status
+    options:
+      - value: 200
+        label: Enabled
+      - value: 403
+        label: Disabled
+      - value: 100
+        label: Under Construction
+  - meta.description
+fields:
+  - key: type
+    defaultValue: CONTENT_TYPE
+    hideExpression: true
+  - key: name
+    type: input
+    templateOptions:
+      label: Content Type
+  - key: state
+    type: select
+    templateOptions:
+      label: Status
+      options:
+        - value: 200
+          label: Enabled
+        - value: 403
+          label: Disabled
+        - value: 100
+          label: Under Construction
+  - key: meta
+    fieldGroup:
+      - key: description
+        type: textarea
+        templateOptions:
+          label: Content Type Description
+          cols: 80
+          rows: 5
+      - key: tags
+        type: tags
+        wrappers: [form-field]
+        templateOptions:
+          label: Tags
+      - key: fields
+        type: repeat
+        templateOptions:
+          label: Fields
+        fieldArray:
+          fieldGroupClassName: row
+          fieldGroup:
+            - key: key
+              type: input
+              className: col-md-3
+              templateOptions:
+                label: Field Key
+                description: Unique identifier for this field
+                required: true
+            - key: type
+              type: select
+              className: col-md-3
+              templateOptions:
+                label: Field Type
+                description: Type of the field
+                required: true
+                options:
+                  - value: input
+                    label: Input
+                  - value: textarea
+                    label: Text Area
+                  - value: select
+                    label: Select
+                  - value: remote-form
+                    label: Remote Form
+                  - value: template
+                    label: Template
+                  - value: crud-table
+                    label: CRUD Table
+                  - value: button
+                    label: Button
+                  - value: time
+                    label: Time
+                  - value: date
+                    label: Date
+                  - value: datetime
+                    label: Date Time
+                  - value: file-gridfs
+                    label: Multiple Files
+                  - value: file-upload
+                    label: Single File
+                  - value: quill
+                    label: Quill
+                  - value: slider
+                    label: Slider
+                  - value: ng-select
+                    label: Select existing data
+                  - value: tags
+                    label: Tags
+                  - value: repeat
+                    label: Repeat
+            - key: templateOptions
+              className: col-md-12
+              fieldGroupClassName: row
+              fieldGroup:
+                - key: label
+                  type: input
+                  className: col-md-6
+                  templateOptions:
+                    label: Label
+                    description: Label for this field
+                - key: description
+                  type: input
+                  className: col-md-6
+                  templateOptions:
+                    label: Field Description
+                    description: Help text about this field
+            - key: input
+              type: remote-form
+              className: col-md-12
+              hideExpression: "model.type && (model.type !== 'input')"
+              templateOptions:
+                label: Field Specifications
+                src: '/assets/cms/input.specs.yaml'
+            - key: texarea
+              type: remote-form
+              className: col-md-12
+              hideExpression: "model.type && (model.type !== 'textarea')"
+              templateOptions:
+                label: Field Specifications
+                src: '/assets/cms/textarea.specs.yaml'

@@ -1,8 +1,11 @@
 # Menu Tree on Top Naviation
-- name: Tính năng
+- name: CMS
   icon: book
-  url: /docs/gioi-thieu
+  url: /docs/cms
   children:
-    - name: Quản lý bài viết
-      url: /data/demo/form
+    - name: Content Types
+      url: /data/cms/content-types
+      icon: question
+    - name: Contents
+      url: /data/cms/contents
       icon: question

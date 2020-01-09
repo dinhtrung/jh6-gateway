@@ -1,0 +1,17 @@
+fields:
+  - key: templateOptions.type
+    type: select
+    templateOptions:
+      label: Input Type
+      description: Type of Input
+      options:
+        - value: text
+          label: Text
+        - value: email
+          label: Email
+        - value: number
+          label: Number
+  - key: templateOptions.required
+    type: checkbox
+    templateOptions:
+      label: Required

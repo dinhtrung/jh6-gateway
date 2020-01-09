@@ -188,8 +188,8 @@ export class DataComponent implements OnInit, OnDestroy {
 
   sort(): string[] {
     const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-    if (this.predicate !== 'id') {
-      result.push('id');
+    if (this.predicate !== '_id') {
+      result.push('_id');
     }
     return result;
   }

@@ -1,0 +1,63 @@
+title: Contents
+apiEndpoint: /api/nodes
+params:
+  type: CONTENT
+columns:
+  - name
+  - prop: state
+    label: Status
+    options:
+      - value: 200
+        label: Published
+      - value: 403
+        label: Not Published
+      - value: 500
+        label: Outdated
+      - value: 100
+        label: Need Review
+  - prop: meta.contentType.name
+    label: Content Type
+fields:
+  - key: type
+    defaultValue: CONTENT
+    hideExpression: true
+  - key: name
+    type: input
+    templateOptions:
+      label: Title
+  - key: state
+    type: select
+    templateOptions:
+      label: Status
+      options:
+        - value: 200
+          label: Published
+        - value: 403
+          label: Not Published
+        - value: 500
+          label: Outdated
+        - value: 100
+          label: Need Review
+  - key: meta
+    fieldGroup:
+      - key: contentType
+        type: ng-select
+        templateOptions:
+          label: Content Type
+          description: Type of Content
+          apiEndpoint: /api/nodes
+          queryParams:
+            type: CONTENT_TYPE
+            state: 200
+          val: name
+          termPattern: false
+      - key: content
+        type: remote-form
+        wrappers: ['form-field']
+        expressionProperties:
+          templateOptions.fields: '_.get(model, "contentType.meta.fields", [])'
+          templateOptions.description: '`Selected content type: ${_.get(model, "contentType.name") }`'
+        templateOptions:
+          label: Content Details
+          fields:
+            - template: "<p class='alert alert-info'>Select one Content Type in order to get started</p>"

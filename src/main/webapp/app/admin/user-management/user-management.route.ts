@@ -30,7 +30,7 @@ export const userManagementRoute: Routes = [
       pagingParams: JhiResolvePagingParams
     },
     data: {
-      defaultSort: 'id,asc'
+      defaultSort: 'login,asc'
     }
   },
   {

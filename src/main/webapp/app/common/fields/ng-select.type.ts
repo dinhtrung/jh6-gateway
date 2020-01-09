@@ -60,6 +60,9 @@ import * as _ from 'lodash';
   `
 })
 export class NgselectTypeComponent extends FieldType implements OnInit, OnDestroy {
+  defaultOptions = {
+    wrappers: ['form-field']
+  };
   onDestroy$ = new Subject<void>();
   options$: any;
   isLoading = false;
