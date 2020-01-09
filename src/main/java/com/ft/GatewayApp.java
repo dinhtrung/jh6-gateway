@@ -1,6 +1,7 @@
 package com.ft;
 
 import com.ft.config.ApplicationProperties;
+import com.ft.config.MinioConfiguration;
 
 import io.github.jhipster.config.DefaultProfileUtil;
 import io.github.jhipster.config.JHipsterConstants;
@@ -22,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @SpringBootApplication
-@EnableConfigurationProperties({ApplicationProperties.class})
+@EnableConfigurationProperties({ApplicationProperties.class, MinioConfiguration.class})
 @EnableDiscoveryClient
 @EnableZuulProxy
 public class GatewayApp implements InitializingBean {
