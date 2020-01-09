@@ -3,7 +3,6 @@ package com.ft.web.rest;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLConnection;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.util.StreamUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,14 +72,10 @@ public class MinioFilesResource {
      * @throws Exception
      */
     @GetMapping("/minio/{bucketName}")
-    public ResponseEntity<List<Map<String, Object>>> browseFiles(@PathVariable String bucketName) throws Exception {
-    	List<Map<String, Object>> results = StreamUtils.createStreamFromIterator(minioClient.listObjects(bucketName).iterator())
+    public ResponseEntity<List<Map>> browseFiles(@PathVariable String bucketName) throws Exception {
+    	List<Map> results = StreamUtils.createStreamFromIterator(minioClient.listObjects(bucketName).iterator())
     	.map(result -> {
-    		try { 
-    			return result.get(); 
-    		} catch (Exception e) { 
-    			return null; 
-    		}
+    		try { return result.get(); } catch (Exception e) { return null; }
     	})
     	.filter(d -> d != null)
     	.map(item -> item.entrySet().stream().collect(Collectors.toMap(Entry::getKey, Entry::getValue))).collect(Collectors.toList());
@@ -216,10 +208,7 @@ public class MinioFilesResource {
     @GetMapping("/public/download-file")
     public ResponseEntity<InputStreamResource> downloadObject(@RequestParam String name) throws Exception {
     	log.debug("REST request to download file: {}", name);
-    	String mimeType = URLConnection.guessContentTypeFromName(name);
-    	return ResponseEntity.ok()
-    			.header(HttpHeaders.CONTENT_TYPE, MediaType.parseMediaType(mimeType).toString())
-    			.body(new InputStreamResource(minioClient.getObject(minioConfig.getBucketName(), name)));
+    	return ResponseEntity.ok(new InputStreamResource(minioClient.getObject(minioConfig.getBucketName(), name)));
     }
 
     /**
