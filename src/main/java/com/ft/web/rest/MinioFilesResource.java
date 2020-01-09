@@ -72,10 +72,14 @@ public class MinioFilesResource {
      * @throws Exception
      */
     @GetMapping("/minio/{bucketName}")
-    public ResponseEntity<List<Map>> browseFiles(@PathVariable String bucketName) throws Exception {
-    	List<Map> results = StreamUtils.createStreamFromIterator(minioClient.listObjects(bucketName).iterator())
+    public ResponseEntity<List<Map<String, Object>>> browseFiles(@PathVariable String bucketName) throws Exception {
+    	List<Map<String, Object>> results = StreamUtils.createStreamFromIterator(minioClient.listObjects(bucketName).iterator())
     	.map(result -> {
-    		try { return result.get(); } catch (Exception e) { return null; }
+    		try { 
+    			return result.get(); 
+    		} catch (Exception e) { 
+    			return null; 
+    		}
     	})
     	.filter(d -> d != null)
     	.map(item -> item.entrySet().stream().collect(Collectors.toMap(Entry::getKey, Entry::getValue))).collect(Collectors.toList());
