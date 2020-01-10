@@ -27,15 +27,19 @@ public class Node implements Serializable {
     @Field(type = FieldType.Keyword)
     private String name;
     
+    @Field(type = FieldType.Integer)
     private Integer state;
 
     @Field(type = FieldType.Keyword)
     private String type;
     
+    @Field(type = FieldType.Nested)
     private Map<String, Object> fields = new HashMap<String, Object>();
     
+    @Field(type = FieldType.Nested)
     private Map<String, Object> meta = new HashMap<String, Object>();
     
+    @Field(type = FieldType.Keyword)
     private Set<String> tags = new HashSet<>();
 
 
@@ -140,4 +144,14 @@ public class Node implements Serializable {
 		this.meta = meta;
 		return this;
 	}
+
+	public Set<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
+    
+    
 }

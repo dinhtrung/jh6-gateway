@@ -15,22 +15,22 @@ export class AppValidators {
     return control.value == null || /(\d{1,3}\.){3}\d{1,3}/.test(control.value) ? null : { ip: true };
   }
 
-  static minlengthMessage(err: any, field: any): string {
+  static minlengthMessage(err: any): string {
     return `This field is required to be at least ${err.requiredLength} characters.`;
   }
-  static maxlengthMessage(err: any, field: any): string {
+  static maxlengthMessage(err: any): string {
     return `This field cannot be longer than ${err.requiredLength} characters.`;
   }
-  static minMessage(err: any, field: any): string {
+  static minMessage(err: any): string {
     return `This field should be at least ${err.min}.`;
   }
-  static maxMessage(err: any, field: any): string {
+  static maxMessage(err: any): string {
     return `This field cannot be more than ${err.max}.`;
   }
-  static minbytesMessage(err: any, field: any): string {
+  static minbytesMessage(err: any): string {
     return `This field should be at least ${err.minbytes} bytes.`;
   }
-  static maxbytesMessage(err: any, field: any): string {
+  static maxbytesMessage(err: any): string {
     return `This field cannot be more than ${err.maxbytes} bytes.`;
   }
   static patternMessage(err: any, field: any): string {

@@ -17,4 +17,8 @@ import { FieldType } from '@ngx-formly/core';
     </ng-select>
   `
 })
-export class TagsTypeComponent extends FieldType {}
+export class TagsTypeComponent extends FieldType {
+  defaultOptions = {
+    wrappers: ['form-field']
+  };
+}

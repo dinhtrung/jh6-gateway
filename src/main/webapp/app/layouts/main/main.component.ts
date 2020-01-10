@@ -18,32 +18,18 @@ export class MainComponent implements OnInit {
     private translateService: TranslateService,
     private titleService: Title,
     private router: Router
-  ) {
-    this.router.events.subscribe((event: Event) => {
-      switch (true) {
-        case event instanceof NavigationStart: {
-          this.spinner.show();
-          break;
-        }
-
-        case event instanceof NavigationEnd:
-        case event instanceof NavigationCancel:
-        case event instanceof NavigationError: {
-          this.spinner.hide();
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     // try to log in automatically
     this.accountService.identity().subscribe();
 
-    this.router.events.subscribe(event => {
+    this.router.events.subscribe((event: Event) => {
+      if (event instanceof NavigationStart) {
+        this.spinner.show();
+      } else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+        this.spinner.hide();
+      }
       if (event instanceof NavigationEnd) {
         this.updateTitle();
       }
