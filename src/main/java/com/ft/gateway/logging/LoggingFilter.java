@@ -65,6 +65,7 @@ public class LoggingFilter extends SendResponseFilter {
     public Object run() {
     	RequestContext context = RequestContext.getCurrentContext();
     	String login = SecurityUtils.getCurrentUserLogin().get();
+    	String ip = context.getRequest().getRemoteAddr();
         context.getResponse().setCharacterEncoding("UTF-8");
 
         String rewrittenResponse = rewriteBasePath(context);
@@ -80,7 +81,7 @@ public class LoggingFilter extends SendResponseFilter {
         
         try  {
     		String request = IOUtils.toString(context.getRequest().getInputStream(), StandardCharsets.UTF_8);
-    		log.info(">> {} | {}", login, request);
+    		log.info("{} >> {} | {}", ip, login, request);
 			log.info("<< {} | {}", context.getResponseStatusCode(), rewrittenResponse);
 		} catch (IOException e1) {
 			log.error("Cannot rewrite data: {}", e1.getMessage(), e1);
