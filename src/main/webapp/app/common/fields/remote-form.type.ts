@@ -12,39 +12,28 @@ import * as jsyaml from 'js-yaml';
 @Component({
   selector: 'jhi-remote-form-type',
   template: `
-    <div *ngIf="ready">
-      <formly-form [model]="model" [fields]="formFields" [options]="options" [form]="form"></formly-form>
-    </div>
+    <formly-form *ngIf="to.fields" [model]="model" [fields]="to.fields" [options]="options" [form]="form"></formly-form>
   `
 })
 export class RemoteFormTypeComponent extends FieldType implements OnInit {
   formFields: FormlyFieldConfig[] = [];
-  ready = false;
   constructor(private httpClient: HttpClient) {
     super();
-    this.ready = false;
   }
 
   ngOnInit(): void {
-    if (this.to.fields) {
-      this.formFields = this.to.fields;
-      this.ready = true;
-    } else if (this.to.yamlResource) {
+    if (this.to.src) {
       this.loadRemoteForm();
     }
   }
 
   loadRemoteForm(): void {
-    // FIXME: Load existings value from formControl to populate into of
     this.httpClient
-      .get(this.to.yamlResource + '?ts=' + new Date().getTime(), { responseType: 'text', observe: 'response' })
+      .get(this.to.src + '?ts=' + new Date().getTime(), { responseType: 'text', observe: 'response' })
       .pipe(
         filter(res => res.ok),
         map(res => jsyaml.load(res.body || ''))
       )
-      .subscribe(res => {
-        this.formFields = _.get(res, 'fields', []);
-        this.ready = true;
-      });
+      .subscribe(res => (this.to.fields = _.get(res, 'fields', [])));
   }
 }
