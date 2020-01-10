@@ -19,8 +19,6 @@ import { FieldType } from '@ngx-formly/core';
 })
 export class TagsTypeComponent extends FieldType {
   defaultOptions = {
-    templateOptions: {
-      wrappers: ['form-field']
-    }
+    wrappers: ['form-field']
   };
 }

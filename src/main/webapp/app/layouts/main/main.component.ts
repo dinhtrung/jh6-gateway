@@ -1,7 +1,9 @@
-import { Component, OnInit, RendererFactory2, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router, ActivatedRouteSnapshot, NavigationEnd, NavigationError } from '@angular/router';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { Router, ActivatedRouteSnapshot, Event, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
+// + ngx-spinner
+import { NgxSpinnerService } from 'ngx-spinner';
+import { TranslateService } from '@ngx-translate/core';
 
 import { AccountService } from 'app/core/auth/account.service';
 
@@ -10,30 +12,24 @@ import { AccountService } from 'app/core/auth/account.service';
   templateUrl: './main.component.html'
 })
 export class MainComponent implements OnInit {
-  private renderer: Renderer2;
-
   constructor(
     private spinner: NgxSpinnerService,
     private accountService: AccountService,
-    private titleService: Title,
-    private router: Router,
     private translateService: TranslateService,
-    rootRenderer: RendererFactory2
-  ) {
-    this.renderer = rootRenderer.createRenderer(document.querySelector('html'), null);
-  }
+    private titleService: Title,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     // try to log in automatically
     this.accountService.identity().subscribe();
 
-    this.router.events.subscribe(event => {
+    this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         this.spinner.show();
-      } else {
+      } else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
         this.spinner.hide();
       }
-
       if (event instanceof NavigationEnd) {
         this.updateTitle();
       }
@@ -42,11 +38,7 @@ export class MainComponent implements OnInit {
       }
     });
 
-    this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
-      this.updateTitle();
-
-      this.renderer.setAttribute(document.querySelector('html'), 'lang', langChangeEvent.lang);
-    });
+    this.translateService.onLangChange.subscribe(() => this.updateTitle());
   }
 
   private getPageTitle(routeSnapshot: ActivatedRouteSnapshot): string {
