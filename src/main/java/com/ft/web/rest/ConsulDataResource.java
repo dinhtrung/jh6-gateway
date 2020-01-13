@@ -1,7 +1,11 @@
 package com.ft.web.rest;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -14,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecwid.consul.v1.ConsulClient;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.ft.security.AuthoritiesConstants;
 
 @RestController
@@ -22,6 +29,10 @@ public class ConsulDataResource {
 
 	@Autowired
 	ConsulClient consulClient;
+	
+	private YAMLMapper yamlMapper = new YAMLMapper();
+	
+	private ObjectMapper objectMapper = new ObjectMapper();
 	
 	/**
 	 * List all available configuration keys
@@ -37,11 +48,24 @@ public class ConsulDataResource {
 	 * Retrieve one key in decoded value
 	 * @param key
 	 * @return
+	 * @throws IOException 
 	 */
 	@GetMapping("/config")
     @Secured(AuthoritiesConstants.ADMIN)
-	public ResponseEntity<String> getConfiguration(@RequestParam String key) {
-		return ResponseEntity.ok(consulClient.getKVValue("config/" + key).getValue().getDecodedValue());
+	public ResponseEntity<String> getConfiguration(@RequestParam String key, @RequestParam(required = false) String file, @RequestParam(required = false) String format) throws IOException {
+		String content = consulClient.getKVValue("config/" + key).getValue().getDecodedValue();
+		if (file != null) {
+			try {
+				JsonNode data = yamlMapper.readTree(content);
+				if (format.equalsIgnoreCase("json")) {
+					content = objectMapper.writeValueAsString(data);
+				}
+			} catch (Exception e) {
+			}
+			File fileResource = new File(file);
+			FileUtils.writeStringToFile(fileResource, content, StandardCharsets.UTF_8);
+		}
+		return ResponseEntity.ok(content);
 	}
 	
 	/**
@@ -55,7 +79,6 @@ public class ConsulDataResource {
 	public ResponseEntity<String> setConfiguration(@RequestParam String key, @RequestBody String value) {
 		return ResponseEntity.ok(consulClient.setKVValue("config/" + key, value).getValue() ? value : null);
 	}
-	
 	/**
 	 * Delete one key
 	 * @param key
