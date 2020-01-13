@@ -33,6 +33,10 @@ fields:
     type: quill
     templateOptions:
       label: Description
+      apiEndpoint: /api/minio
+      fileSrc: /api/public/download-file?name=${fileId}
+      # styles:
+      #   height: 150px
   - key: state
     type: select
     templateOptions:
@@ -60,9 +64,3 @@ fields:
     type: input
     templateOptions:
       label: Fax
-  - key: bio
-    type: quill
-    templateOptions:
-      label: Biography
-      apiEndpoint: /api/minio
-      fileSrc: /api/public/download-file?name=${fileId}
