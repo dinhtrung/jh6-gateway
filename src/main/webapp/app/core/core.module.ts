@@ -7,7 +7,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { CookieModule } from 'ngx-cookie';
 import { TranslateModule, TranslateLoader, MissingTranslationHandler } from '@ngx-translate/core';
 import { NgxWebstorageModule } from 'ngx-webstorage';
-import { NgJhipsterModule, translatePartialLoader, missingTranslationHandler, JhiConfigService, JhiLanguageService } from 'ng-jhipster';
+import { NgJhipsterModule, translatePartialLoader, JhiConfigService, JhiLanguageService } from 'ng-jhipster';
 import locale from '@angular/common/locales/en';
 
 import * as moment from 'moment';
@@ -20,6 +20,11 @@ import { ErrorHandlerInterceptor } from 'app/blocks/interceptor/errorhandler.int
 import { NotificationInterceptor } from 'app/blocks/interceptor/notification.interceptor';
 
 import { fontAwesomeIcons } from './icons/font-awesome-icons';
+// + customize translation handler
+import { TranslationHandler } from './language/missing-translation-handler';
+export function missingTranslationHandler(): TranslationHandler {
+  return new TranslationHandler();
+}
 
 @NgModule({
   imports: [
