@@ -132,6 +132,14 @@ jhipster:
 
 # application:
 
+# Logging all request / response to microservices
 gateway:
   logging:
     excludePattern: /services/microapp/api /services/vnpti-msu
+
+# Support AWS S3 Storage
+minio:
+  endpoint: 'https://play.min.io'
+  accessKey: 'Q3AM3UQ867SPQQA43P2F'
+  secretKey: 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG'
+  bucketName: jh6-gateway
