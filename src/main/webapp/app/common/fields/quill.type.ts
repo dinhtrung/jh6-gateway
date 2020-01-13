@@ -19,7 +19,7 @@ import * as _ from 'lodash';
 export class QuillTypeComponent extends FieldType {
   defaultOptions = {
     wrappers: ['form-field'],
-    styles: { height: '300px' }
+    templateOptions: { styles: { height: '150px' } }
   };
   fileToUpload: any;
   @ViewChild('quillFile', { static: true }) quillFileRef: any;
