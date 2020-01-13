@@ -60,3 +60,9 @@ fields:
     type: input
     templateOptions:
       label: Fax
+  - key: bio
+    type: quill
+    templateOptions:
+      label: Biography
+      apiEndpoint: /api/minio
+      fileSrc: /api/public/download-file?name=${fileId}
