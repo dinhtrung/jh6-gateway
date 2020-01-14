@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { FieldType } from '@ngx-formly/core';
-
 // + HttpClient
 import { HttpClient } from '@angular/common/http';
 import { SERVER_API_URL } from 'app/app.constants';
@@ -9,9 +8,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'jhi-formly-field-quill',
   template: `
-    <div class="d-none">
-      <input #quillFile type="file" (change)="quillFileSelected($event)" />
-    </div>
+    <div class="d-none"><input #quillFile type="file" (change)="quillFileSelected($event)" /></div>
     <quill-editor (onEditorCreated)="getEditorInstance($event)" [formControl]="formControl" [formlyAttributes]="field" [styles]="to.styles">
     </quill-editor>
   `
@@ -34,14 +31,7 @@ export class QuillTypeComponent extends FieldType {
     toolbar.addHandler('image', () => this.customImageUpload());
   }
 
-  // Upload a file to server, return the URL
-  // addFile(event: any): void {
-  //   this.fileToUpload = event.target.files.item(0);
-  //   this.uploadFile();
-  // }
-
   customImageUpload(): void {
-    // console.log(image);
     /* Here we trigger a click action on the file input field, this will open a file chooser on a client computer */
     this.quillFileRef.nativeElement.click();
   }
@@ -51,12 +41,6 @@ export class QuillTypeComponent extends FieldType {
     this.fileToUpload = ev.target.files[0];
     const formData = new FormData();
     formData.append('file', this.fileToUpload, this.fileToUpload.name);
-    // console.log(ev.target.files[0]);
-    // const imageData = {
-    //   id: this.article != null && this.article !== undefined ? this.article.post_id : null,
-    //   title: this.quillFile.name,
-    //   file: this.quillFile
-    // };
     this.httpClient
       .post(SERVER_API_URL + _.get(this.to, 'apiEndpoint', 'api/upload'), formData, { responseType: 'text' })
       .subscribe((fileId: string) => {

@@ -132,7 +132,7 @@ jhipster:
 
 # application:
 
-# Logging all request / response to microservices
+# Logging all request / response to microservices, excludes following
 gateway:
   logging:
     excludePattern: /services/microapp/api /services/vnpti-msu
@@ -143,3 +143,8 @@ minio:
   accessKey: 'Q3AM3UQ867SPQQA43P2F'
   secretKey: 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG'
   bucketName: jh6-gateway
+
+# Document converter using pandoc
+pandoc:
+  path: /usr/bin/pandoc
+  options: '--reference-doc=/tmp/custom-reference.docx'
