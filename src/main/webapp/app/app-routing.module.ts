@@ -25,6 +25,10 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
           loadChildren: () => import('./account/account.module').then(m => m.AccountModule)
         },
         {
+          path: 'demo',
+          loadChildren: () => import('./demo/demo.module').then(m => m.DemoModule)
+        },
+        {
           path: 'data',
           loadChildren: () => import('./data/data.module').then(m => m.GatewayDataModule)
         },
