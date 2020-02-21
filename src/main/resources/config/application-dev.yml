@@ -45,6 +45,7 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017
       database: exp_gateway
+      auto-index-creation: true
   mail:
     host: localhost
     port: 25
