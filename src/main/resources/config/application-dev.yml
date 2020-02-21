@@ -44,7 +44,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017
-      database: Gateway
+      database: exp_gateway
   mail:
     host: localhost
     port: 25

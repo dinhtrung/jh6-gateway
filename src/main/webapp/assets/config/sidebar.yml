@@ -1,0 +1,14 @@
+# Menu Tree on Sidebar on Data module
+- name: Alt Item 1
+  icon: bolt
+  url: '#'
+- name: Alt Item 2
+  icon: bolt
+  url: '#'
+- name: Sidebar Menu
+  icon: paste
+  url: '#'
+  children:
+    - name: Item
+      url: '/data/models/demo-form'
+      icon: file-alt

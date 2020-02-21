@@ -1,0 +1,5 @@
+- key: jhipster.security.authentication.jwt.secret
+  type: input
+  templateOptions:
+    label: JWT Key
+    description: JWT Key for Authorization

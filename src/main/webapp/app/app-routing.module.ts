@@ -24,6 +24,10 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
           path: 'account',
           loadChildren: () => import('./account/account.module').then(m => m.AccountModule)
         },
+        {
+          path: 'data',
+          loadChildren: () => import('./data/data.module').then(m => m.GatewayDataModule)
+        },
         ...LAYOUT_ROUTES
       ],
       { enableTracing: DEBUG_INFO_ENABLED }

@@ -1,0 +1,145 @@
+import { NgModule } from '@angular/core';
+import { GatewaySharedModule } from 'app/shared/shared.module';
+import { MarkdownModule } from 'ngx-markdown';
+// + ng-select
+import { NgSelectModule } from '@ng-select/ng-select';
+// + ng5-slider
+import { Ng5SliderModule } from 'ng5-slider';
+// + ngx-quill
+import { QuillModule } from 'ngx-quill';
+// + ngx-formly
+import { FormlyModule } from '@ngx-formly/core';
+import { FormlyBootstrapModule } from '@ngx-formly/bootstrap';
+// +ngx-formly fields
+import { RemoteFormTypeComponent } from './fields/remote-form.type';
+import { ButtonTypeComponent } from './fields/button.type';
+import { TimeTypeComponent } from './fields/timepicker.type';
+import { DateTypeComponent } from './fields/datepicker.type';
+import { DateTimeTypeComponent } from './fields/datetimepicker.type';
+import { CrudTableTypeComponent } from './fields/crud-table.type';
+import { NgselectTypeComponent } from './fields/ng-select.type';
+import { TagsTypeComponent } from './fields/tags.type';
+import { RepeatTypeComponent } from './fields/repeat-section.type';
+import { QuillTypeComponent } from './fields/quill.type';
+import { SliderTypeComponent } from './fields/slider.type';
+import { FormlyTabsetTypeComponent } from './fields/tabset.type';
+import { FormlyCardTypeComponent } from './fields/card.type';
+import { FormlyAccordionTypeComponent } from './fields/accordion.type';
+import { FormlyFileGridfsComponent } from './fields/file-gridfs.type';
+import { FormlyFileUploadComponent } from './fields/file-upload.type';
+import { FileValueAccessorDirective } from './fields/file-value-accessor';
+import { TemplateTypeComponent } from './fields/template.type';
+// + wrappers
+import { FormlyWrapperFormFieldComponent } from './fields/form-field.wrapper';
+// + formBuilder
+import { FormBuilderService } from './fields/form-builder.service';
+// + missing translation handle
+import { AppValidators } from './util/app-validators';
+
+@NgModule({
+  imports: [
+    GatewaySharedModule,
+    MarkdownModule.forRoot(),
+    // + ng-select
+    NgSelectModule,
+    // + ng5-slider
+    Ng5SliderModule,
+    // + ngx-formly
+    FormlyBootstrapModule,
+    FormlyModule.forRoot({
+      validators: [{ name: 'ip', validation: AppValidators.IpValidator }],
+      validationMessages: [
+        { name: 'minlength', message: AppValidators.minlengthMessage },
+        { name: 'maxlength', message: AppValidators.maxlengthMessage },
+        { name: 'min', message: AppValidators.minMessage },
+        { name: 'max', message: AppValidators.maxMessage },
+        { name: 'minbytes', message: AppValidators.minbytesMessage },
+        { name: 'maxbytes', message: AppValidators.maxbytesMessage },
+        { name: 'pattern', message: AppValidators.patternMessage },
+        { name: 'number', message: 'This field should be a number.' },
+        { name: 'email', message: 'This field should be a valid email address.' },
+        { name: 'datetimelocal', message: 'This field should be a date and time.' },
+        { name: 'patternLogin', message: 'This field can only contain letters, digits and e-mail addresses.' },
+        // + custom validators
+        { name: 'ip', message: AppValidators.ipMessage },
+        // - custom validators
+        { name: 'required', message: 'This field is required.' }
+      ],
+      wrappers: [{ name: 'form-field', component: FormlyWrapperFormFieldComponent }],
+      types: [
+        { name: 'remote-form', component: RemoteFormTypeComponent },
+        { name: 'template', component: TemplateTypeComponent },
+        { name: 'crud-table', component: CrudTableTypeComponent },
+        { name: 'button', component: ButtonTypeComponent },
+        { name: 'time', component: TimeTypeComponent },
+        { name: 'date', component: DateTypeComponent },
+        { name: 'datetime', component: DateTimeTypeComponent },
+        { name: 'card', component: FormlyCardTypeComponent },
+        { name: 'accordion', component: FormlyAccordionTypeComponent },
+        { name: 'tabset', component: FormlyTabsetTypeComponent },
+        { name: 'file-gridfs', component: FormlyFileGridfsComponent },
+        { name: 'file-upload', component: FormlyFileUploadComponent },
+        { name: 'quill', component: QuillTypeComponent },
+        { name: 'slider', component: SliderTypeComponent },
+        { name: 'ng-select', component: NgselectTypeComponent },
+        { name: 'tags', component: TagsTypeComponent },
+        { name: 'repeat', component: RepeatTypeComponent }
+      ]
+    }),
+    // + quill
+    QuillModule.forRoot({
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+          ['blockquote', 'code-block'],
+
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
+          [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
+
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+          [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+          [{ font: [] }],
+          [{ align: [] }],
+
+          ['clean'], // remove formatting button
+
+          ['link', 'image', 'video'] // link and image, video
+        ]
+      }
+    })
+  ],
+  exports: [
+    GatewaySharedModule,
+    FileValueAccessorDirective,
+    MarkdownModule,
+    NgSelectModule,
+    FormlyModule,
+    FormlyBootstrapModule,
+    QuillModule
+  ],
+  declarations: [
+    RemoteFormTypeComponent,
+    TemplateTypeComponent,
+    CrudTableTypeComponent,
+    ButtonTypeComponent,
+    TimeTypeComponent,
+    DateTypeComponent,
+    DateTimeTypeComponent,
+    FormlyCardTypeComponent,
+    NgselectTypeComponent,
+    TagsTypeComponent,
+    RepeatTypeComponent,
+    QuillTypeComponent,
+    SliderTypeComponent,
+    FileValueAccessorDirective,
+    FormlyAccordionTypeComponent,
+    FormlyFileGridfsComponent,
+    FormlyFileUploadComponent,
+    FormlyTabsetTypeComponent,
+    FormlyWrapperFormFieldComponent
+  ],
+  providers: [FormBuilderService]
+})
+export class GatewayCommonModule {}
