@@ -14,11 +14,12 @@ export type HealthKey =
   | 'consul'
   | 'diskSpace'
   | 'mail'
+  | 'ping'
   | 'mongo';
 
 export interface Health {
   status: HealthStatus;
-  details: {
+  components: {
     [key in HealthKey]?: HealthDetails;
   };
 }
