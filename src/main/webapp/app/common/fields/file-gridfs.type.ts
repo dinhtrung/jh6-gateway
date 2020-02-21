@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FieldArrayType } from '@ngx-formly/core';
 // + HttpClient
-import { HttpClient } from '@angular/common/http';
+import { HttpResponse, HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { SERVER_API_URL } from 'app/app.constants';
 import * as _ from 'lodash';
 
@@ -29,9 +29,9 @@ export class FormlyFileGridfsComponent extends FieldArrayType implements OnInit 
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit() {}
   // API Endpoint for Retrieve File
-  getFileSrc(fileId: any): string {
+  getFileSrc(fileId: any) {
     return this.to.getFileSrc
       ? this.to.getFileSrc(fileId)
       : this.to.fileSrc
@@ -39,21 +39,21 @@ export class FormlyFileGridfsComponent extends FieldArrayType implements OnInit 
       : SERVER_API_URL + _.get(this.to, 'apiEndpoint', 'api/public/gridfs') + `/${fileId}`;
   }
 
-  removeFile(fileId: string, idx: number): void {
-    this.httpClient.delete(SERVER_API_URL + _.get(this.to, 'apiEndpoint', 'api/gridfs') + `/${fileId}`).subscribe(
-      () => _.pullAt(this.model, idx),
-      () => _.pullAt(this.model, idx)
+  removeFile(fileId: string, idx: number) {
+    return this.httpClient.delete(SERVER_API_URL + _.get(this.to, 'apiEndpoint', 'api/gridfs') + `/${fileId}`).subscribe(
+      res => _.pullAt(this.model, idx),
+      err => _.pullAt(this.model, idx)
     );
   }
 
   // Upload a file to server, return the URL
-  addFile(event: any): void {
+  addFile(event: any) {
     this.fileToUpload = event.target.files.item(0);
     this.uploadFile();
   }
 
   // API Endpoint for Upload File
-  protected uploadFile(): void {
+  protected uploadFile() {
     this.formControl.setErrors({ uploading: true });
     const formData = new FormData();
     formData.append('file', this.fileToUpload, this.fileToUpload.name);
@@ -62,7 +62,7 @@ export class FormlyFileGridfsComponent extends FieldArrayType implements OnInit 
         this.add(undefined, res);
         this.formControl.setErrors(null);
       },
-      () => this.formControl.setErrors(null)
+      err => this.formControl.setErrors(null)
     );
   }
 }

@@ -5,7 +5,7 @@ import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { plainToFlattenObject } from 'app/common/util/request-util';
 // + ng-select
-import { Subject, of, concat } from 'rxjs';
+import { Subject, Observable, of, concat } from 'rxjs';
 import { FieldType } from '@ngx-formly/core';
 import { distinctUntilChanged, filter, debounceTime, switchMap, tap, catchError, map } from 'rxjs/operators';
 import * as _ from 'lodash';
@@ -60,9 +60,6 @@ import * as _ from 'lodash';
   `
 })
 export class NgselectTypeComponent extends FieldType implements OnInit, OnDestroy {
-  defaultOptions = {
-    wrappers: ['form-field']
-  };
   onDestroy$ = new Subject<void>();
   options$: any;
   isLoading = false;
@@ -72,7 +69,7 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
     super();
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     // FIXME: Load existings value from formControl to populate into of
     // Support TypeAhed
     if (this.to.itemEndpoint) {
@@ -93,8 +90,7 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
           ),
           switchMap((term: string) =>
             this.loadSeachResult(term).pipe(
-              filter((res: HttpResponse<any[]>) => res.ok),
-              map((res: HttpResponse<any[]>) => this.parseResult(res.body || [])), // The original array
+              map(res => this.parseResult(res.body)), // The original array
               catchError(() => of([])), // empty list on error
               tap(() => (this.isLoading = false))
             )
@@ -105,11 +101,11 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
     }
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.onDestroy$.complete();
   }
 
-  loadSelected(): any {
+  loadSelected() {
     return this.httpClient
       .get<any>(SERVER_API_URL + this.to.apiEndpoint, {
         params: createRequestOption(
@@ -124,7 +120,7 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
       );
   }
 
-  loadSeachResult(term: string): any {
+  loadSeachResult(term: string) {
     const query = _.assign({}, this.to.params);
     if (this.to.termPattern) {
       _.set(query, this.to.val, this.to.termPattern ? this.to.termPattern.replace('${term}', term) : term);
@@ -146,7 +142,7 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
     }
   }
 
-  parseResult(res: any[]): any {
+  parseResult(res: any[]) {
     if (this.to.key) {
       res = _.map(res, item => plainToFlattenObject(item)); // Convert nested one into path
       res = _.map(res, obj => _.mapKeys(obj, (v, k) => _.replace(k, '.', '$')));

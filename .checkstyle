@@ -3,7 +3,7 @@
 <fileset-config file-format-version="1.2.0" simple-config="false" sync-formatter="false">
   <local-check-config name="maven-checkstyle-plugin default" location="file:/home/dinhtrung/workspace-ft/github-exp-jh6-gateway/checkstyle.xml" type="remote" description="maven-checkstyle-plugin configuration default">
     <property name="checkstyle.cache.file" value="${project_loc}/target/checkstyle-cachefile"/>
-    <property name="checkstyle.header.file" value="/srv/share/Documents/002-MYSON/workspace-myson/.metadata/.plugins/org.eclipse.core.resources/.projects/github-exp-jh6-gateway/com.basistech.m2e.code.quality.checkstyleConfigurator/checkstyle-header-default.txt"/>
+    <property name="checkstyle.header.file" value="/home/dinhtrung/workspace/.metadata/.plugins/org.eclipse.core.resources/.projects/github_gateway/com.basistech.m2e.code.quality.checkstyleConfigurator/checkstyle-header-default.txt"/>
   </local-check-config>
   <fileset name="java-sources-default" enabled="true" check-config-name="maven-checkstyle-plugin default" local="true">
     <file-match-pattern match-pattern="^./pom\.xml" include-pattern="true"/>

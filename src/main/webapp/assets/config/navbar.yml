@@ -1,7 +1,4 @@
 # Menu Tree on Top Naviation
-- name: Demo
-  icon: asterisk
-  url: /demo
 - name: Giới thiệu
   icon: book
   url: /docs/gioi-thieu

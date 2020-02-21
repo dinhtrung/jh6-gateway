@@ -1,18 +1,19 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Subscription, combineLatest } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { EntityService } from 'app/common/model/entity.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { LanguageHelper } from 'app/core/language/language.helper';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 // + Modal
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 // + search
 import * as _ from 'lodash';
+import * as jsyaml from 'js-yaml';
 
 @Component({
   selector: 'jhi-data',
@@ -23,24 +24,24 @@ export class DataComponent implements OnInit, OnDestroy {
   isReady = false;
   currentAccount: any;
   // + data
-  tasks: any[] = []; // List of available task from this UI
-  actions: any[] = []; // List of available options for each row
+  tasks: any[]; // List of available task from this UI
+  actions: any[]; // List of available options for each row
   fields: any;
-  rows: any[] = [];
-  columns: any[] = [];
-  columnKeys: string[] = [];
-  columnNames: string[] = [];
+  rows: any[];
+  columns: any[];
+  columnKeys: string[];
+  columnNames: string[];
   displayColumns: any = {};
   // How to display the table
-  title = ''; // page title
-  prop = ''; // entity namespace
-  svc = ''; // service namespace
-  apiEndpoint = '';
+  title: string; // page title
+  prop: string; // entity namespace
+  svc: string; // service namespace
+  apiEndpoint: string;
   queryParams: any;
   // + states
   error: any;
   success: any;
-  eventSubscriber: any;
+  eventSubscriber: Subscription;
   // + pagination
   links: any;
   totalItems: any;
@@ -50,10 +51,10 @@ export class DataComponent implements OnInit, OnDestroy {
   previousPage: any;
   reverse: any;
   // + search support
-  filterOperators: string[] = [];
+  filterOperators: string[];
   searchModel: any;
   // + delete Modal
-  @ViewChild('deleteModal', { static: true }) deleteModal: any;
+  @ViewChild('deleteModal', { static: true }) deleteModal: NgbModalRef;
   // + references
   referenceMap: any = {};
   referenceEndpoint: any = {};
@@ -72,7 +73,7 @@ export class DataComponent implements OnInit, OnDestroy {
     this.itemsPerPage = ITEMS_PER_PAGE;
   }
 
-  loadAll(): void {
+  loadAll() {
     this.dataService
       .query(
         _.assign(
@@ -87,19 +88,19 @@ export class DataComponent implements OnInit, OnDestroy {
         this.apiEndpoint
       )
       .subscribe(
-        (res: HttpResponse<any[]>) => this.paginate(res.body || [], res.headers),
+        (res: HttpResponse<any[]>) => this.paginate(res.body, res.headers),
         (res: HttpErrorResponse) => this.onError(res.message)
       );
   }
 
-  loadPage(page: number): void {
+  loadPage(page: number) {
     if (page !== this.previousPage) {
       this.previousPage = page;
       this.transition();
     }
   }
 
-  transition(): void {
+  transition() {
     this.router.navigate([], {
       queryParams: _.assign(
         {},
@@ -114,7 +115,7 @@ export class DataComponent implements OnInit, OnDestroy {
     this.loadAll();
   }
 
-  clear(): void {
+  clear() {
     this.page = 0;
     this.router.navigate([
       '',
@@ -126,7 +127,7 @@ export class DataComponent implements OnInit, OnDestroy {
     this.loadAll();
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.isReady = false;
     combineLatest(
       this.activatedRoute.data.pipe(
@@ -140,7 +141,7 @@ export class DataComponent implements OnInit, OnDestroy {
           this.prop = data.templateFile.prop;
           this.svc = data.templateFile.svc;
           this.title = _.get(data.templateFile, 'config.title', 'app.title.' + this.prop);
-          // this.languageHelper.updateTitle(this.title);
+          this.languageHelper.updateTitle(this.title);
           // + apiEndpoint and params
           this.tasks = _.get(data.templateFile, 'config.tasks', []);
           this.actions = _.get(data.templateFile, 'config.actions', []);
@@ -148,6 +149,7 @@ export class DataComponent implements OnInit, OnDestroy {
           this.queryParams = _.get(data.templateFile, 'config.queryParams', {});
           // + fields
           this.fields = _.get(data.templateFile, 'config.fields', []);
+          console.log('Fields', JSON.stringify(this.fields));
           this.columns = _.get(data.templateFile, 'config.columns', ['id']);
           this.columnKeys = _.map(this.columns, c => _.get(c, 'prop', c));
           this.columnNames = _.map(this.columns, c => _.get(c, 'label', c));
@@ -170,23 +172,25 @@ export class DataComponent implements OnInit, OnDestroy {
       ),
       this.activatedRoute.queryParams.pipe(map(params => (this.searchModel = _.omit(params, ['size', 'sort', 'page']))))
     ).subscribe(() => this.loadAll());
-    this.accountService.identity().subscribe(account => (this.currentAccount = account));
+    this.accountService.identity().then(account => {
+      this.currentAccount = account;
+    });
     this.registerChangeInData();
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.eventManager.destroy(this.eventSubscriber);
   }
 
-  trackId(index: number, item: any): string {
+  trackId(index: number, item: any) {
     return item.id;
   }
 
-  registerChangeInData(): void {
-    this.eventSubscriber = this.eventManager.subscribe('dataListModification', () => this.loadAll());
+  registerChangeInData() {
+    this.eventSubscriber = this.eventManager.subscribe('dataListModification', response => this.loadAll());
   }
 
-  sort(): string[] {
+  sort() {
     const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
     if (this.predicate !== 'id') {
       result.push('id');
@@ -194,15 +198,17 @@ export class DataComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  protected paginate(data: any[], headers: HttpHeaders): void {
-    this.links = this.parseLinks.parse(headers.get('link') || '');
-    this.totalItems = parseInt(headers.get('X-Total-Count') || '0', 10);
+  protected paginate(data: any[], headers: HttpHeaders) {
+    if (headers.get('link')) {
+      this.links = this.parseLinks.parse(headers.get('link'));
+      this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
+    }
     this.rows = data;
     this.loadReferences();
     this.isReady = true;
   }
 
-  protected loadReferences(): void {
+  protected loadReferences() {
     // + load reference remote entities based on apiEndpoint
     _.each(this.referenceEndpoint, (templateOptions, fieldKey) => {
       const ids = _.uniq(
@@ -211,6 +217,7 @@ export class DataComponent implements OnInit, OnDestroy {
           values => (_.isArray(values) ? _.values(values) : values)
         )
       );
+      console.log('Gotta find all related info for key = ' + fieldKey, ids);
       const q = _.get(templateOptions, 'params', {});
       _.set(q, templateOptions.key, ids);
       this.dataService
@@ -221,31 +228,35 @@ export class DataComponent implements OnInit, OnDestroy {
     });
   }
 
-  protected onError(errorMessage: string): void {
-    this.jhiAlertService.error(errorMessage);
+  protected onError(errorMessage: string) {
+    console.error(errorMessage);
+    this.jhiAlertService.error(errorMessage, null, null);
   }
 
   // Add search modifier
-  setSearchOperator(field: string, operator: string): void {
+  setSearchOperator(field, operator) {
     _.set(this.searchModel, field, `${operator}(${_.get(this.searchModel, field)})`);
   }
-  toggleView(column: string): void {
+  toggleView(column) {
     this.displayColumns[column] = !this.displayColumns[column];
   }
   // + delete confirm
-  delete(t: any): void {
+  delete(t) {
     this.modalService.open(this.deleteModal).result.then(
-      () =>
+      result => {
         this.dataService.delete(t.id, this.apiEndpoint).subscribe(
-          () => this.loadAll(),
+          res => this.loadAll(),
           err => this.onError(err.error.title)
-        ),
-      () => this.modalService.dismissAll()
+        );
+      },
+      reason => {
+        this.modalService.dismissAll();
+      }
     );
   }
 
   // Render cell value based on current reference map
-  renderCell(row: any, col: string): any {
+  renderCell(row, col) {
     // {{ _.get(referenceMap, [c, _.get(val, c)], _.get(val, c)) }}
     const val = _.get(row, col);
     if (_.isArray(val)) {

@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormlyFieldConfig } from '@ngx-formly/core';
-import { HttpResponse } from '@angular/common/http';
+import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
+import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, combineLatest, from } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map, filter } from 'rxjs/operators';
 // + Form Builder
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { AccountService } from 'app/core/auth/account.service';
 import { EntityService } from 'app/common/model/entity.service';
+import { LanguageHelper } from 'app/core/language/language.helper';
 import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 
 @Component({
@@ -19,21 +20,26 @@ import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 })
 export class DataUpdateComponent implements OnInit {
   _ = _;
-  title = '';
+  title: string;
   isReady = false;
-  isSaving = false;
+  isSaving: boolean;
   model: any = {};
-  fields: FormlyFieldConfig[] = [];
-  prop = '';
-  svc = '';
+  fields: FormlyFieldConfig[];
+  prop: string;
+  svc: string;
   debug = DEBUG_INFO_ENABLED;
-  apiEndpoint = '';
+  apiEndpoint: string;
   editForm = new FormGroup({});
   options: any;
 
-  constructor(protected accountService: AccountService, protected dataService: EntityService, protected activatedRoute: ActivatedRoute) {}
+  constructor(
+    private languageHelper: LanguageHelper,
+    protected accountService: AccountService,
+    protected dataService: EntityService,
+    protected activatedRoute: ActivatedRoute
+  ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.isSaving = false;
     combineLatest(
       from(this.accountService.identity()).pipe(
@@ -51,7 +57,7 @@ export class DataUpdateComponent implements OnInit {
       this.activatedRoute.data.pipe(
         tap(({ templateFile, model }) => {
           this.title = _.get(templateFile, 'title', 'createOrEditData');
-          // this.languageHelper.updateTitle(this.title);
+          this.languageHelper.updateTitle(this.title);
           this.svc = templateFile.svc;
           this.prop = templateFile.prop;
           // + apiEndpoint and params
@@ -61,14 +67,14 @@ export class DataUpdateComponent implements OnInit {
           this.model = model;
         })
       )
-    ).subscribe(() => (this.isReady = true));
+    ).subscribe(res => (this.isReady = true));
   }
 
-  previousState(): void {
+  previousState() {
     window.history.back();
   }
 
-  save(): void {
+  save() {
     this.isSaving = true;
     if (_.get(this.model, 'id') !== undefined) {
       this.subscribeToSaveResponse(this.dataService.update(this.model, this.apiEndpoint));
@@ -77,19 +83,19 @@ export class DataUpdateComponent implements OnInit {
     }
   }
 
-  protected subscribeToSaveResponse(result: Observable<HttpResponse<any>>): void {
+  protected subscribeToSaveResponse(result: Observable<HttpResponse<any>>) {
     result.subscribe(
       () => this.onSaveSuccess(),
       () => this.onSaveError()
     );
   }
 
-  protected onSaveSuccess(): void {
+  protected onSaveSuccess() {
     this.isSaving = false;
     this.previousState();
   }
 
-  protected onSaveError(): void {
+  protected onSaveError() {
     this.isSaving = false;
   }
 }

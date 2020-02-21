@@ -33,19 +33,19 @@ import * as _ from 'lodash';
 export class DateTypeComponent extends FieldType implements OnInit {
   date = new FormControl();
   // Store the value in string when the form update
-  ngOnInit(): void {
+  ngOnInit() {
     this.formControl.valueChanges.subscribe(() => this.onFormValueChange());
     this.onFormValueChange();
   }
-  onDateSelect(): void {
+  onDateSelect() {
     this.formControl.setValue(moment(this.date.value).format(DATE_FORMAT));
   }
-  onFormValueChange(): void {
+  onFormValueChange() {
     if (this.formControl.value && _.isString(this.formControl.value)) {
       this.date.setValue(moment(this.formControl.value));
     }
   }
-  clear(): void {
+  clear() {
     this.formControl.setValue(null);
     this.date.setValue(null);
   }

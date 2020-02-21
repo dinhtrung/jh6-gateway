@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FieldType } from '@ngx-formly/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { filter, map } from 'rxjs/operators';
+import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { filter, map, tap } from 'rxjs/operators';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { plainToFlattenObject } from 'app/common/util/request-util';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'jhi-formly-template',
@@ -19,26 +18,28 @@ export class TemplateTypeComponent extends FieldType implements OnInit {
     super();
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     if (this.to.apiEndpoint) {
       this.loadRemote().subscribe(res => (this.to.innerHTML = res));
     }
   }
 
-  loadRemote(): Observable<any> {
+  loadRemote() {
     return this.to.key
       ? this.loadRemoteApi().pipe(
           filter(res => res.ok),
           map(res => res.body),
-          map(res => _.get(res, this.to.key))
+          map(res => _.get(res, this.to.key)),
+          tap(res => console.log(res))
         )
       : this.loadRemoteText().pipe(
           filter(res => res.ok),
-          map(res => res.body)
+          map(res => res.body),
+          tap(res => console.log(res))
         );
   }
 
-  loadRemoteText(): Observable<HttpResponse<any>> {
+  loadRemoteText() {
     const query = _.assign({}, this.to.params);
     const body = _.assign({}, this.to.body);
     if (_.isEmpty(body)) {
@@ -56,7 +57,7 @@ export class TemplateTypeComponent extends FieldType implements OnInit {
     }
   }
 
-  loadRemoteApi(): Observable<HttpResponse<any>> {
+  loadRemoteApi() {
     const query = _.assign({}, this.to.params);
     const body = _.assign({}, this.to.body);
     if (_.isEmpty(body)) {

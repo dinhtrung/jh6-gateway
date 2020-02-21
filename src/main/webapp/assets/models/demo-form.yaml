@@ -33,10 +33,6 @@ fields:
     type: quill
     templateOptions:
       label: Description
-      apiEndpoint: /api/minio
-      fileSrc: /api/public/download-file?name=${fileId}
-      # styles:
-      #   height: 150px
   - key: state
     type: select
     templateOptions:

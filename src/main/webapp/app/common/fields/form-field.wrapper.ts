@@ -5,9 +5,8 @@ import { FieldWrapper } from '@ngx-formly/core';
   selector: 'jhi-fromly-wrapper-form-field',
   template: `
     <div class="form-group" [class.has-error]="showError">
-      <label *ngIf="!to.hideLabel && (to.label || to.jhiTranslate)" [attr.for]="id">
-        <span *ngIf="to.jhiTranslate" [jhiTranslate]="to.jhiTranslate"></span>
-        <span *ngIf="!to.jhiTranslate" [innerHtml]="to.label"></span>
+      <label *ngIf="to.label && to.hideLabel !== true" [attr.for]="id">
+        <span [jhiTranslate]="to.label"></span>
         <span *ngIf="to.required && to.hideRequiredMarker !== true">*</span>
       </label>
       <ng-template #fieldComponent></ng-template>

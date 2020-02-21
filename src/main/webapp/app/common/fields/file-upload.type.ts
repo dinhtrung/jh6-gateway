@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FieldType } from '@ngx-formly/core';
 // + HttpClient
 import { HttpClient } from '@angular/common/http';
@@ -24,15 +24,16 @@ import { SafePipe } from 'app/common/util/safe.pipe';
   `,
   providers: [SafePipe]
 })
-export class FormlyFileUploadComponent extends FieldType {
+export class FormlyFileUploadComponent extends FieldType implements OnInit {
   fileToUpload: any;
 
   constructor(private pipe: SafePipe, private httpClient: HttpClient) {
     super();
   }
 
+  ngOnInit() {}
   // API Endpoint for Retrieve File
-  getFileSrc(): string {
+  getFileSrc() {
     return this.to.getFileSrc
       ? this.to.getFileSrc()
       : this.to.fileSrc
@@ -40,28 +41,28 @@ export class FormlyFileUploadComponent extends FieldType {
       : SERVER_API_URL + _.get(this.to, 'apiEndpoint', 'api/public/upload') + `/${this.formControl.value}`;
   }
 
-  removeFile(): void {
-    this.httpClient.delete(SERVER_API_URL + _.get(this.to, 'apiEndpoint', 'api/upload') + `/${this.formControl.value}`).subscribe(
-      () => this.formControl.setValue(null),
-      () => this.formControl.setValue(null)
+  removeFile() {
+    return this.httpClient.delete(SERVER_API_URL + _.get(this.to, 'apiEndpoint', 'api/upload') + `/${this.formControl.value}`).subscribe(
+      res => this.formControl.setValue(null),
+      err => this.formControl.setValue(null)
     );
   }
 
   // Upload a file to server, return the URL
-  addFile(event: any): void {
+  addFile(event: any) {
     this.fileToUpload = event.target.files.item(0);
     this.uploadFile();
   }
 
   // API Endpoint for Upload File
-  protected uploadFile(): void {
+  protected uploadFile() {
     const formData = new FormData();
     formData.append('file', this.fileToUpload, this.fileToUpload.name);
     this.httpClient
       .post(SERVER_API_URL + _.get(this.to, 'apiEndpoint', 'api/upload'), formData, { responseType: 'text' })
       .subscribe(res => this.formControl.setValue(res));
   }
-  getTemplate(): any {
+  getTemplate() {
     return this.pipe.transform(this.to.template.replace('${fileId}', this.formControl.value));
   }
 }

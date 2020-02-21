@@ -56,7 +56,7 @@ export class EntityService {
     const copy: any = Object.assign(
       {},
       entity,
-      _.reduce(this.momentAttrs, (a, b) => _.set(a, b, entity[b] && entity[b].isValid() ? entity[b].format(DATE_FORMAT) : null), {})
+      _.reduce(this.momentAttrs, (a, b, c) => _.set(a, b, entity[b] && entity[b].isValid() ? entity[b].format(DATE_FORMAT) : null), {})
     );
     return copy;
   }
