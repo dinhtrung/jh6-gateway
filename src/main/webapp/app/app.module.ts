@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import './vendor';
-// import { GatewaySharedModule } from 'app/shared/shared.module';
+// import { SharedModule } from 'app/shared/shared.module';
 import { GatewayCommonModule } from 'app/common/common.module';
 import { GatewayCoreModule } from 'app/core/core.module';
 import { GatewayAppRoutingModule } from './app-routing.module';
@@ -24,7 +24,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     // + angular
     BrowserModule,
     BrowserAnimationsModule,
-    // GatewaySharedModule,
+    // SharedModule,
     NgxSpinnerModule,
     GatewayCommonModule,
     // + jhipster

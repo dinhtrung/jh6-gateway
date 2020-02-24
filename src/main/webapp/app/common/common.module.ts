@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { GatewaySharedModule } from 'app/shared/shared.module';
+import { SharedModule } from 'app/shared/shared.module';
 // + ngx-markdown
 import { MarkdownModule } from 'ngx-markdown';
 // + ng-select
@@ -44,7 +44,7 @@ import { AppValidators } from './util/app-validators';
 
 @NgModule({
   imports: [
-    GatewaySharedModule,
+    SharedModule,
     MarkdownModule.forRoot(),
     // + ng-select
     NgSelectModule,
@@ -117,7 +117,7 @@ import { AppValidators } from './util/app-validators';
     })
   ],
   exports: [
-    GatewaySharedModule,
+    SharedModule,
     FileValueAccessorDirective,
     MarkdownModule,
     NgSelectModule,
