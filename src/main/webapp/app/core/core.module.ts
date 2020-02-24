@@ -18,7 +18,8 @@ import { AuthExpiredInterceptor } from 'app/blocks/interceptor/auth-expired.inte
 import { ErrorHandlerInterceptor } from 'app/blocks/interceptor/errorhandler.interceptor';
 import { NotificationInterceptor } from 'app/blocks/interceptor/notification.interceptor';
 
-import { fontAwesomeIcons } from './icons/font-awesome-icons';
+// import { fontAwesomeIcons } from './icons/font-awesome-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 // + customize translation handler
 import { TranslationHandler } from './language/missing-translation-handler';
 export function missingTranslationHandler(): TranslationHandler {
@@ -83,7 +84,8 @@ export function missingTranslationHandler(): TranslationHandler {
 export class GatewayCoreModule {
   constructor(iconLibrary: FaIconLibrary, dpConfig: NgbDatepickerConfig, languageService: JhiLanguageService) {
     registerLocaleData(locale);
-    iconLibrary.addIcons(...fontAwesomeIcons);
+    // iconLibrary.addIcons(...fontAwesomeIcons);
+    iconLibrary.addIconPacks(fas);
     dpConfig.minDate = { year: moment().year() - 100, month: 1, day: 1 };
     languageService.init();
   }

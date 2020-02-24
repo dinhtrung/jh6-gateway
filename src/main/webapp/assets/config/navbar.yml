@@ -1,14 +1,11 @@
 # Menu Tree on Top Naviation
-- name: Demo
-  icon: asterisk
-  url: /demo
-- name: Giới thiệu
-  icon: book
-  url: /docs/gioi-thieu
+- name: User Guide
+  icon: question-circle
+  url: /docs/user-guide
   children:
-    - name: Mô tả dịch vụ
-      url: /thong-tin/mo-ta-dich-vu
-      icon: question
-    - name: Chính sách dịch vụ
-      url: /thong-tin/chinh-sach-dich-vu
-      icon: file
+    - name: Deployments
+      url: /docs/deployment
+      icon: paper-plane
+    - name: Development
+      url: /docs/development
+      icon: boxes

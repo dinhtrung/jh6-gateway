@@ -8,7 +8,11 @@
 
         <p class="lead" jhiTranslate="home.subtitle">This is your homepage</p>
 
-        <a routerLink="/docs/themer">Themer</a>
+        <nav class="nav">
+          <a class="nav-link" routerLink="/docs/themer">Themer</a>
+          <a class="nav-link" routerLink="/docs/deployment">Deployment</a>
+          <a class="nav-link" routerLink="/docs/development">Development</a>
+        </nav>
 
         <div [ngSwitch]="isAuthenticated()">
             <div class="alert alert-success" *ngSwitchCase="true">
