@@ -13,9 +13,8 @@ import { ProfileService } from 'app/layouts/profiles/profile.service';
 // + HttpClient
 import { JhiEventManager } from 'ng-jhipster';
 import { HttpClient } from '@angular/common/http';
-import { SERVER_API_URL } from 'app/app.constants';
+import { DEBUG_INFO_ENABLED, SERVER_API_URL, BUILD_TIMESTAMP } from 'app/app.constants';
 import { filter, map, tap } from 'rxjs/operators';
-import { createRequestOption } from 'app/shared/util/request-util';
 import * as jsyaml from 'js-yaml';
 import * as _ from 'lodash';
 
@@ -97,7 +96,7 @@ export class NavbarComponent implements OnInit {
   loadExtraMenu(): void {
     // Retrieve the navbar
     this.httpClient
-      .get(SERVER_API_URL + 'assets/config/navbar.yml', { params: createRequestOption({ ts: new Date().getTime() }), responseType: 'text' })
+      .get(SERVER_API_URL + 'assets/config/navbar.yml' + (DEBUG_INFO_ENABLED ? `?ts=${BUILD_TIMESTAMP}` : ''), { responseType: 'text' })
       .subscribe(res => (this.menuItems = jsyaml.load(res)));
   }
 
@@ -106,7 +105,7 @@ export class NavbarComponent implements OnInit {
     this.router.navigate([file.url]).then(() => {
       if (file.sidebarUrl) {
         this.httpClient
-          .get(`${file.sidebarUrl}?ts=` + new Date().getTime(), { responseType: 'text' })
+          .get(SERVER_API_URL + file.sidebarUrl + (DEBUG_INFO_ENABLED ? `?ts=${BUILD_TIMESTAMP}` : ''), { responseType: 'text' })
           .pipe(
             map(res => jsyaml.load(res)),
             tap(menuItems => this.sessionStorage.store('sidebarMenuItems', menuItems))
