@@ -8,6 +8,8 @@
 
         <p class="lead" jhiTranslate="home.subtitle">This is your homepage</p>
 
+        <a routerLink="/docs/themer">Themer</a>
+
         <div [ngSwitch]="isAuthenticated()">
             <div class="alert alert-success" *ngSwitchCase="true">
                 <span id="home-logged-message" *ngIf="account" jhiTranslate="home.logged.message"
