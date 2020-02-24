@@ -6,6 +6,10 @@
 Bootstrap tweaks
 ===============================================================*/
 
+body {
+  padding-top: 60px;
+}
+
 body,
 h1,
 h2,
@@ -15,11 +19,7 @@ h4 {
 }
 
 /* Increase contrast of links to get 100% on Lighthouse Accessability Audit. Override this color if you want to change the link color, or use a Bootswatch theme */
-a {
-  color: #533f03;
-  font-weight: bold;
-}
-
+a,
 a:hover {
   color: #533f03;
 }
@@ -37,6 +37,11 @@ a:not([href]):not([tabindex]):hover.dropdown-item {
 a:hover {
   /* make sure browsers use the pointer cursor for anchors, even with no href */
   cursor: pointer;
+}
+
+b,
+strong {
+  font-weight: bold !important;
 }
 
 .dropdown-item:hover {
@@ -193,3 +198,24 @@ ui bootstrap tweaks
 }
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */
+
+/* ==========================================================================
+Main page layout
+========================================================================== */
+
+.row.equal-height {
+  display: flex;
+  flex-wrap: wrap;
+}
+.row.equal-height > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+}
+
+.equal-height .card {
+  flex: 1;
+}
+
+.content-wrapper {
+  min-height: 400px;
+}
