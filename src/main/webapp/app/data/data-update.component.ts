@@ -57,7 +57,7 @@ export class DataUpdateComponent implements OnInit {
       this.activatedRoute.data.pipe(
         tap(({ templateFile, model }) => {
           this.title = _.get(templateFile, 'title', 'createOrEditData');
-          this.titleService.updateTitle(this.title);
+          this.titleService.setTitle(this.title);
           // this.languageHelper.updateTitle(this.title);
           this.svc = templateFile.svc;
           this.prop = templateFile.prop;
