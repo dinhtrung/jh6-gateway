@@ -50,7 +50,7 @@ export class MainComponent implements OnInit {
             this.loadExtraMenu();
             this.eventManager.subscribe('reloadSidebar', () => this.loadExtraMenu());
           } else {
-            this.menuItems = null;
+            this.menuItems = [];
             this.sessionStorage.clear('sidebarMenuItems');
           }
         });
