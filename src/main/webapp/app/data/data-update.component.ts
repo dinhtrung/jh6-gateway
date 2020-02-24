@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { AccountService } from 'app/core/auth/account.service';
 import { EntityService } from 'app/common/model/entity.service';
+import { Title } from '@angular/platform-browser';
 import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 
 @Component({
@@ -31,7 +32,12 @@ export class DataUpdateComponent implements OnInit {
   editForm = new FormGroup({});
   options: any;
 
-  constructor(protected accountService: AccountService, protected dataService: EntityService, protected activatedRoute: ActivatedRoute) {}
+  constructor(
+    private titleService: Title,
+    protected accountService: AccountService,
+    protected dataService: EntityService,
+    protected activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.isSaving = false;
@@ -51,6 +57,7 @@ export class DataUpdateComponent implements OnInit {
       this.activatedRoute.data.pipe(
         tap(({ templateFile, model }) => {
           this.title = _.get(templateFile, 'title', 'createOrEditData');
+          this.titleService.updateTitle(this.title);
           // this.languageHelper.updateTitle(this.title);
           this.svc = templateFile.svc;
           this.prop = templateFile.prop;
