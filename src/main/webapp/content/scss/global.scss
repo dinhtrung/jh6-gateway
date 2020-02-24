@@ -193,3 +193,50 @@ ui bootstrap tweaks
 }
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */
+
+/* ==========================================================================
+sidebar layout
+========================================================================== */
+body {
+  padding-top: 70px;
+}
+
+.nav-sidebar {
+  transition: width 0.3s, left 0.3s;
+  position: fixed;
+  z-index: 600;
+  width: 220px;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+  background-color: #fafafa;
+  box-shadow: inset -1px 0 0 #e5e5e5;
+  transform: translate3d(0, 0, 0);
+
+  .dropdown-toggle::after {
+    float: right;
+    margin-top: 0.5rem;
+  }
+}
+
+.page-with-contextual-sidebar {
+  transition: padding-left 0.3s;
+}
+
+@media (min-width: 768px) {
+  .page-with-contextual-sidebar {
+    padding-left: 50px;
+  }
+  .nav-sidebar {
+    width: 50px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .page-with-contextual-sidebar {
+    padding-left: 220px;
+  }
+  .nav-sidebar {
+    width: 220px;
+  }
+}

@@ -5,11 +5,43 @@
 </div>
 
 <div class="container-fluid">
-    <div class="card jh-card">
-        <router-outlet></router-outlet>
+    <div [class]="isNavbarCollapsed || !menuItems ? 'page-without-sidebar' : 'page-with-contextual-sidebar'">
+        <nav class="nav-sidebar bg-primary d-none d-md-block" *ngIf="menuItems">
+            <ng-template ngFor let-item [ngForOf]="menuItems">
+                <div *jhiHasAnyAuthority="['ROLE_ADMIN', _.get(item, 'authority', item.url)]">
+                    <a *ngIf="!item.children" class="list-group-item list-group-item-action border-right bg-primary text-white pl-1" href="javascript:void(0);" [routerLink]="item.url" [ngbTooltip]="item.name">
+                        <fa-icon [icon]="item.icon" fixedWidth="true"></fa-icon>
+                        <span [innerHtml]="item.name" class="d-none d-xl-inline"></span>
+                    </a>
+                    <div *ngIf="item.children" ngbDropdown placement="right-top">
+                        <a class="list-group-item list-group-item-action border-right bg-primary text-white pl-1" ngbDropdownToggle href="javascript:void(0);" id="entity-menu" [ngbTooltip]="item.name">
+                            <fa-icon [icon]="item.icon" fixedWidth="true"></fa-icon>
+                            <span [innerHtml]="item.name" class="d-none d-xl-inline"></span>
+                        </a>
+                        <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
+                            <li *ngFor="let child of item.children" [ngbTooltip]="item.name">
+                                <a class="dropdown-item" href="javascript:void(0);" [routerLink]="child.url" [ngbTooltip]="item.title">
+                                    <fa-icon [icon]="child.icon" fixedWidth="true"></fa-icon>
+                                    <span class="d-none d-xl-inline">{{child.name}}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </ng-template>
+        </nav>
+        <div class="content-wrapper mb-1">
+            <router-outlet *ngIf="!menuItems"></router-outlet>
+            <div class="card bg-none" *ngIf="menuItems">
+                <div class="card-body">
+                    <router-outlet></router-outlet>
+                </div>
+            </div>
+        </div>
+
+        <jhi-footer></jhi-footer>
     </div>
 
-    <jhi-footer></jhi-footer>
 </div>
 <ngx-spinner bdOpacity=0.9 bdColor="#333" size="medium" color="#fff" type="ball-atom" [fullScreen]="true">
     <p style="color: white"> Loading... </p>
