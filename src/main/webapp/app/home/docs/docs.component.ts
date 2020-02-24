@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./docs.component.scss']
 })
 export class DocsComponent implements OnInit {
-  markdown: string;
+  markdown = '';
   constructor(protected activatedRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
