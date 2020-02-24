@@ -5,6 +5,7 @@
   children:
     - name: Deployments
       url: /docs/deployment
+      sidebarUrl: 'assets/config/sidebar.yml'
       icon: paper-plane
     - name: Development
       url: /docs/development
