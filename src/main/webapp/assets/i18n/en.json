@@ -3,5 +3,9 @@
     "title": "Gateway Application",
     "slogan": "An API Gateway build for Micro Service Architecture"
   },
+  "home": {
+    "title": "Gateway Application",
+    "subtitle": "An API Gateway build for Micro Service Architecture"
+  },
   "footer": "© 2020 Company Name"
 }
