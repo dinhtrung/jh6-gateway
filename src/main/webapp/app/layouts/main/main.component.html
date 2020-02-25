@@ -5,8 +5,8 @@
 </div>
 
 <div class="container-fluid">
-    <div [class]="isNavbarCollapsed || (menuItems.length == 0) ? 'page-without-sidebar' : 'page-with-contextual-sidebar'">
-        <nav class="nav-sidebar bg-secondary d-none d-md-block" *ngIf="menuItems.length > 0">
+    <div [class]="isNavbarCollapsed || (menuItems?.length == 0) ? 'page-without-sidebar' : 'page-with-contextual-sidebar'">
+        <nav class="nav-sidebar bg-secondary d-none d-md-block" *ngIf="menuItems?.length > 0">
             <ng-template ngFor let-item [ngForOf]="menuItems">
                 <div *jhiHasAnyAuthority="['ROLE_ADMIN', _.get(item, 'authority', item.url)]">
                     <a *ngIf="!item.children" class="list-group-item list-group-item-action border-right bg-secondary text-white pl-1" href="javascript:void(0);" [routerLink]="item.url" [ngbTooltip]="item.name">
@@ -31,8 +31,8 @@
             </ng-template>
         </nav>
         <div class="content-wrapper mb-1">
-            <router-outlet *ngIf="!menuItems"></router-outlet>
-            <div class="card bg-none" *ngIf="menuItems">
+            <router-outlet *ngIf="!(menuItems?.length > 0)"></router-outlet>
+            <div class="card bg-none" *ngIf="menuItems?.length > 0">
                 <div class="card-body">
                     <router-outlet></router-outlet>
                 </div>

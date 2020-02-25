@@ -14,12 +14,9 @@ import * as _ from 'lodash';
 export class DashboardComponent implements OnInit {
   _ = _;
   isReady = false;
-  rows: any[];
-  menuItems: any = [];
+  rows: any[] = [];
 
-  constructor(private httpClient: HttpClient) {
-    this.rows = _.chunk(this.menuItems, 6);
-  }
+  constructor(private httpClient: HttpClient) {}
 
   ngOnInit(): void {
     this.isReady = false;
@@ -30,7 +27,7 @@ export class DashboardComponent implements OnInit {
         map((content: HttpResponse<string>) => jsyaml.load(content.body || '')),
         tap(() => (this.isReady = true))
       )
-      .subscribe(menuItems => (this.menuItems = menuItems));
+      .subscribe(menuItems => (this.rows = _.chunk(menuItems, 6)));
   }
 
   trackId(index: number, item: any): string {
