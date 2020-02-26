@@ -91,6 +91,9 @@ export class NavbarComponent implements OnInit {
   getImageUrl(): string {
     return this.isAuthenticated() ? this.accountService.getImageUrl() : '';
   }
+  getDisplayName(): string {
+    return this.isAuthenticated() ? this.accountService.getDisplayName() : '';
+  }
 
   // + Load Extra Menu
   loadExtraMenu(): void {
