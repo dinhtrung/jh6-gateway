@@ -76,13 +76,16 @@ export class DataComponent implements OnInit, OnDestroy {
   loadAll(): void {
     this.dataService
       .query(
-        _.assign(
-          {
-            page: this.page - 1,
-            size: this.itemsPerPage,
-            sort: this.sort()
-          },
-          { query: _.map(plainToFlattenObject(_.assign({}, this.queryParams, this.searchModel)), (v, k) => `${k}: ${v}`).join(' AND ') }
+        plainToFlattenObject(
+          _.assign(
+            {
+              page: this.page - 1,
+              size: this.itemsPerPage,
+              sort: this.sort()
+            },
+            this.queryParams,
+            this.searchModel
+          )
         ),
         this.apiEndpoint
       )
@@ -188,8 +191,8 @@ export class DataComponent implements OnInit, OnDestroy {
 
   sort(): string[] {
     const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-    if (this.predicate !== '_id') {
-      result.push('_id');
+    if (this.predicate !== 'id') {
+      result.push('id');
     }
     return result;
   }
