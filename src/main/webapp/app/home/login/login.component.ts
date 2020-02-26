@@ -45,16 +45,7 @@ export class LoginComponent implements AfterViewInit {
         rememberMe: this.loginForm.get('rememberMe')!.value
       })
       .subscribe(
-        () => {
-          this.authenticationError = false;
-          if (
-            this.router.url === '/account/register' ||
-            this.router.url.startsWith('/account/activate') ||
-            this.router.url.startsWith('/account/reset/')
-          ) {
-            this.router.navigate(['']);
-          }
-        },
+        () => (this.authenticationError = false),
         () => (this.authenticationError = true)
       );
   }

@@ -5,7 +5,7 @@
 </div>
 
 <div class="container-fluid">
-    <div [class]="isNavbarCollapsed || (menuItems?.length == 0) ? 'page-without-sidebar' : 'page-with-contextual-sidebar'">
+    <div [class]="isNavbarCollapsed || (menuItems?.length > 0) ? 'page-with-contextual-sidebar' : 'page-without-sidebar'">
         <nav class="nav-sidebar bg-secondary d-none d-md-block" *ngIf="menuItems?.length > 0">
             <ng-template ngFor let-item [ngForOf]="menuItems">
                 <div *jhiHasAnyAuthority="['ROLE_ADMIN', _.get(item, 'authority', item.url)]">
