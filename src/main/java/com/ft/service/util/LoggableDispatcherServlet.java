@@ -1,16 +1,20 @@
 package com.ft.service.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.HandlerExecutionChain;
@@ -59,6 +63,7 @@ public class LoggableDispatcherServlet extends DispatcherServlet {
     	String login = SecurityUtils.getCurrentUserLogin().orElse(null);
     	String method = requestToCache.getMethod();
     	String contentType = responseToCache.getContentType();
+    	boolean isGzipped = responseToCache.getHeaders(HttpHeaders.CONTENT_ENCODING).stream().filter(i -> i.contains("gzip")).findAny().isPresent();
     	
         if (HttpMethod.DELETE.matches(method) || HttpMethod.PUT.matches(method)
                 || HttpMethod.PATCH.matches(method) || HttpMethod.POST.matches(method)
@@ -73,7 +78,7 @@ public class LoggableDispatcherServlet extends DispatcherServlet {
         	
         	Map<String, String> log = new HashMap<>();
         	log.put("responseCode", responseToCache.getStatus() + "");
-        	log.put("responsePayload", getResponsePayload(responseToCache));
+        	log.put("responsePayload", getResponsePayload(responseToCache, isGzipped));
         	log.put("remoteAddress", requestToCache.getRemoteAddr());
         	
         	audit.setData(log);
@@ -82,19 +87,30 @@ public class LoggableDispatcherServlet extends DispatcherServlet {
         }
     }
 
-    private String getResponsePayload(HttpServletResponse response) {
+    private String getResponsePayload(HttpServletResponse response, boolean gzipped) {
         ContentCachingResponseWrapper wrapper = WebUtils.getNativeResponse(response, ContentCachingResponseWrapper.class);
         if (wrapper != null) {
 
-            byte[] buf = wrapper.getContentAsByteArray();
-            if (buf.length > 0) {
-                int length = Math.min(buf.length, 5120);
-                try {
-                    return new String(buf, 0, length, wrapper.getCharacterEncoding());
-                }
-                catch (UnsupportedEncodingException ex) {
-                    // NOOP
-                }
+        	if (gzipped) {
+                InputStream responseDataStream;
+				try {
+					responseDataStream = new GZIPInputStream(wrapper.getContentInputStream());
+					return IOUtils.toString(responseDataStream, wrapper.getCharacterEncoding());
+				} catch (IOException e) {
+					
+				}
+                
+            } else {
+            	byte[] buf = wrapper.getContentAsByteArray();
+            	if (buf.length > 0) {
+            		int length = Math.min(buf.length, 5120);
+            		try {
+            			return new String(buf, 0, length, wrapper.getCharacterEncoding());
+            		}
+            		catch (UnsupportedEncodingException ex) {
+            			// NOOP
+            		}
+            	}
             }
         }
         return "[unknown]";
