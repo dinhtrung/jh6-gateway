@@ -1,5 +1,5 @@
 # Menu Tree on Top Naviation
-- name: User Guide
+- name: Help
   icon: question-circle
   url: /docs/user-guide
   children:
@@ -9,3 +9,6 @@
     - name: Development
       url: /docs/development
       icon: boxes
+    - name: User Guide
+      url: /docs/user-guide
+      icon: question-circle
