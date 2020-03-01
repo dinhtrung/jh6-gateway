@@ -15,6 +15,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import * as jsyaml from 'js-yaml';
 
+// <jhi-grid src="/assets/path/entity.yaml" prop="" svc=""></jhi-grid>
+
 @Component({
   selector: 'jhi-grid',
   templateUrl: './grid.component.html'
@@ -138,8 +140,8 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
   resolvePagingParams(): any {
     return this.activatedRoute.queryParams.pipe(
       map(data => {
-        this.page = _.get(data, 'page', 0);
-        this.previousPage = _.get(data, 'page', 0);
+        this.page = _.get(data, 'page', 1);
+        this.previousPage = _.get(data, 'page', 1);
         this.reverse = _.get(data, 'sort', 'id,desc');
         this.predicate = _.get(data, 'sort', 'desc');
       })
@@ -183,7 +185,9 @@ export class GridWidgetComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.eventManager.destroy(this.eventSubscriber);
+    if (this.eventSubscriber) {
+      this.eventManager.destroy(this.eventSubscriber);
+    }
   }
 
   trackId(index: number, item: any): string {
