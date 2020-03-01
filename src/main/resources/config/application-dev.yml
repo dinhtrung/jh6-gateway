@@ -20,6 +20,8 @@ logging:
     com.ft: DEBUG
 
 spring:
+  application:
+    name: gateway
   profiles:
     active: dev
     include:

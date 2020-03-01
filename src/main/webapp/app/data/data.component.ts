@@ -10,7 +10,6 @@ import { Title } from '@angular/platform-browser';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 // + Modal
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { plainToFlattenObject } from 'app/common/util/request-util';
 
 // + search
 import * as _ from 'lodash';
@@ -76,16 +75,14 @@ export class DataComponent implements OnInit, OnDestroy {
   loadAll(): void {
     this.dataService
       .query(
-        plainToFlattenObject(
-          _.assign(
-            {
-              page: this.page - 1,
-              size: this.itemsPerPage,
-              sort: this.sort()
-            },
-            this.queryParams,
-            this.searchModel
-          )
+        _.assign(
+          this.queryParams,
+          {
+            page: this.page - 1,
+            size: this.itemsPerPage,
+            sort: this.sort()
+          },
+          this.searchModel
         ),
         this.apiEndpoint
       )
@@ -178,7 +175,9 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.eventManager.destroy(this.eventSubscriber);
+    if (this.eventSubscriber) {
+      this.eventManager.destroy(this.eventSubscriber);
+    }
   }
 
   trackId(index: number, item: any): string {
