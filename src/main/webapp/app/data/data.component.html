@@ -24,7 +24,8 @@
             <div class="alert alert-warning" *ngIf="rows?.length === 0">
                 <span [jhiTranslate]="'data.notFound'">No data found</span>
             </div>
-            <div class="table-responsive" style="min-height: 550px;">
+
+            <div *ngIf="!isMobile" class="table-responsive" style="min-height: 550px;">
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
@@ -92,6 +93,45 @@
                     </tbody>
                 </table>
             </div>
+
+            <div *ngIf="isMobile" class="mobile-wrapper">
+
+                <div class="card-columns">
+                    <div class="card" *ngFor="let row of rows ;trackBy: trackId">
+                        <div class="card-header">
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li *ngFor="let c of columnKeys" [class]="_.get(displayColumns, c) ? '' : 'd-none'">
+                                    <strong [jhiTranslate]="prop + '.label.' + _.get(columnNames, ci)">{{ c }}</strong>
+                                    <strong [innerHTML]="renderCell(row, c)"></strong>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <div class="btn-group">
+                                <button type="submit" [routerLink]="['/data', svc, prop, row.id, 'view' ]" class="btn btn-info btn-sm">
+                                    <fa-icon [icon]="'eye'"></fa-icon>
+                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                                </button>
+                                <button type="submit" [routerLink]="['/data', svc, prop, row.id, 'edit']" class="btn btn-primary btn-sm">
+                                    <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                                </button>
+                                <button type="button" (click)="delete(row)" class="btn btn-danger btn-sm">
+                                    <fa-icon [icon]="'times'"></fa-icon>
+                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                                </button>
+                                <button type="button" *ngFor="let a of actions" class="btn btn-{{ a.className }}" [routerLink]="_.replace(a.url, '${id}', row.id)">
+                                    <fa-icon [icon]="a.icon" *ngIf="a.icon"></fa-icon>
+                                    <span [jhiTranslate]="a.name" class="d-none d-md-inline"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div [hidden]="rows?.length === 0 || !totalItems">
                 <div class="row justify-content-center">
                     <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>

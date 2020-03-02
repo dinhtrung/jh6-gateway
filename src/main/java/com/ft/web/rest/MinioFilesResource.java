@@ -1,5 +1,6 @@
 package com.ft.web.rest;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -30,7 +32,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.xmlpull.v1.XmlPullParserException;
@@ -252,5 +256,42 @@ public class MinioFilesResource {
 		}
 		return false;
 	}
+	
+	/**
+	 * Another endpoint to access public static resources
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+    
+    @GetMapping("/public/static/{name}")
+    public ResponseEntity<InputStreamResource> downloadStatic(@PathVariable String name) throws Exception {
+        log.debug("REST request to download file: {}", name);
+        return ResponseEntity.ok(new InputStreamResource(minioClient.getObject(minioConfig.getBucketName(), name)));
+    }
+    
+    /**
+     * Then to upload them
+     * @param name
+     * @param body
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(path = "/public/static/{name}", method = { RequestMethod.POST, RequestMethod.PUT })
+    public ResponseEntity<String> uploadFile(@PathVariable String name, @RequestBody String body, HttpServletRequest request) throws Exception {
+        String contentType = request.getContentType();
+        String bucketName = minioConfig.getBucketName();
+        if (!minioClient.bucketExists(bucketName)) {
+                minioClient.makeBucket(bucketName);
+        }
+        ByteArrayInputStream bais = new ByteArrayInputStream(body.getBytes());
+                minioClient.putObject(bucketName, name , bais, bais.available(), contentType);
+                log.debug("REST request to save object : {}", name);
+                return ResponseEntity.created(new URI("api/public/static/" + name))
+                .headers(HeaderUtil.createAlert(applicationName,  "minio.created", name))
+                .body(name);
+    }
+
     
 }
