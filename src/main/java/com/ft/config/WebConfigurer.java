@@ -161,7 +161,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
                                               EnumSet<DispatcherType> disps) {
         log.debug("Registering Caching HTTP Headers Filter");
         FilterRegistration.Dynamic auditLogFilter =
-            servletContext.addFilter("cachingHttpHeadersFilter",
+            servletContext.addFilter("auditLogFilter",
                 new AuditLogFilter(persistAuditEventRepo));
         
         // + logging for micro services 
