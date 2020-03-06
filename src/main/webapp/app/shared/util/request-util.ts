@@ -1,4 +1,5 @@
 import { HttpParams } from '@angular/common/http';
+import * as _ from 'lodash';
 
 export interface Pagination {
   page: number;
@@ -16,9 +17,13 @@ export const createRequestOption = (req?: any): HttpParams => {
   let options: HttpParams = new HttpParams();
 
   if (req) {
-    Object.keys(req).forEach(key => {
+    _.each(req, (val, key) => {
       if (key !== 'sort') {
-        options = options.set(key, req[key]);
+        if (_.isArray(val)) {
+          _.each(val, v => (options = options.append(key, v)));
+        } else {
+          options = options.set(key, req[key]);
+        }
       }
     });
 

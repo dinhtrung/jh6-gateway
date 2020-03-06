@@ -166,4 +166,4 @@ import { NgbTimeStringAdapter } from './util/timepicker-adapter';
     FormBuilderService
   ]
 })
-export class GatewayCommonModule {}
+export class SharedCommonModule {}

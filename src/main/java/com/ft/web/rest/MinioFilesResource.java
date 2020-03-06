@@ -221,6 +221,24 @@ public class MinioFilesResource {
     			.header(HttpHeaders.CONTENT_TYPE, MediaType.parseMediaType(mimeType).toString())
     			.body(new InputStreamResource(minioClient.getObject(minioConfig.getBucketName(), name)));
     }
+    
+    @GetMapping("/public/static/{name}")
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String name) throws Exception {
+    	log.debug("REST request to download file: {}", name);
+    	String mimeType = URLConnection.guessContentTypeFromName(name);
+    	return ResponseEntity.ok()
+    			.header(HttpHeaders.CONTENT_TYPE, MediaType.parseMediaType(mimeType).toString())
+    			.body(new InputStreamResource(minioClient.getObject(minioConfig.getBucketName(), name)));
+    }
+    
+    @GetMapping("/public/static/{bucket}/{name}")
+    public ResponseEntity<InputStreamResource> downloadBucketFile(@PathVariable String bucket, @PathVariable String name) throws Exception {
+    	log.debug("REST request to download file: {}", name);
+    	String mimeType = URLConnection.guessContentTypeFromName(name);
+    	return ResponseEntity.ok()
+    			.header(HttpHeaders.CONTENT_TYPE, MediaType.parseMediaType(mimeType).toString())
+    			.body(new InputStreamResource(minioClient.getObject(bucket, name)));
+    }
 
     /**
      * Generate a 302 redirect to temporary file URL

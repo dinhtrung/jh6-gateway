@@ -12,4 +12,4 @@ import { DocsComponent } from './docs/docs.component';
   imports: [SharedModule, MarkdownModule.forRoot(), RouterModule.forChild(HOME_ROUTES)],
   declarations: [HomeComponent, DocsComponent]
 })
-export class GatewayHomeModule {}
+export class HomeModule {}
