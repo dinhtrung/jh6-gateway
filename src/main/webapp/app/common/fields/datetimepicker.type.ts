@@ -44,9 +44,7 @@ import * as moment from 'moment';
 })
 export class DateTimeTypeComponent extends FieldType implements OnInit {
   defaultOptions = {
-    templateOptions: {
-      wrappers: ['form-field']
-    }
+    wrappers: ['form-field']
   };
   showTimePickerToggle = false;
   date: FormControl = new FormControl();
