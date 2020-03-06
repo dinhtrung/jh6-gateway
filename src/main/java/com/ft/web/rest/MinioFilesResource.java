@@ -226,24 +226,6 @@ public class MinioFilesResource {
     			.body(new InputStreamResource(minioClient.getObject(minioConfig.getBucketName(), name)));
     }
     
-    @GetMapping("/public/static/{name}")
-    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String name) throws Exception {
-    	log.debug("REST request to download file: {}", name);
-    	String mimeType = URLConnection.guessContentTypeFromName(name);
-    	return ResponseEntity.ok()
-    			.header(HttpHeaders.CONTENT_TYPE, MediaType.parseMediaType(mimeType).toString())
-    			.body(new InputStreamResource(minioClient.getObject(minioConfig.getBucketName(), name)));
-    }
-    
-    @GetMapping("/public/static/{bucket}/{name}")
-    public ResponseEntity<InputStreamResource> downloadBucketFile(@PathVariable String bucket, @PathVariable String name) throws Exception {
-    	log.debug("REST request to download file: {}", name);
-    	String mimeType = URLConnection.guessContentTypeFromName(name);
-    	return ResponseEntity.ok()
-    			.header(HttpHeaders.CONTENT_TYPE, MediaType.parseMediaType(mimeType).toString())
-    			.body(new InputStreamResource(minioClient.getObject(bucket, name)));
-    }
-
     /**
      * Generate a 302 redirect to temporary file URL
      * @param name
@@ -275,19 +257,20 @@ public class MinioFilesResource {
 		return false;
 	}
 	
-	/**
-	 * Another endpoint to access public static resources
-	 * @param name
-	 * @return
-	 * @throws Exception
-	 */
-    
-    @GetMapping("/public/static/{name}")
-    public ResponseEntity<InputStreamResource> downloadStatic(@PathVariable String name) throws Exception {
-        log.debug("REST request to download file: {}", name);
-        return ResponseEntity.ok(new InputStreamResource(minioClient.getObject(minioConfig.getBucketName(), name)));
+	
+	@GetMapping("/public/static/{name}")
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String name) throws Exception {
+    	return downloadBucketFile(minioConfig.getBucketName(), name);
     }
     
+    @GetMapping("/public/static/{bucket}/{name}")
+    public ResponseEntity<InputStreamResource> downloadBucketFile(@PathVariable String bucket, @PathVariable String name) throws Exception {
+    	log.debug("REST request to download file: {}", name);
+    	String mimeType = URLConnection.guessContentTypeFromName(name);
+    	return ResponseEntity.ok()
+    			.header(HttpHeaders.CONTENT_TYPE, MediaType.parseMediaType(mimeType).toString())
+    			.body(new InputStreamResource(minioClient.getObject(bucket, name)));
+    }
     /**
      * Then to upload them
      * @param name
@@ -298,13 +281,17 @@ public class MinioFilesResource {
      */
     @RequestMapping(path = "/public/static/{name}", method = { RequestMethod.POST, RequestMethod.PUT })
     public ResponseEntity<String> uploadFile(@PathVariable String name, @RequestBody String body, HttpServletRequest request) throws Exception {
+        return uploadFileBucket(minioConfig.getBucketName(), name, body, request);
+    }
+    
+    @RequestMapping(path = "/public/static/{bucket}{name}", method = { RequestMethod.POST, RequestMethod.PUT })
+    public ResponseEntity<String> uploadFileBucket(@PathVariable String bucket, @PathVariable String name, @RequestBody String body, HttpServletRequest request) throws Exception {
         String contentType = request.getContentType();
-        String bucketName = minioConfig.getBucketName();
-        if (!minioClient.bucketExists(bucketName)) {
-                minioClient.makeBucket(bucketName);
+        if (!minioClient.bucketExists(bucket)) {
+                minioClient.makeBucket(bucket);
         }
         ByteArrayInputStream bais = new ByteArrayInputStream(body.getBytes());
-                minioClient.putObject(bucketName, name , bais, bais.available(), contentType);
+                minioClient.putObject(bucket, name , bais, bais.available(), contentType);
                 log.debug("REST request to save object : {}", name);
                 return ResponseEntity.created(new URI("api/public/static/" + name))
                 .headers(HeaderUtil.createAlert(applicationName,  "minio.created", name))
