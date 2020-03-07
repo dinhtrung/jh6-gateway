@@ -49,4 +49,4 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
   ],
   exports: [RouterModule]
 })
-export class GatewayAppRoutingModule {}
+export class AppRoutingModule {}

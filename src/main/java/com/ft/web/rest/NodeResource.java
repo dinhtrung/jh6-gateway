@@ -2,11 +2,14 @@ package com.ft.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -19,9 +22,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.querydsl.core.BooleanBuilder;
@@ -37,6 +44,8 @@ import com.querydsl.core.types.dsl.StringPath;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ft.domain.Node;
 import com.ft.repository.NodeRepository;
+import com.ft.security.AuthoritiesConstants;
+import com.ft.security.SecurityUtils;
 import com.ft.service.util.QuerydslPredicateUtil;
 import com.ft.web.rest.errors.BadRequestAlertException;
 import com.mongodb.BasicDBObject;
@@ -168,5 +177,31 @@ public class NodeResource {
 		nodeRepository.deleteById(id);
 		return ResponseEntity.noContent()
 				.headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id)).build();
+	}
+	
+	
+	@PutMapping("/import/nodes/{type}")
+	@PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
+	public ResponseEntity<Set<Node>> importNode(@PathVariable String type, @Valid @RequestBody List<Node> node) throws URISyntaxException {
+		log.debug("REST request to import Node : {}", node);
+		String login = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid login"));
+		return ResponseEntity.ok().body(
+			node.parallelStream()
+			.map(n -> {
+				try {
+					return nodeRepository.save(
+							n.type(type)
+							.updatedAt(ZonedDateTime.now())
+							.updatedBy(login)
+							.touchedBy(login)
+					);
+				} catch (Exception e) {
+					log.warn("Cannot process node: {}", n, e);
+					return null;
+				}
+			})
+			.filter(i -> i != null)
+			.distinct().collect(Collectors.toSet())
+		);
 	}
 }

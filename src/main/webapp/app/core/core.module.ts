@@ -89,7 +89,7 @@ export function missingTranslationHandler(): TranslationHandler {
     }
   ]
 })
-export class GatewayCoreModule {
+export class CoreModule {
   constructor(iconLibrary: FaIconLibrary, dpConfig: NgbDatepickerConfig, languageService: JhiLanguageService) {
     registerLocaleData(locale);
     // iconLibrary.addIcons(...fontAwesomeIcons);

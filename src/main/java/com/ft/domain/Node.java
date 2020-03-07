@@ -196,6 +196,11 @@ public class Node implements Serializable {
 	public void setCreatedAt(ZonedDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
+	
+	public Node createdAt(ZonedDateTime createdAt) {
+		this.createdAt = createdAt;
+		return this;
+	}
 
 	public String getCreatedBy() {
 		return createdBy;
@@ -204,6 +209,7 @@ public class Node implements Serializable {
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
+	
 
 	public ZonedDateTime getUpdatedAt() {
 		return updatedAt;
@@ -211,6 +217,11 @@ public class Node implements Serializable {
 
 	public void setUpdatedAt(ZonedDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+	
+	public Node updatedAt(ZonedDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+		return this;
 	}
 
 	public String getUpdatedBy() {
@@ -220,6 +231,11 @@ public class Node implements Serializable {
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
+	
+	public Node updatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+		return this;
+	}
 
 	public Set<String> getTouchedBy() {
 		return touchedBy;
@@ -227,6 +243,11 @@ public class Node implements Serializable {
 
 	public void setTouchedBy(Set<String> touchedBy) {
 		this.touchedBy = touchedBy;
+	}
+	
+	public Node touchedBy(String touchedBy) {
+		this.touchedBy.add(touchedBy);
+		return this;
 	}
 
 }

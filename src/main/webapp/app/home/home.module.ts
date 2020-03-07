@@ -14,4 +14,4 @@ import { DashboardComponent } from './dashboard/dashboard.component';
   imports: [SharedModule, MarkdownModule.forRoot(), RouterModule.forChild(HOME_ROUTES)],
   declarations: [HomeComponent, DocsComponent, LoginComponent, DashboardComponent]
 })
-export class GatewayHomeModule {}
+export class HomeModule {}
