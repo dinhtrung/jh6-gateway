@@ -1,16 +1,13 @@
-        <h1 class="display-4" jhiTranslate="home.title">Welcome, Java Hipster!</h1>
+<div [ngSwitch]="isAuthenticated()">
 
-        <p class="lead" jhiTranslate="home.subtitle">This is your homepage</p>
+    <div class="alert alert-success" *ngSwitchCase="true">
+        <span id="home-logged-message" *ngIf="account" jhiTranslate="home.logged.message" [translateValues]="{ username: account.login }">You are logged in as user "{{ account.login }}".</span>
+    </div>
 
-        <div [ngSwitch]="isAuthenticated()">
-            <div class="alert alert-success" *ngSwitchCase="true">
-                <span id="home-logged-message" *ngIf="account" jhiTranslate="home.logged.message" [translateValues]="{ username: account.login }">You are logged in as user "{{ account.login }}".</span>
-            </div>
+    <jhi-login *ngSwitchCase="false"></jhi-login>
 
-            <jhi-login *ngSwitchCase="false"></jhi-login>
+    <jhi-dashboard *ngSwitchCase="true"></jhi-dashboard>
 
-            <jhi-dashboard *ngSwitchCase="true"></jhi-dashboard>
+    <markdown src="assets/docs/home-authenticated.md" *ngSwitchCase="true"></markdown>
 
-            <markdown src="assets/docs/home-authenticated.md" *ngSwitchCase="true"></markdown>
-
-        </div>
+</div>
