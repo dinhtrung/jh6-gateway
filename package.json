@@ -54,6 +54,7 @@
     "@angular/compiler-cli": "8.2.14",
     "@ngtools/webpack": "8.3.20",
     "@openapitools/openapi-generator-cli": "1.0.10-4.2.3",
+    "@types/file-saver": "^2.0.1",
     "@types/jest": "24.0.23",
     "@types/js-yaml": "^3.12.1",
     "@types/lodash": "^4.14.149",

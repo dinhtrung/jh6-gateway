@@ -14,6 +14,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 // + mobile friendly
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'jhi-data',
@@ -260,5 +261,30 @@ export class DataComponent implements OnInit, OnDestroy {
       return JSON.stringify(val);
     }
     return _.get(this.referenceMap, [col, val], val);
+  }
+
+  // + export data
+  exportData(): void {
+    this.dataService
+      .query(
+        _.assign(
+          this.queryParams,
+          {
+            page: this.page - 1,
+            size: 10000,
+            sort: this.sort()
+          },
+          this.searchModel
+        ),
+        this.apiEndpoint
+      )
+      .subscribe(res => this.saveDataToFile(res.body || []));
+  }
+  // + save array of json to file
+  saveDataToFile(data: any[]): void {
+    const blob = new Blob([JSON.stringify(data)], {
+      type: 'application/json'
+    });
+    saveAs(blob, this.prop + '.json');
   }
 }

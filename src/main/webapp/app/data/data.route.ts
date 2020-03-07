@@ -13,6 +13,7 @@ import { createRequestOption } from 'app/shared/util/request-util';
 import { DataComponent } from './data.component';
 import { DataDetailComponent } from './data-detail.component';
 import { DataUpdateComponent } from './data-update.component';
+import { DataImportComponent } from './data-import.component';
 
 @Injectable({ providedIn: 'root' })
 export class TemplateFilenameResolve implements Resolve<string> {
@@ -84,6 +85,18 @@ export const dataRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
+      pageTitle: 'data.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':svc/:prop/import',
+    component: DataImportComponent,
+    resolve: {
+      templateFile: TemplateFilenameResolve
+    },
+    data: {
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'data.title'
     },
     canActivate: [UserRouteAccessService]
