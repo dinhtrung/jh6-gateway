@@ -1,6 +1,7 @@
 package com.ft.repository;
 
 import com.ft.GatewayApp;
+
 import com.ft.config.Constants;
 import com.ft.config.audit.AuditEventConverter;
 import com.ft.domain.PersistentAuditEvent;
