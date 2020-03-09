@@ -6,8 +6,9 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { CookieModule } from 'ngx-cookie';
 import { TranslateModule, TranslateLoader, MissingTranslationHandler } from '@ngx-translate/core';
 import { NgxWebstorageModule } from 'ngx-webstorage';
-import { NgJhipsterModule, translatePartialLoader, JhiConfigService, JhiLanguageService } from 'ng-jhipster';
+import { NgJhipsterModule, JhiConfigService, JhiLanguageService } from 'ng-jhipster';
 import locale from '@angular/common/locales/en';
+import localeVi from '@angular/common/locales/vi';
 
 import * as moment from 'moment';
 import { NgbDateAdapter, NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -21,6 +22,17 @@ import { NotificationInterceptor } from 'app/blocks/interceptor/notification.int
 // import { fontAwesomeIcons } from './icons/font-awesome-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 // + customize translation handler
+import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
+export function translatePartialLoader(http: HttpClient): TranslateLoader {
+  return new MultiTranslateHttpLoader(http, [
+    { prefix: 'i18n/', suffix: `.json?buildTimestamp=${process.env.BUILD_TIMESTAMP}` },
+    // + static files overload
+    { prefix: 'assets/i18n/', suffix: `.json?buildTimestamp=${process.env.BUILD_TIMESTAMP}` },
+    // + server side overload
+    { prefix: '/api/public/static/', suffix: `.json?buildTimestamp=${process.env.BUILD_TIMESTAMP}` }
+  ]);
+}
+
 import { TranslationHandler } from './language/missing-translation-handler';
 export function missingTranslationHandler(): TranslationHandler {
   return new TranslationHandler();
@@ -81,9 +93,10 @@ export function missingTranslationHandler(): TranslationHandler {
     }
   ]
 })
-export class GatewayCoreModule {
+export class CoreModule {
   constructor(iconLibrary: FaIconLibrary, dpConfig: NgbDatepickerConfig, languageService: JhiLanguageService) {
     registerLocaleData(locale);
+    registerLocaleData(localeVi);
     // iconLibrary.addIcons(...fontAwesomeIcons);
     iconLibrary.addIconPacks(fas);
     dpConfig.minDate = { year: moment().year() - 100, month: 1, day: 1 };

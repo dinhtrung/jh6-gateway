@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-expand-md bg-light fixed-top">
+<nav class="navbar navbar-default navbar-expand-md bg-light shadow fixed-top">
     <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
         <span class="logo-img"></span>
         <span jhiTranslate="global.title" class="navbar-title">Gateway</span> <span class="navbar-version">{{ version }}</span>
@@ -99,6 +99,12 @@
                         </a>
                     </li>
                     <li>
+                        <a class="dropdown-item" routerLink="admin/settings" routerLinkActive="active" (click)="collapseNavbar()">
+                            <fa-icon icon="cogs" fixedWidth="true"></fa-icon>
+                            <span jhiTranslate="global.menu.admin.settings">Settings</span>
+                        </a>
+                    </li>
+                    <li>
                         <a class="dropdown-item" routerLink="admin/audits" routerLinkActive="active" (click)="collapseNavbar()">
                             <fa-icon icon="bell" fixedWidth="true"></fa-icon>
                             <span jhiTranslate="global.menu.admin.audits">Audits</span>
@@ -136,9 +142,7 @@
                 <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="account-menu">
                     <span *ngIf="!getImageUrl()">
                         <fa-icon icon="user"></fa-icon>
-                        <span jhiTranslate="global.menu.account.main">
-                            Account
-                        </span>
+                        <span class="text-muted" [innerHtml]="getDisplayName()"></span>
                     </span>
                     <span *ngIf="getImageUrl()">
                         <img [src]="getImageUrl()" class="profile-image rounded-circle" alt="Avatar">

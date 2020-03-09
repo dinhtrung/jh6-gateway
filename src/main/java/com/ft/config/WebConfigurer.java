@@ -5,6 +5,7 @@ import io.github.jhipster.config.JHipsterProperties;
 import io.github.jhipster.web.filter.CachingHttpHeadersFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.*;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
@@ -16,6 +17,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import com.ft.config.ApplicationProperties;
+import com.ft.repository.PersistenceAuditEventRepository;
+import com.ft.service.util.AuditLogFilter;
 
 import javax.servlet.*;
 import java.io.File;
@@ -51,6 +56,10 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
         if (env.acceptsProfiles(Profiles.of(JHipsterConstants.SPRING_PROFILE_PRODUCTION))) {
             initCachingHttpHeadersFilter(servletContext, disps);
+        }
+        
+        if (env.acceptsProfiles(Profiles.of(Constants.SPRING_PROFILE_AUDIT))) {
+            initAuditLoggingFilter(servletContext, disps);
         }
         log.info("Web application fully configured");
     }
@@ -139,6 +148,35 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
             source.registerCorsConfiguration("/*/management/**", config);
         }
         return new CorsFilter(source);
+    }
+    
+    
+    @Autowired
+	PersistenceAuditEventRepository persistAuditEventRepo;
+
+    /**
+     * Initializes the caching HTTP Headers Filter.
+     */
+    private void initAuditLoggingFilter(ServletContext servletContext,
+                                              EnumSet<DispatcherType> disps) {
+        log.debug("Registering Caching HTTP Headers Filter");
+        FilterRegistration.Dynamic auditLogFilter =
+            servletContext.addFilter("auditLogFilter",
+                new AuditLogFilter(persistAuditEventRepo));
+        
+        // + logging for micro services 
+        auditLogFilter.addMappingForUrlPatterns(disps, true, "/services/*");
+        // + logging for user actions
+        auditLogFilter.addMappingForUrlPatterns(disps, true, "/api/users/*");
+        // + logging for consul
+        auditLogFilter.addMappingForUrlPatterns(disps, true, "/api/consul/*");
+        // + logging for account
+        auditLogFilter.addMappingForUrlPatterns(disps, true, "/api/authorities/*");
+        
+        // + logging for process request
+        auditLogFilter.addMappingForUrlPatterns(disps, true, "/api/process/*");
+        
+        auditLogFilter.setAsyncSupported(true);
     }
 
 }

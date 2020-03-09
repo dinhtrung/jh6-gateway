@@ -41,6 +41,9 @@ import { JhiYamlFormComponent } from './widgets/form.component';
 // + utils
 import { SafePipe } from './util/safe.pipe';
 import { AppValidators } from './util/app-validators';
+// + timepicker adapter
+import { NgbTimeAdapter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTimeStringAdapter } from './util/timepicker-adapter';
 
 @NgModule({
   imports: [
@@ -156,6 +159,11 @@ import { AppValidators } from './util/app-validators';
     FormlyTabsetTypeComponent,
     FormlyWrapperFormFieldComponent
   ],
-  providers: [SafePipe, FormBuilderService]
+  providers: [
+    SafePipe,
+    // + timepicker adapter
+    { provide: NgbTimeAdapter, useClass: NgbTimeStringAdapter },
+    FormBuilderService
+  ]
 })
-export class GatewayCommonModule {}
+export class SharedCommonModule {}

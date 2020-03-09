@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpResponse, HttpHeaders } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,6 +7,8 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { Audit } from './audit.model';
 import { AuditsService } from './audits.service';
 
+// + Modal
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'jhi-audit',
   templateUrl: './audits.component.html'
@@ -23,11 +25,16 @@ export class AuditsComponent implements OnInit {
   totalItems = 0;
 
   private dateFormat = 'yyyy-MM-dd';
+  // + details modal
+  @ViewChild('detailModal', { static: true }) detailModal: any;
+  model = '';
 
   constructor(
     private auditsService: AuditsService,
     private activatedRoute: ActivatedRoute,
     private datePipe: DatePipe,
+    // + detail view
+    protected modalService: NgbModal,
     private router: Router
   ) {}
 
@@ -106,5 +113,13 @@ export class AuditsComponent implements OnInit {
   private onSuccess(audits: Audit[] | null, headers: HttpHeaders): void {
     this.totalItems = Number(headers.get('X-Total-Count'));
     this.audits = audits || [];
+  }
+  // + detail view
+  viewDetail(item: string): void {
+    this.model = item;
+    this.modalService.open(this.detailModal, { size: 'lg' }).result.then(
+      () => this.modalService.dismissAll(),
+      () => this.modalService.dismissAll()
+    );
   }
 }

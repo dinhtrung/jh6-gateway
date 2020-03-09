@@ -14,8 +14,10 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -70,6 +72,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @Size(max = 20)
     @Field("reset_key")
+
     @JsonIgnore
     private String resetKey;
 
@@ -213,4 +216,26 @@ public class User extends AbstractAuditingEntity implements Serializable {
             ", activationKey='" + activationKey + '\'' +
             "}";
     }
+    
+    /** Extra meta data **/
+    @Field("meta")
+	private Map<String, Object> meta = new HashMap<String, Object>();
+
+	public Map<String, Object> getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Map<String, Object> meta) {
+		this.meta = meta;
+	}
+
+	private Map<String, Object> preferences = new HashMap<String, Object>();
+
+	public Map<String, Object> getPreferences() {
+		return preferences;
+	}
+
+	public void setPreferences(Map<String, Object> preferences) {
+		this.preferences = preferences;
+	}
 }

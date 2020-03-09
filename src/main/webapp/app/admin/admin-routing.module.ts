@@ -30,6 +30,10 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./gateway/gateway.module').then(m => m.GatewayModule)
       },
       {
+        path: 'settings',
+        loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule)
+      },
+      {
         path: 'health',
         loadChildren: () => import('./health/health.module').then(m => m.HealthModule)
       },

@@ -2,12 +2,16 @@ package com.ft.service;
 
 import com.ft.config.Constants;
 import com.ft.domain.Authority;
+import com.ft.domain.QUser;
 import com.ft.domain.User;
 import com.ft.repository.AuthorityRepository;
 import com.ft.repository.UserRepository;
 import com.ft.security.AuthoritiesConstants;
 import com.ft.security.SecurityUtils;
+import com.ft.service.dto.PublicUserDTO;
 import com.ft.service.dto.UserDTO;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 import io.github.jhipster.security.RandomUtil;
 
@@ -19,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -120,6 +125,9 @@ public class UserService {
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
+        // + meta
+        newUser.setMeta(userDTO.getMeta());
+        newUser.setPreferences(userDTO.getPreferences());
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
@@ -149,7 +157,7 @@ public class UserService {
         } else {
             user.setLangKey(userDTO.getLangKey());
         }
-        String encryptedPassword = passwordEncoder.encode(RandomUtil.generatePassword());
+        String encryptedPassword = passwordEncoder.encode(userDTO.getPassword() != null ? userDTO.getPassword() :  RandomUtil.generatePassword());
         user.setPassword(encryptedPassword);
         user.setResetKey(RandomUtil.generateResetKey());
         user.setResetDate(Instant.now());
@@ -162,6 +170,9 @@ public class UserService {
                 .collect(Collectors.toSet());
             user.setAuthorities(authorities);
         }
+        // + meta
+        user.setMeta(userDTO.getMeta());
+        user.setPreferences(userDTO.getPreferences());
         userRepository.save(user);
         this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
@@ -177,7 +188,7 @@ public class UserService {
      * @param langKey   language key.
      * @param imageUrl  image URL of user.
      */
-    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
+    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl, Map<String, Object> preferences) {
         SecurityUtils.getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
             .ifPresent(user -> {
@@ -188,6 +199,7 @@ public class UserService {
                 }
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);
+                user.setPreferences(preferences);
                 userRepository.save(user);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
@@ -216,6 +228,8 @@ public class UserService {
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());
                 user.setLangKey(userDTO.getLangKey());
+                if (!StringUtils.isEmpty(userDTO.getPassword()))
+                	user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
                 userDTO.getAuthorities().stream()
@@ -223,6 +237,9 @@ public class UserService {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .forEach(managedAuthorities::add);
+                // + meta
+                user.setMeta(userDTO.getMeta());
+                user.setPreferences(userDTO.getPreferences());
                 userRepository.save(user);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
@@ -257,6 +274,27 @@ public class UserService {
 
     public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
         return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+    }
+    
+    /**
+     * Get all managed user for current domain
+     * @param predicate
+     * @param pageable
+     * @param domain
+     * @return
+     */
+    public Page<UserDTO> getAllManagedUsers(Predicate predicate, Pageable pageable, String domain) {
+    	BooleanExpression presetPredicate = QUser.user.login.ne(Constants.ANONYMOUS_USER).and(QUser.user.authorities.any().sites.contains(domain));
+    	predicate = (predicate != null) ? presetPredicate.and(predicate) : presetPredicate;
+    	log.debug("Final predicate: {}", predicate);
+        return userRepository.findAll(predicate, pageable).map(UserDTO::new);
+    }
+    
+    public Page<PublicUserDTO> getAllPublicUsers(Predicate predicate, Pageable pageable, String domain) {
+    	BooleanExpression presetPredicate = QUser.user.login.ne(Constants.ANONYMOUS_USER).and(QUser.user.authorities.any().sites.contains(domain)).and(QUser.user.activated.eq(true));
+    	predicate = (predicate != null) ? presetPredicate.and(predicate) : presetPredicate;
+    	log.debug("Final predicate: {}", predicate);
+        return userRepository.findAll(predicate, pageable).map(PublicUserDTO::new);
     }
 
     public Optional<User> getUserWithAuthoritiesByLogin(String login) {

@@ -4,13 +4,14 @@ import { HttpResponse } from '@angular/common/http';
 
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, combineLatest, from } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
 // + Form Builder
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { AccountService } from 'app/core/auth/account.service';
 import { EntityService } from 'app/common/model/entity.service';
+import { Title } from '@angular/platform-browser';
 import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 
 @Component({
@@ -29,28 +30,27 @@ export class DataUpdateComponent implements OnInit {
   debug = DEBUG_INFO_ENABLED;
   apiEndpoint = '';
   editForm = new FormGroup({});
-  options: any;
+  options: any = {
+    formState: {
+      moment
+    }
+  };
 
-  constructor(protected accountService: AccountService, protected dataService: EntityService, protected activatedRoute: ActivatedRoute) {}
+  constructor(
+    private titleService: Title,
+    protected accountService: AccountService,
+    protected dataService: EntityService,
+    protected activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.isSaving = false;
     combineLatest(
-      from(this.accountService.identity()).pipe(
-        tap(
-          account =>
-            (this.options = {
-              formState: {
-                mainModel: this.model,
-                account,
-                moment
-              }
-            })
-        )
-      ),
+      this.accountService.identity().pipe(tap(account => (this.options.formState.account = account))),
       this.activatedRoute.data.pipe(
         tap(({ templateFile, model }) => {
           this.title = _.get(templateFile, 'title', 'createOrEditData');
+          this.titleService.setTitle(this.title);
           // this.languageHelper.updateTitle(this.title);
           this.svc = templateFile.svc;
           this.prop = templateFile.prop;
@@ -59,6 +59,7 @@ export class DataUpdateComponent implements OnInit {
           // + form rendering
           this.fields = _.get(templateFile, 'config.fields', []);
           this.model = model;
+          this.options.formState.mainModel = this.model;
         })
       )
     ).subscribe(() => (this.isReady = true));

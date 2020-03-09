@@ -8,7 +8,11 @@ import * as moment from 'moment';
   selector: 'jhi-formly-field-datetimepicker',
   template: `
     <div class="input-group">
-      <input class="form-control" [formControl]="formControl" [formlyAttributes]="field" />
+      <button class="btn btn-sm btn-outline-secondary" (click)="clear()" type="button" [disabled]="!date.value">
+        <fa-icon icon="times"></fa-icon>
+      </button>
+      <input *ngIf="!to.displayFormat" class="form-control" [formControl]="formControl" [formlyAttributes]="field" />
+      <span class="form-control" *ngIf="to.displayFormat" type="text" [innerHtml]="to.displayInput"></span>
       <div class="input-group-append">
         <button class="btn btn-outline-secondary" [ngbPopover]="calendarContent" autoClose="outside" type="button" #p="ngbPopover">
           <fa-icon [icon]="'calendar-alt'"></fa-icon>
@@ -40,9 +44,7 @@ import * as moment from 'moment';
 })
 export class DateTimeTypeComponent extends FieldType implements OnInit {
   defaultOptions = {
-    templateOptions: {
-      wrappers: ['form-field']
-    }
+    wrappers: ['form-field']
   };
   showTimePickerToggle = false;
   date: FormControl = new FormControl();
@@ -51,6 +53,9 @@ export class DateTimeTypeComponent extends FieldType implements OnInit {
   ngOnInit(): void {
     this.date.setValue(this.formControl.value ? moment(this.formControl.value) : moment());
     this.time.setValue((this.formControl.value ? moment(this.formControl.value) : moment()).format('HH:mm:00'));
+    if (this.to.displayFormat) {
+      this.to.displayInput = (this.formControl.value ? moment(this.formControl.value) : moment()).format(this.to.displayFormat);
+    }
   }
 
   toggleDateTimeState($event: any): void {
@@ -62,13 +67,26 @@ export class DateTimeTypeComponent extends FieldType implements OnInit {
     this.formControl.setValue(moment(this.date.value).format(this.to.format || DATE_FORMAT));
     this.showTimePickerToggle = !this.showTimePickerToggle;
   }
+
   onDateTimeSelected(): void {
     const tmp = moment(this.time.value, 'HH:mm');
-    const dt = this.date.value.set({
-      hour: tmp.get('hour'),
-      minute: tmp.get('minute'),
-      second: '00'
-    });
+    const dt = moment(this.date.value)
+      .hour(tmp.hour())
+      .minute(tmp.minute())
+      .second(0);
     this.formControl.setValue(dt.format(this.to.format || DATE_TIME_FORMAT));
+    if (this.to.displayFormat) {
+      this.to.displayInput = moment(this.formControl.value).format(this.to.displayFormat);
+    }
+  }
+  clear(): void {
+    this.formControl.setValue(null);
+    if (this.to.displayFormat) {
+      this.to.displayInput = moment()
+        .local()
+        .format(this.to.displayFormat);
+    }
+    this.date.setValue(moment());
+    this.time.setValue(moment().format('HH:mm:00'));
   }
 }

@@ -5,8 +5,13 @@ import com.ft.config.Constants;
 import com.ft.domain.Authority;
 import com.ft.domain.User;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 import javax.validation.constraints.*;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,7 +42,7 @@ public class UserDTO {
 
     private boolean activated = false;
 
-    @Size(min = 2, max = 10)
+    @Size(min = 2, max = 6)
     private String langKey;
 
     private String createdBy;
@@ -70,6 +75,8 @@ public class UserDTO {
         this.authorities = user.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
+        this.setMeta(user.getMeta());
+        this.setPreferences(user.getPreferences());
     }
 
     public String getId() {
@@ -193,4 +200,35 @@ public class UserDTO {
             ", authorities=" + authorities +
             "}";
     }
+    
+    private String password;
+
+    private Map<String, Object> meta = new HashMap<String, Object>();
+    
+    private Map<String, Object> preferences = new HashMap<String, Object>();
+	
+    public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Map<String, Object> getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Map<String, Object> meta) {
+		this.meta = meta;
+	}
+
+	public Map<String, Object> getPreferences() {
+		return preferences;
+	}
+
+	public void setPreferences(Map<String, Object> preferences) {
+		this.preferences = preferences;
+	}
+	
 }

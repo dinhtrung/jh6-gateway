@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +30,9 @@ public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
 
     private Key key;
+    
+    @Value("${spring.application.name}")
+    private String issuer;
 
     private long tokenValidityInMilliseconds;
 
@@ -76,6 +80,7 @@ public class TokenProvider {
         return Jwts.builder()
             .setSubject(authentication.getName())
             .claim(AUTHORITIES_KEY, authorities)
+            .setIssuer(issuer)
             .signWith(key, SignatureAlgorithm.HS512)
             .setExpiration(validity)
             .compact();

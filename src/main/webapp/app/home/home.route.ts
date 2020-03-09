@@ -9,6 +9,7 @@ import { HttpResponse, HttpClient } from '@angular/common/http';
 import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 
 import { DocsComponent } from './docs/docs.component';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 // + resolve markdown documentation

@@ -10,10 +10,11 @@ import { Title } from '@angular/platform-browser';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 // + Modal
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { plainToFlattenObject } from 'app/common/util/request-util';
-
 // + search
 import * as _ from 'lodash';
+// + mobile friendly
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'jhi-data',
@@ -21,6 +22,7 @@ import * as _ from 'lodash';
 })
 export class DataComponent implements OnInit, OnDestroy {
   _ = _;
+  isMobile: boolean;
   isReady = false;
   currentAccount: any;
   // + data
@@ -61,6 +63,7 @@ export class DataComponent implements OnInit, OnDestroy {
 
   constructor(
     private titleService: Title,
+    private deviceService: DeviceDetectorService,
     protected dataService: EntityService,
     protected parseLinks: JhiParseLinks,
     protected jhiAlertService: JhiAlertService,
@@ -71,18 +74,20 @@ export class DataComponent implements OnInit, OnDestroy {
     protected eventManager: JhiEventManager
   ) {
     this.itemsPerPage = ITEMS_PER_PAGE;
+    this.isMobile = this.deviceService.isMobile();
   }
 
   loadAll(): void {
     this.dataService
       .query(
         _.assign(
+          this.queryParams,
           {
             page: this.page - 1,
             size: this.itemsPerPage,
             sort: this.sort()
           },
-          { query: _.map(plainToFlattenObject(_.assign({}, this.queryParams, this.searchModel)), (v, k) => `${k}: ${v}`).join(' AND ') }
+          this.searchModel
         ),
         this.apiEndpoint
       )
@@ -175,7 +180,9 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.eventManager.destroy(this.eventSubscriber);
+    if (this.eventSubscriber) {
+      this.eventManager.destroy(this.eventSubscriber);
+    }
   }
 
   trackId(index: number, item: any): string {
@@ -188,8 +195,8 @@ export class DataComponent implements OnInit, OnDestroy {
 
   sort(): string[] {
     const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-    if (this.predicate !== '_id') {
-      result.push('_id');
+    if (this.predicate !== 'id') {
+      result.push('id');
     }
     return result;
   }
@@ -254,5 +261,30 @@ export class DataComponent implements OnInit, OnDestroy {
       return JSON.stringify(val);
     }
     return _.get(this.referenceMap, [col, val], val);
+  }
+
+  // + export data
+  exportData(): void {
+    this.dataService
+      .query(
+        _.assign(
+          this.queryParams,
+          {
+            page: this.page - 1,
+            size: 10000,
+            sort: this.sort()
+          },
+          this.searchModel
+        ),
+        this.apiEndpoint
+      )
+      .subscribe(res => this.saveDataToFile(res.body || []));
+  }
+  // + save array of json to file
+  saveDataToFile(data: any[]): void {
+    const blob = new Blob([JSON.stringify(data)], {
+      type: 'application/json'
+    });
+    saveAs(blob, this.prop + '.json');
   }
 }
