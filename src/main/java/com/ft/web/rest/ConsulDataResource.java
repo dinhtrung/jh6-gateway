@@ -31,11 +31,11 @@ public class ConsulDataResource {
 
 	@Autowired
 	ConsulClient consulClient;
-	
+
 	private YamlMapFactoryBean yamlMapper = new YamlMapFactoryBean();
-	
+
 	private ObjectMapper objectMapper = new ObjectMapper();
-	
+
 	/**
 	 * List all available configuration keys
 	 * @return
@@ -45,17 +45,17 @@ public class ConsulDataResource {
 	public ResponseEntity<List<String>> getConfigurations() {
 		return ResponseEntity.ok(consulClient.getKVKeysOnly("config").getValue());
 	}
-	
+
 	/**
 	 * Retrieve one key in decoded value
 	 * @param key
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@GetMapping("/config")
     @Secured(AuthoritiesConstants.ADMIN)
 	public ResponseEntity<String> getConfiguration(@RequestParam String key, @RequestParam(required = false) String file, @RequestParam(required = false) String format) throws IOException {
-		String content = consulClient.getKVValue("config/" + key).getValue().getDecodedValue();
+		String content = consulClient.getKVValue(key).getValue().getDecodedValue();
 		if (file != null) {
 			try {
 				Resource res = new ByteArrayResource(content.getBytes());
@@ -71,7 +71,7 @@ public class ConsulDataResource {
 		}
 		return ResponseEntity.ok(content);
 	}
-	
+
 	/**
 	 * Update the key with target YAML or JSON
 	 * @param key
@@ -81,7 +81,7 @@ public class ConsulDataResource {
 	@PostMapping("/config")
     @Secured(AuthoritiesConstants.ADMIN)
 	public ResponseEntity<String> setConfiguration(@RequestParam String key, @RequestBody String value) {
-		return ResponseEntity.ok(consulClient.setKVValue("config/" + key, value).getValue() ? value : null);
+		return ResponseEntity.ok(consulClient.setKVValue(key, value).getValue() ? value : null);
 	}
 	/**
 	 * Delete one key
@@ -91,6 +91,6 @@ public class ConsulDataResource {
 	@DeleteMapping("/config")
     @Secured(AuthoritiesConstants.ADMIN)
 	public ResponseEntity<Void> deleteConfiguration(@RequestParam String key) {
-		return ResponseEntity.ok(consulClient.deleteKVValues("config/" + key).getValue());
+		return ResponseEntity.ok(consulClient.deleteKVValues(key).getValue());
 	}
 }
