@@ -8,6 +8,7 @@ import { TranslateModule, TranslateLoader, MissingTranslationHandler } from '@ng
 import { NgxWebstorageModule } from 'ngx-webstorage';
 import { NgJhipsterModule, JhiConfigService, JhiLanguageService } from 'ng-jhipster';
 import locale from '@angular/common/locales/en';
+import localeVi from '@angular/common/locales/vi';
 
 import * as moment from 'moment';
 import { NgbDateAdapter, NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -25,7 +26,10 @@ import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 export function translatePartialLoader(http: HttpClient): TranslateLoader {
   return new MultiTranslateHttpLoader(http, [
     { prefix: 'i18n/', suffix: `.json?buildTimestamp=${process.env.BUILD_TIMESTAMP}` },
-    { prefix: 'assets/i18n/', suffix: `.json?buildTimestamp=${process.env.BUILD_TIMESTAMP}` }
+    // + static files overload
+    { prefix: 'assets/i18n/', suffix: `.json?buildTimestamp=${process.env.BUILD_TIMESTAMP}` },
+    // + server side overload
+    { prefix: '/api/public/static/', suffix: `.json?buildTimestamp=${process.env.BUILD_TIMESTAMP}` }
   ]);
 }
 
@@ -92,6 +96,7 @@ export function missingTranslationHandler(): TranslationHandler {
 export class CoreModule {
   constructor(iconLibrary: FaIconLibrary, dpConfig: NgbDatepickerConfig, languageService: JhiLanguageService) {
     registerLocaleData(locale);
+    registerLocaleData(localeVi);
     // iconLibrary.addIcons(...fontAwesomeIcons);
     iconLibrary.addIconPacks(fas);
     dpConfig.minDate = { year: moment().year() - 100, month: 1, day: 1 };
