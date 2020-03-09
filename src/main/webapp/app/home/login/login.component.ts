@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Renderer, ElementRef, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, Renderer2, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -21,11 +21,11 @@ export class LoginComponent implements AfterViewInit {
     rememberMe: [false]
   });
 
-  constructor(private loginService: LoginService, private renderer: Renderer, private router: Router, private fb: FormBuilder) {}
+  constructor(private loginService: LoginService, private renderer: Renderer2, private router: Router, private fb: FormBuilder) {}
 
   ngAfterViewInit(): void {
     if (this.username) {
-      this.renderer.invokeElementMethod(this.username.nativeElement, 'focus', []);
+      this.renderer.selectRootElement(this.username.nativeElement).scrollIntoView();
     }
   }
 
