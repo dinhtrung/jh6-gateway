@@ -1,0 +1,18 @@
+<!-- <router-outlet name="navbar"></router-outlet> -->
+<div class="wrapper">
+  <jhi-header (toggleMenuSidebar)="toggleMenuSidebar()"></jhi-header>
+
+  <jhi-menu-sidebar (mainSidebarHeight)="mainSidebarHeight($event)" ></jhi-menu-sidebar>
+
+  <div #contentWrapper class="content-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+
+  <jhi-footer></jhi-footer>
+  <aside class="control-sidebar control-sidebar-dark"></aside>
+  <div id="sidebar-overlay" (click)="toggleMenuSidebar()"></div>
+</div>
+
+<ngx-spinner bdOpacity=0.9 bdColor="#333" size="medium" color="#fff" type="ball-atom" [fullScreen]="true">
+    <p style="color: white"> Loading... </p>
+</ngx-spinner>

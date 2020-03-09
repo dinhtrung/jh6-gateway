@@ -1,0 +1,8 @@
+title: Thiết lập trang Liên hệ
+apiEndpoint: /api/public/static/contact-us
+fields:
+  - key: contactInfo
+    type: quill
+    templateOptions:
+      label: Thông tin liên hệ
+      description: Thông tin liên hệ hiển thị bên phải

@@ -1,0 +1,54 @@
+title: Trang giới thiệu
+apiEndpoint: /api/public/static/about-us
+fields:
+  - key: intro
+    type: quill
+    templateOptions:
+      label: About Us
+      description: About Us Information
+  - key: members
+    type: repeat
+    templateOptions:
+      label: Our Team
+      addText: Add Team Member
+    fieldArray:
+      fieldGroup:
+        - key: avatar
+          type: file-upload
+          templateOptions:
+            label: Avatar
+            apiEndpoint: /api/minio
+            fileSrc: 'api/public/download-file?name=${fileId}'
+            isImage: true
+            className: card-img
+        - key: name
+          type: input
+          templateOptions:
+            label: Member name
+        - key: job
+          type: input
+          templateOptions:
+            label: Job Title
+        - key: bio
+          type: quill
+          templateOptions:
+            label: Bio
+  - key: partners
+    type: repeat
+    templateOptions:
+      label: Our Partners
+      addText: Add Partner
+    fieldArray:
+      fieldGroup:
+        - key: logo
+          type: file-upload
+          templateOptions:
+            label: Logo
+            apiEndpoint: /api/minio
+            fileSrc: 'api/public/download-file?name=${fileId}'
+            isImage: true
+            className: card-img
+        - key: name
+          type: input
+          templateOptions:
+            label: Member name

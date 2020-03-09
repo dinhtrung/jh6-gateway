@@ -9,12 +9,16 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access-service'
 
 const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
 
+import { MainJhiComponent } from './layouts/main-jhi/main-jhi.component';
+import { MainLteComponent } from './layouts/main-lte/main-lte.component';
+
 @NgModule({
   imports: [
     RouterModule.forRoot(
       [
         {
           path: 'admin',
+          component: MainJhiComponent,
           data: {
             authorities: [Authority.ADMIN]
           },
@@ -23,6 +27,7 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
         },
         {
           path: 'management',
+          component: MainJhiComponent,
           data: {
             authorities: ['ROLE_ADMIN']
           },
@@ -31,6 +36,7 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
         },
         {
           path: 'account',
+          component: MainLteComponent,
           loadChildren: () => import('./account/account.module').then(m => m.AccountModule)
         },
         // + crud module
@@ -41,6 +47,7 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
         // + demo module
         {
           path: 'demo',
+          component: MainLteComponent,
           loadChildren: () => import('./demo/demo.module').then(m => m.DemoModule)
         },
         ...LAYOUT_ROUTES

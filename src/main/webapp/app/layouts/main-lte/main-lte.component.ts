@@ -12,10 +12,10 @@ import { SessionStorageService } from 'ngx-webstorage';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'jhi-main',
-  templateUrl: './main.component.html'
+  selector: 'jhi-main-lte',
+  templateUrl: './main-lte.component.html'
 })
-export class MainComponent implements OnInit {
+export class MainLteComponent implements OnInit {
   public sidebarMenuOpened = true;
   @ViewChild('contentWrapper', { static: false }) contentWrapper: any;
 

@@ -1,0 +1,9 @@
+apiEndpoint: /api/public/static/home
+queryParams:
+title: Homepage Settings
+fields:
+  - key: videoUrl
+    type: input
+    templateOptions:
+      label: Video URL
+      description: Homepage Video URL

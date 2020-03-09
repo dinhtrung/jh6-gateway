@@ -16,6 +16,11 @@ import { FooterComponent } from './layouts/footer/footer.component';
 import { PageRibbonComponent } from './layouts/profiles/page-ribbon.component';
 import { ActiveMenuDirective } from './layouts/navbar/active-menu.directive';
 import { ErrorComponent } from './layouts/error/error.component';
+// + admin lte
+import { MainJhiComponent } from './layouts/main-jhi/main-jhi.component';
+import { MainLteComponent } from './layouts/main-lte/main-lte.component';
+import { HeaderComponent } from './layouts/header/header.component';
+import { MenuSidebarComponent } from './layouts/menu-sidebar/menu-sidebar.component';
 // + spinner
 import { NgxSpinnerModule } from 'ngx-spinner';
 // + device detector
@@ -43,7 +48,18 @@ import { DEBUG_INFO_ENABLED } from 'app/app.constants';
     EntityModule,
     AppRoutingModule
   ],
-  declarations: [MainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, ActiveMenuDirective, FooterComponent],
+  declarations: [
+    MainComponent,
+    NavbarComponent,
+    ErrorComponent,
+    PageRibbonComponent,
+    ActiveMenuDirective,
+    FooterComponent,
+    HeaderComponent,
+    MenuSidebarComponent,
+    MainLteComponent,
+    MainJhiComponent
+  ],
   bootstrap: [MainComponent]
 })
 export class GatewayAppModule {}
