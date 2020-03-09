@@ -13,3 +13,11 @@
     - name: User Guide
       url: /docs/user-guide
       icon: question-circle
+- name: Settings
+  icon: cogs
+  authority: ROLE_ADMIN
+  children:
+    - name: White Label
+      url: /management/forms/i18n/en
+      icon: home
+      authority: ROLE_USER

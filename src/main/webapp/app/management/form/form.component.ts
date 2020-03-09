@@ -11,7 +11,6 @@ import { SERVER_API_URL } from 'app/app.constants';
 import { FormGroup } from '@angular/forms';
 // + search
 import * as _ from 'lodash';
-import * as jsyaml from 'js-yaml';
 
 @Component({
   selector: 'jhi-form',
@@ -45,10 +44,10 @@ export class FormComponent implements OnInit {
 
   loadAll(): void {
     this.httpClient
-      .get(SERVER_API_URL + this.apiEndpoint, { params: createRequestOption(this.queryParams), observe: 'response', responseType: 'text' })
+      .get(SERVER_API_URL + this.apiEndpoint, { params: createRequestOption(this.queryParams), observe: 'response' })
       .pipe(
         filter(res => res.ok),
-        map(res => jsyaml.load(res.body || ''))
+        map(res => res.body || {})
       )
       .subscribe(
         res => (this.model = res),
@@ -79,10 +78,9 @@ export class FormComponent implements OnInit {
 
   save(): void {
     this.httpClient
-      .post(this.apiEndpoint, jsyaml.dump(this.model), {
+      .post(this.apiEndpoint, this.model, {
         params: createRequestOption(this.queryParams),
-        observe: 'response',
-        responseType: 'text'
+        observe: 'response'
       })
       .subscribe(() => this.loadAll());
   }
