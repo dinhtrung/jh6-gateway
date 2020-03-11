@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,12 +25,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecwid.consul.v1.ConsulClient;
+import com.ecwid.consul.v1.QueryParams;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ft.security.AuthoritiesConstants;
 
 @RestController
 @RequestMapping("/api/consul")
 public class ConsulDataResource {
+	
+	private final Logger log = LoggerFactory.getLogger(ConsulDataResource.class);
 
 	@Autowired
 	ConsulClient consulClient;
@@ -92,5 +98,27 @@ public class ConsulDataResource {
     @Secured(AuthoritiesConstants.ADMIN)
 	public ResponseEntity<Void> deleteConfiguration(@RequestParam String key) {
 		return ResponseEntity.ok(consulClient.deleteKVValues(key).getValue());
+	}
+	
+	
+	/**
+	 * System Overall health checks
+	 * @return
+	 */
+	@GetMapping("/health")
+	public ResponseEntity<Object> getHealth() {
+		return ResponseEntity.ok(consulClient.getHealthChecksState(null).getValue());
+	}
+//	
+//	@GetMapping("/health/node/{node}")
+//	public ResponseEntity<Object> getNodeHealth(@PathVariable String node, @RequestParam(required = false) QueryParams queryParams) {
+//		log.debug("Available nodes: {}", consulClient.getNodes(null));
+//		log.debug("Available nodes: {}", );
+//		return ResponseEntity.ok(consulClient.getHealthChecksForNode(node, queryParams));
+//	}
+//	
+	@GetMapping("/health/service/{service}")
+	public ResponseEntity<Object> getServiceHealth(@PathVariable String service, @RequestParam(required = false) QueryParams queryParams) {
+		return ResponseEntity.ok(consulClient.getHealthChecksForService(service, queryParams).getValue());
 	}
 }

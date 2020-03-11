@@ -34,6 +34,10 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule)
       },
       {
+        path: 'consul-health',
+        loadChildren: () => import('./consul-health/consul-health.module').then(m => m.ConsulHealthModule)
+      },
+      {
         path: 'health',
         loadChildren: () => import('./health/health.module').then(m => m.HealthModule)
       },

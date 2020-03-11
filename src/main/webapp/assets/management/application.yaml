@@ -36,3 +36,25 @@
   type: checkbox
   templateOptions:
     label: spring.mail.properties.mail.smtp.starttls.enable
+
+# Minio configuration
+- key: minio
+  fieldGroup:
+    # File Upload configuration
+    - key: endpoint
+      defaultValue: https://play.min.io
+      templateOptions:
+        jhiLabel: endpoint
+    - key: accessKey
+      defaultValue: Q3AM3UQ867SPQQA43P2F
+      templateOptions:
+        jhiLabel: accessKey
+    - key: secretKey
+      defaultValue: zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
+      templateOptions:
+        jhiLabel: secretKey
+        type: password
+    - key: bucketName
+      defaultValue: hohuy
+      templateOptions:
+        jhiLabel: bucketName
