@@ -106,18 +106,13 @@ public class ConsulDataResource {
 	 * @return
 	 */
 	@GetMapping("/health")
+	@Secured(AuthoritiesConstants.ADMIN)
 	public ResponseEntity<Object> getHealth() {
 		return ResponseEntity.ok(consulClient.getHealthChecksState(null).getValue());
 	}
-//	
-//	@GetMapping("/health/node/{node}")
-//	public ResponseEntity<Object> getNodeHealth(@PathVariable String node, @RequestParam(required = false) QueryParams queryParams) {
-//		log.debug("Available nodes: {}", consulClient.getNodes(null));
-//		log.debug("Available nodes: {}", );
-//		return ResponseEntity.ok(consulClient.getHealthChecksForNode(node, queryParams));
-//	}
-//	
+
 	@GetMapping("/health/service/{service}")
+	@Secured(AuthoritiesConstants.ADMIN)
 	public ResponseEntity<Object> getServiceHealth(@PathVariable String service, @RequestParam(required = false) QueryParams queryParams) {
 		return ResponseEntity.ok(consulClient.getHealthChecksForService(service, queryParams).getValue());
 	}

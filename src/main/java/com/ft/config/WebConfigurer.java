@@ -153,7 +153,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     
     @Autowired
 	PersistenceAuditEventRepository persistAuditEventRepo;
-
+    
     /**
      * Initializes the caching HTTP Headers Filter.
      */
