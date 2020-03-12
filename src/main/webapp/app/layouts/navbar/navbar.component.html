@@ -99,6 +99,12 @@
                         </a>
                     </li>
                     <li>
+                        <a class="dropdown-item" routerLink="admin/alert-manager" routerLinkActive="active" (click)="collapseNavbar()">
+                            <fa-icon icon="bell" fixedWidth="true"></fa-icon>
+                            <span jhiTranslate="global.menu.admin.alertManager">Alert Manager</span>
+                        </a>
+                    </li>
+                    <li>
                         <a class="dropdown-item" routerLink="admin/configuration" routerLinkActive="active" (click)="collapseNavbar()">
                             <fa-icon icon="list" fixedWidth="true"></fa-icon>
                             <span jhiTranslate="global.menu.admin.configuration">Configuration</span>

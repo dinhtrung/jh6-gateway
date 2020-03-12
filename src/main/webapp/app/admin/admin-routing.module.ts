@@ -38,6 +38,10 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./consul-health/consul-health.module').then(m => m.ConsulHealthModule)
       },
       {
+        path: 'alert-manager',
+        loadChildren: () => import('./alert-manager/alert-manager.module').then(m => m.AlertManagerModule)
+      },
+      {
         path: 'health',
         loadChildren: () => import('./health/health.module').then(m => m.HealthModule)
       },

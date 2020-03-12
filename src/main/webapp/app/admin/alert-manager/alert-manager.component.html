@@ -1,0 +1,90 @@
+<div>
+    <h2 id="alertManager-page-heading" jhiTranslate="alertManager.title">Alert Manager</h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <div class="row">
+        <div class="col-md-5">
+            <h4 jhiTranslate="alertManager.filter.title">Filter by date</h4>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" jhiTranslate="alertManager.filter.from">from</span>
+                </div>
+                <input type="date" class="form-control" name="start" [(ngModel)]="fromDate" (ngModelChange)="transition()" required/>
+
+                <div class="input-group-append">
+                    <span class="input-group-text" jhiTranslate="alertManager.filter.to">To</span>
+                </div>
+                <input type="date" class="form-control" name="end" [(ngModel)]="toDate" (ngModelChange)="transition()" required/>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-warning" *ngIf="alerts?.length === 0">
+        <span jhiTranslate="alertManager.notFound">No alert found</span>
+    </div>
+
+    <div class="table-responsive" *ngIf="alerts?.length > 0">
+        <table class="table table-sm table-striped" aria-describedby="alertManager-page-heading">
+            <thead>
+                <tr>
+                    <th scope="col"><span jhiTranslate="alertManager.table.header.startsAt">Start Date</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"><span jhiTranslate="alertManager.table.header.endsAt">End Date</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"><span jhiTranslate="alertManager.table.header.status">State</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"><span jhiTranslate="alertManager.table.header.instance">Instance</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"><span jhiTranslate="alertManager.table.header.instance">Name</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"><span jhiTranslate="alertManager.table.header.extraData">Extra data</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let audit of alerts">
+                    <td><span>{{ audit.startsAt | date:'short' }}</span></td>
+                    <td><span>{{ audit.endsAt | date:'short' }}</span></td>
+                    <td>
+                      <span class="badge" [ngClass]="getBadgeClass(audit.status?.state)" *ngIf="audit.status?.state">{{ audit.status?.state }}</span>
+                      <span class="badge" [ngClass]="getBadgeClass(audit.labels?.severity)" *ngIf="audit.labels?.severity">{{ audit.labels?.severity }}</span>
+                    </td>
+                    <td>{{ audit.labels?.instance }}</td>
+                    <td>{{ audit.labels?.name }}</td>
+                    <td>
+                        <p [innerHtml]="audit.annotations?.summary"></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="alerts?.length > 0">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)" [disabled]="!canLoad()"></ngb-pagination>
+        </div>
+    </div>
+</div>
+
+<ng-template #detailModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Response Payload</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="modal.dismiss()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <pre [innerHtml]="model" *ngIf="!details"></pre>
+        <div class="table-responsive" *ngIf="details">
+        <table class="table table-sm table-striped table-borderless">
+          <tr *ngFor="let d of details | keyvalue">
+            <th [innerHtml]="d.key"></th>
+            <td [innerHtml]="d.value"></td>
+          </tr>
+        </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="modal.dismiss()">
+            <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">OK</span>
+        </button>
+    </div>
+</ng-template>

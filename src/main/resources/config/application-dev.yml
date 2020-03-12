@@ -13,6 +13,12 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
+zuul: # those values must be configured depending on the application specific needs
+  routes:
+    alert-manager:
+      path: /alert-manager/**
+      url: http://localhost:9093/
+
 logging:
   level:
     ROOT: DEBUG
