@@ -50,7 +50,7 @@ spring:
       auto-index-creation: true
   mail:
     host: localhost
-    port: 25
+    port: 20025
     username:
     password:
   messages:

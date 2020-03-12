@@ -82,7 +82,15 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="modal.dismiss()">&times;</button>
     </div>
     <div class="modal-body">
-        <pre [innerHtml]="model"></pre>
+        <pre [innerHtml]="model" *ngIf="!details"></pre>
+        <div class="table-responsive" *ngIf="details">
+        <table class="table table-sm table-striped table-borderless">
+          <tr *ngFor="let d of details | keyvalue">
+            <th [innerHtml]="d.key"></th>
+            <td [innerHtml]="d.value"></td>
+          </tr>
+        </table>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="modal.dismiss()">

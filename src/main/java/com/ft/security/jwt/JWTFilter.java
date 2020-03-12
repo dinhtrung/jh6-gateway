@@ -1,9 +1,13 @@
 package com.ft.security.jwt;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.ft.security.AuthoritiesConstants;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -33,6 +37,11 @@ public class JWTFilter extends GenericFilterBean {
         String jwt = resolveToken(httpServletRequest);
         if (StringUtils.hasText(jwt) && this.tokenProvider.validateToken(jwt)) {
             Authentication authentication = this.tokenProvider.getAuthentication(jwt);
+            
+            String permission = httpServletRequest.getMethod() + " " + httpServletRequest.getRequestURI();
+            authentication.getAuthorities().stream().filter(i -> i.getAuthority().equalsIgnoreCase(AuthoritiesConstants.ADMIN) || permission.startsWith(i.getAuthority())).findAny()
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "User does not have any permission for requested resource: " + permission));
+            
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(servletRequest, servletResponse);

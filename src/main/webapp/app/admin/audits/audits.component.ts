@@ -9,6 +9,8 @@ import { AuditsService } from './audits.service';
 
 // + Modal
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { plainToFlattenObject } from 'app/common/util/request-util';
+
 @Component({
   selector: 'jhi-audit',
   templateUrl: './audits.component.html'
@@ -28,6 +30,7 @@ export class AuditsComponent implements OnInit {
   // + details modal
   @ViewChild('detailModal', { static: true }) detailModal: any;
   model = '';
+  details: any;
 
   constructor(
     private auditsService: AuditsService,
@@ -117,6 +120,11 @@ export class AuditsComponent implements OnInit {
   // + detail view
   viewDetail(item: string): void {
     this.model = item;
+    try {
+      this.details = plainToFlattenObject(JSON.parse(item));
+    } catch (Error) {
+      this.details = undefined;
+    }
     this.modalService.open(this.detailModal, { size: 'lg' }).result.then(
       () => this.modalService.dismissAll(),
       () => this.modalService.dismissAll()

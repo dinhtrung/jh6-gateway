@@ -195,6 +195,18 @@ ui bootstrap tweaks
 /* jhipster-needle-scss-add-main JHipster will add new css style */
 
 /* ==========================================================================
+Generic Custom styles
+========================================================================== */
+.blinking {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+/* ==========================================================================
 sidebar layout
 ========================================================================== */
 body {

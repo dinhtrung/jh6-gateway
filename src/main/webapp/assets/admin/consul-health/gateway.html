@@ -20,6 +20,14 @@
     </li>
   <% } %>
 
+  <% if (components.mail) { %>
+  <li><strong>Mail Server:</strong> <span class="float-right badge badge-${ (components.mail.status === 'UP' ? 'success' : 'danger')}">${ components.mail.status }</span>
+    <ul>
+      <li><strong>Location:</strong> <code class="float-right">${ components.mail.details.location }</code></li>
+    </ul>
+  </li>
+  <% } %>
+
   <% if (components.mongo) { %>
     <li><strong>mongo:</strong> <span class="float-right badge badge-${ (components.mongo.status === 'UP' ? 'success' : 'danger')}">${ components.mongo.status }</span>
       <ul>

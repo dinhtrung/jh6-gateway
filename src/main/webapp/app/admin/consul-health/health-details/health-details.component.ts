@@ -25,11 +25,11 @@ export class HealthDetailsComponent implements OnInit {
   // consul status: UNKNOWN, 	PASSING, 	WARNING
   getBadgeClass(statusState: string): string {
     if (statusState === 'CRITICAL') {
-      return 'badge-danger';
+      return 'badge-danger blinking';
     } else if (statusState === 'PASSING') {
       return 'badge-success';
     } else if (statusState === 'WARNING') {
-      return 'badge-warning';
+      return 'badge-warning blinking';
     } else {
       return 'badge-dark';
     }
