@@ -15,6 +15,7 @@ export class HealthDetailsComponent implements OnInit {
   properties: any;
   output = '';
   metadata = '';
+  isCollapsed = true;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -39,7 +40,7 @@ export class HealthDetailsComponent implements OnInit {
     try {
       this.meta = JSON.parse(output.substr(output.indexOf('Output: ') + 'Output: '.length));
       this.httpClient
-        .get(SERVER_API_URL + `assets/admin/consul-health/${service}.html`, { responseType: 'text', observe: 'response' })
+        .get(SERVER_API_URL + `assets/admin/consul-health/${service}.tpl`, { responseType: 'text', observe: 'response' })
         .pipe(
           filter(res => res.ok),
           map(res => res.body || '')

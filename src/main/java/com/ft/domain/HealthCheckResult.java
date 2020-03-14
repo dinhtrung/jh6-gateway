@@ -19,7 +19,7 @@ import java.util.Set;
  * A Entry.
  */
 @Document(collection = "health_checks")
-public class HealthCheck implements Serializable {
+public class HealthCheckResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -84,7 +84,7 @@ public class HealthCheck implements Serializable {
         return name;
     }
 
-    public HealthCheck name(String name) {
+    public HealthCheckResult name(String name) {
         this.name = name;
         return this;
     }
@@ -97,7 +97,7 @@ public class HealthCheck implements Serializable {
         return state;
     }
 
-    public HealthCheck state(Integer state) {
+    public HealthCheckResult state(Integer state) {
         this.state = state;
         return this;
     }
@@ -110,7 +110,7 @@ public class HealthCheck implements Serializable {
         return type;
     }
 
-    public HealthCheck type(String contentType) {
+    public HealthCheckResult type(String contentType) {
         this.type = contentType;
         return this;
     }
@@ -124,10 +124,10 @@ public class HealthCheck implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof HealthCheck)) {
+        if (!(o instanceof HealthCheckResult)) {
             return false;
         }
-        return id != null && id.equals(((HealthCheck) o).id);
+        return id != null && id.equals(((HealthCheckResult) o).id);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class HealthCheck implements Serializable {
 		this.meta = meta;
 	}
     
-    public HealthCheck meta(Map<String, Object> meta) {
+    public HealthCheckResult meta(Map<String, Object> meta) {
 		this.meta = meta;
 		return this;
 	}
@@ -164,7 +164,7 @@ public class HealthCheck implements Serializable {
 		this.createdAt = createdAt;
 	}
 	
-	public HealthCheck createdAt(Instant createdAt) {
+	public HealthCheckResult createdAt(Instant createdAt) {
 		this.createdAt = createdAt;
 		return this;
 	}
@@ -186,7 +186,7 @@ public class HealthCheck implements Serializable {
 		this.updatedAt = updatedAt;
 	}
 	
-	public HealthCheck updatedAt(Instant updatedAt) {
+	public HealthCheckResult updatedAt(Instant updatedAt) {
 		this.updatedAt = updatedAt;
 		return this;
 	}
@@ -199,7 +199,7 @@ public class HealthCheck implements Serializable {
 		this.updatedBy = updatedBy;
 	}
 	
-	public HealthCheck updatedBy(String updatedBy) {
+	public HealthCheckResult updatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 		return this;
 	}
@@ -212,7 +212,7 @@ public class HealthCheck implements Serializable {
 		this.touchedBy = touchedBy;
 	}
 	
-	public HealthCheck touchedBy(String touchedBy) {
+	public HealthCheckResult touchedBy(String touchedBy) {
 		this.touchedBy.add(touchedBy);
 		return this;
 	}

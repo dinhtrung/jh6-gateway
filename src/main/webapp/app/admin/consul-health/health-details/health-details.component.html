@@ -2,9 +2,15 @@
   <div class="card-header">
     <span class="badge" [ngClass]="getBadgeClass(healthIndicator.status)" [innerHTML]="healthIndicator.status"></span>
     <span [innerHTML]="healthIndicator.name"></span>
+    <button type="button" class="btn btn-outline-primary" (click)="isCollapsed = !isCollapsed"
+          [attr.aria-expanded]="!isCollapsed">
+      Toggle
+    </button>
   </div>
     <div class="card-body">
       <p [innerHTML]="output" class="alert alert-info"></p>
+    </div>
+    <div class="card-body" [ngbCollapse]="isCollapsed">
       <ul *ngIf="properties" class="list-unstyled">
         <li *ngFor="let m of properties | keyvalue" class="d-flex justify-content-between">
           <strong [innerHTML]="m.key"></strong>

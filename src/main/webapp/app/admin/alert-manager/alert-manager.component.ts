@@ -10,6 +10,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { plainToFlattenObject } from 'app/common/util/request-util';
 import { EntityService } from 'app/common/model/entity.service';
 
+// + sockjs client
+import * as SockJS from 'sockjs-client';
+import * as Stomp from 'webstomp-client';
+
 @Component({
   selector: 'jhi-alert-manager',
   templateUrl: './alert-manager.component.html'
@@ -30,6 +34,8 @@ export class AlertManagerComponent implements OnInit {
   @ViewChild('detailModal', { static: true }) detailModal: any;
   model = '';
   details: any;
+  // + websocket
+  stompClient: any;
 
   constructor(
     private entityService: EntityService,
@@ -49,6 +55,17 @@ export class AlertManagerComponent implements OnInit {
       this.ascending = data['pagingParams'].ascending;
       this.predicate = data['pagingParams'].predicate;
       this.loadData();
+    });
+    const socket = new SockJS('ws://172.16.16.146:61613');
+    this.stompClient = Stomp.over(socket);
+    const headers = {};
+    this.stompClient.connect(headers, () => {
+      // eslint-disable-next-line no-console
+      console.log('websocket.service: Successfully estabilish stompClient');
+      this.subscriber = this.stompClient.subscribe('/topic/logstash', data => {
+        // eslint-disable-next-line no-console
+        console.log('Got message', data);
+      });
     });
   }
 

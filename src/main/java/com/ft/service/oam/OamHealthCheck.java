@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 
 @Service
+@ConditionalOnProperty(prefix = "application", name = { "healthcheck" })
 public class OamHealthCheck {
 
 	private final Logger log = LoggerFactory.getLogger(OamHealthCheck.class);
@@ -31,14 +33,13 @@ public class OamHealthCheck {
 	@Autowired
 	ConsulClient consulClient;
 	
-	@Scheduled(fixedRate = 10000)
+	@Scheduled(fixedRate = 300000)
 	public void performHealthCheckViaConsul() {
 		Map<String, List<String>> catalogServices = consulClient.getCatalogServices(null).getValue();
 		log.debug("Perform health check for services: {}", catalogServices);
 		
 		List<Check> healthCheckState = consulClient.getHealthChecksState(null).getValue();
 		log.debug("Perform health check for services: {}", healthCheckState);
-		
 		
 	}
 }
