@@ -29,7 +29,7 @@ export class DataDetailComponent implements OnInit {
       this.activatedRoute.data.pipe(
         tap(({ templateFile, model }) => {
           this.model = model;
-          this.fields = _.get(templateFile, 'config.details', this.generateDefaultFields());
+          this.fields = _.get(templateFile, 'config.details', this.generateDefaultFields(_.get(templateFile, 'config.fields')));
         })
       ),
       this.accountService.identity().pipe(
@@ -51,11 +51,20 @@ export class DataDetailComponent implements OnInit {
     window.history.back();
   }
   // Generate default fields based on model keys
-  generateDefaultFields(): any {
-    return _.map(this.model, (val, key) => {
-      return {
-        template: `<div class="d-flex justify-content-between"><strong>${key}</strong><em>${val}</em></div>`
-      };
-    });
+  generateDefaultFields(fields?: any[]): any {
+    if (!fields) {
+      return _.map(this.model, (val, key) => {
+        return {
+          template: `<div class="d-flex justify-content-between"><strong>${key}</strong><em>${val}</em></div>`
+        };
+      });
+    } else {
+      return [
+        {
+          fieldGroup: fields,
+          templateOptions: { disabled: true }
+        }
+      ];
+    }
   }
 }

@@ -22,7 +22,7 @@ fields:
         type: input
         className: col-md-4
         templateOptions:
-          label: TAG-ID Code
+          label: TADIG CODE
           description: TAGID CODE
       - key: mcc
         type: input
