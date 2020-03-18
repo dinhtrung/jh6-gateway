@@ -1,5 +1,6 @@
 title: GT Prefixes
 apiEndpoint: /services/vnpti-msu/api/hubs
+createOrEditData: Hub Information
 importApiEndpoint: /services/vnpti-msu/api/data-management/hubs
 predicate: 'name'
 reverse: true

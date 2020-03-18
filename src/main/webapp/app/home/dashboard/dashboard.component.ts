@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
         map((content: HttpResponse<string>) => jsyaml.load(content.body || '')),
         tap(() => (this.isReady = true))
       )
-      .subscribe(menuItems => (this.rows = _.chunk(menuItems, 6)));
+      .subscribe(menuItems => (this.rows = _.chunk(menuItems, 4)));
   }
 
   trackId(index: number, item: any): string {

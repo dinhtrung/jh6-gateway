@@ -49,7 +49,7 @@ export class DataUpdateComponent implements OnInit {
       this.accountService.identity().pipe(tap(account => (this.options.formState.account = account))),
       this.activatedRoute.data.pipe(
         tap(({ templateFile, model }) => {
-          this.title = _.get(templateFile, 'title', 'createOrEditData');
+          this.title = _.get(templateFile, 'config.createOrEditData', 'createOrEditData');
           this.titleService.setTitle(this.title);
           // this.languageHelper.updateTitle(this.title);
           this.svc = templateFile.svc;
