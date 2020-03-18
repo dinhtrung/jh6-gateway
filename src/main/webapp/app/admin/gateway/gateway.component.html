@@ -1,12 +1,13 @@
-<div>
-    <h2>
-        <span id="gateway-page-heading" jhiTranslate="gateway.title">Gateway</span>
+<div class="card">
+  <h2 class="card-header">
+      <span id="gateway-page-heading" jhiTranslate="gateway.title">Gateway</span>
 
-        <button class="btn btn-primary float-right" (click)="refresh()" (disabled)="updatingRoutes">
-            <fa-icon icon="sync"></fa-icon> <span jhiTranslate="gateway.refresh.button">Refresh</span>
-        </button>
-    </h2>
+      <button class="btn btn-primary float-right" (click)="refresh()" (disabled)="updatingRoutes">
+          <fa-icon icon="sync"></fa-icon> <span jhiTranslate="gateway.refresh.button">Refresh</span>
+      </button>
+  </h2>
 
+  <div class="card-body">
     <h3 jhiTranslate="gateway.routes.title">Current routes</h3>
 
     <div class="table-responsive">
@@ -51,4 +52,5 @@
             </tbody>
         </table>
     </div>
+  </div>
 </div>

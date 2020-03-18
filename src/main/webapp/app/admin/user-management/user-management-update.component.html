@@ -1,11 +1,12 @@
 <div class="row justify-content-center">
     <div class="col-8">
+      <div class="card">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-            <h2 id="myUserLabel" jhiTranslate="userManagement.home.createOrEditLabel">
+            <h2 class="card-header" id="myUserLabel" jhiTranslate="userManagement.home.createOrEditLabel">
                 Create or edit a User
             </h2>
 
-            <div *ngIf="user">
+            <div *ngIf="user" class="card-body">
                 <jhi-alert-error></jhi-alert-error>
 
                 <div class="form-group" [hidden]="!user.id">
@@ -126,7 +127,7 @@
                 </div>
             </div>
 
-            <div *ngIf="user">
+            <div *ngIf="user" class="card-footer">
                 <button type="button" class="btn btn-secondary" (click)="previousState()">
                     <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
                 </button>
@@ -136,5 +137,6 @@
                 </button>
             </div>
         </form>
+      </div>
     </div>
 </div>

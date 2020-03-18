@@ -1,5 +1,7 @@
-<div *ngIf="allBeans">
-    <h2 id="configuration-page-heading" jhiTranslate="configuration.title">Configuration</h2>
+<div *ngIf="allBeans" class="card">
+  <h2 class="card-header" id="configuration-page-heading" jhiTranslate="configuration.title">Configuration</h2>
+
+  <div class="card-body">
 
     <span jhiTranslate="configuration.filter">Filter (by prefix)</span> <input type="text" [(ngModel)]="beansFilter" (ngModelChange)="filterAndSortBeans()" class="form-control">
 
@@ -47,4 +49,5 @@
             </tbody>
         </table>
     </div>
+  </div>
 </div>

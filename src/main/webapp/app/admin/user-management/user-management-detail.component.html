@@ -1,9 +1,10 @@
 <div class="row justify-content-center">
     <div class="col-8">
-        <div *ngIf="user">
-            <h2>
-                <span jhiTranslate="userManagement.detail.title">User</span> [<b>{{ user.login }}</b>]
-            </h2>
+        <div *ngIf="user" class="card">
+          <h2 class="card-title">
+              <span jhiTranslate="userManagement.detail.title">User</span> [<b>{{ user.login }}</b>]
+          </h2>
+          <div class="card-body">
 
             <dl class="row-md jh-entity-details">
                 <dt><span jhiTranslate="userManagement.login">Login</span></dt>
@@ -49,10 +50,12 @@
                     </ul>
                 </dd>
             </dl>
-
+          </div>
+          <div class="card-footer">
             <button type="submit" routerLink="../../" class="btn btn-info">
                 <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
             </button>
+          </div>
         </div>
     </div>
 </div>
