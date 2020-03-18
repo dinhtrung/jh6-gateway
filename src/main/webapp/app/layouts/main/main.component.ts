@@ -6,24 +6,13 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { TranslateService } from '@ngx-translate/core';
 
 import { AccountService } from 'app/core/auth/account.service';
-// + sidebar support
-import { JhiEventManager } from 'ng-jhipster';
-import { SessionStorageService } from 'ngx-webstorage';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'jhi-main',
   templateUrl: './main.component.html'
 })
 export class MainComponent implements OnInit {
-  isNavbarCollapsed = false;
-  // + Extra menu items
-  _ = _;
-  public menuItems: any[] = [];
   constructor(
-    // + sidebar menu items
-    private eventManager: JhiEventManager,
-    private sessionStorage: SessionStorageService,
     // + spinner
     private spinner: NgxSpinnerService,
     private accountService: AccountService,
@@ -44,16 +33,6 @@ export class MainComponent implements OnInit {
       }
       if (event instanceof NavigationEnd) {
         this.updateTitle();
-        // Once logged in, load extra menus();
-        this.accountService.identity().subscribe(account => {
-          if (account) {
-            this.loadExtraMenu();
-            this.eventManager.subscribe('reloadSidebar', () => this.loadExtraMenu());
-          } else {
-            this.menuItems = [];
-            this.sessionStorage.clear('sidebarMenuItems');
-          }
-        });
       }
       if (event instanceof NavigationError && event.error.status === 404) {
         this.router.navigate(['/404']);
@@ -77,18 +56,5 @@ export class MainComponent implements OnInit {
       pageTitle = 'global.title';
     }
     this.translateService.get(pageTitle).subscribe(title => this.titleService.setTitle(title));
-  }
-
-  // + sidebar support
-  collapseNavbar(): void {
-    this.isNavbarCollapsed = true;
-  }
-
-  toggleNavbar(): void {
-    this.isNavbarCollapsed = !this.isNavbarCollapsed;
-  }
-  // + Load Extra Menu
-  loadExtraMenu(): void {
-    this.menuItems = this.sessionStorage.retrieve('sidebarMenuItems');
   }
 }

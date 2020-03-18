@@ -5,20 +5,42 @@
 * Make sure not to add !default to values here
 */
 
-// Colors:
-// Grayscale and brand colors for use across Bootstrap.
+/*
+* Also check out
+* https://themestr.app/customize
+*/
 
-$primary: #3e8acc;
-$success: #28a745;
-$info: #17a2b8;
-$warning: #ffc107;
-$danger: #dc3545;
+$enable-responsive-font-sizes: true;
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1366px
+);
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1296px
+);
+
+$primary: #07689f;
+$secondary: #c9d6df;
+$success: #11d3bc;
+$danger: #f67280;
+$info: #a2d5f2;
+$warning: #ff7e67;
+$light: #fafafa;
+$dark: #4e4e4e;
 
 // Options:
 // Quickly modify global styling by enabling or disabling optional features.
 $enable-rounded: true;
-$enable-shadows: false;
-$enable-gradients: false;
+$enable-shadows: true;
+$enable-gradients: true;
 $enable-transitions: true;
 $enable-hover-media-query: false;
 $enable-grid-classes: true;
@@ -34,7 +56,7 @@ $border-radius-sm: 0.1rem;
 // Body:
 // Settings for the `<body>` element.
 
-$body-bg: #e4e5e6;
+$body-bg: lighten(#7ebcfa, 10%);
 
 // Typography:
 // Font, line-height, and color for body text, headings, and more.

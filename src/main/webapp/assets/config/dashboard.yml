@@ -1,11 +1,24 @@
 # Dashboard Component on Home page
-- name: User Guide
-  icon: question-circle
-  url: /docs/user-guide
-- name: Deployments
-  url: /docs/deployment
-  sidebarUrl: 'assets/config/sidebar.yml'
-  icon: paper-plane
-- name: Development
-  url: /docs/development
-  icon: boxes
+- name: Countries
+  url: /data/msu-reports/countries
+  icon: globe
+  authority: ROLE_ADMIN
+- name: MAP OpCodes
+  url: /data/msu-reports/map-opcodes
+  icon: location-arrow
+  authority: ROLE_ADMIN
+
+- name: STP Links
+  url: /data/msu-reports/stp-links
+  icon: rss
+  authority: ROLE_ADMIN
+
+- name: Network Information
+  url: /data/msu-reports/network-info
+  icon: desktop
+  authority: ROLE_ADMIN
+
+- name: GT Prefixes
+  url: /data/msu-reports/gt-prefixes
+  icon: cogs
+  authority: ROLE_ADMIN

@@ -1,0 +1,16 @@
+title: STP Links
+apiEndpoint: /services/vnpti-msu/api/stp-links
+importApiEndpoint: /services/vnpti-msu/api/data-management/stp-links
+predicate: 'linkName'
+reverse: true
+columns:
+  - linkName
+fields:
+  - fieldGroupClassName: row
+    fieldGroup:
+      - key: linkName
+        type: input
+        className: col-md-4
+        templateOptions:
+          label: Link Name
+          required: true

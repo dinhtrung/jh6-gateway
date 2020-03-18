@@ -1,0 +1,226 @@
+title: Network Operators
+apiEndpoint: /services/vnpti-msu/api/network-operators
+importApiEndpoint: /services/vnpti-msu/api/data-management/network-operators
+predicate: 'name'
+reverse: true
+columns:
+  - name
+  - tagidcode
+  - description
+  - mcc
+  - mnc
+fields:
+  - fieldGroupClassName: row
+    fieldGroup:
+      - key: name
+        type: input
+        className: col-md-4
+        templateOptions:
+          label: Network Operator Name
+          required: true
+      - key: tagidcode
+        type: input
+        className: col-md-4
+        templateOptions:
+          label: TAG-ID Code
+          description: TAGID CODE
+      - key: mcc
+        type: input
+        className: col-md-2
+        templateOptions:
+          label: Mobile Country Code
+          required: true
+      - key: mnc
+        type: input
+        className: col-md-2
+        templateOptions:
+          label: Mobile Network Code
+          required: true
+      - key: country
+        wrappers: [form-field]
+        type: ng-select
+        className: col-md-4
+        templateOptions:
+          label: Country
+          description: Country this operator belongs to
+          multiple: false
+          apiEndpoint: '/services/vnpti-msu/api/countries'
+          val: name
+          termParam: 'query'
+          termPattern: '${term}*'
+
+      - key: description
+        type: input
+        className: col-md-6
+        templateOptions:
+          label: Description
+      - key: meta.pdfFiles
+        type: file-gridfs
+        className: col-md-2
+        wrappers: ['form-field']
+        templateOptions:
+          label: PDF Files
+          apiEndpoint: api/minio
+          fileSrc: '/api/public/download-file?name=${fileId}'
+          isImage: false
+  - key: meta.group
+    type: input
+    templateOptions:
+      label: Network Group
+      description: Network Group this Operator belongs to
+  - key: hubs
+    type: ng-select
+    wrappers: [form-field]
+    className: col-md-4
+    templateOptions:
+      label: Hubs
+      description: Hubs this operator belongs to
+      multiple: true
+      hideSelected: true
+      apiEndpoint: '/services/vnpti-msu/api/hubs'
+      val: name
+      termParam: 'query'
+      termPattern: '${term}*'
+  - key: meta.grxProvider
+    type: tags
+    wrappers: [form-field]
+    templateOptions:
+      label: GRX Providers
+  - type: tabset
+    fieldGroup:
+    - templateOptions:
+        label: MSISDN Number Range
+      fieldGroup:
+        - key: meta.msisdnRange
+          type: repeat
+          templateOptions:
+            label: MSISDN Number Range
+          fieldArray:
+            fieldGroupClassName: row
+            fieldGroup:
+              - key: cc
+                type: input
+                className: col-md-6
+                templateOptions:
+                  label: Country code
+              - key: ndc
+                type: input
+                className: col-md-6
+                templateOptions:
+                  label: Network code
+    - templateOptions:
+        label: MSRN Number Range
+      fieldGroup:
+        - key: meta.msrnRange
+          type: repeat
+          templateOptions:
+            label: MSRN Number Range
+          fieldArray:
+            fieldGroupClassName: row
+            fieldGroup:
+              - key: cc
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: Country code
+              - key: ndc
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: Network code
+              - key: rangeStart
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: SN Range Start
+              - key: rangeStop
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: SN Range Stop
+    - templateOptions:
+        label: Network Node GT
+      fieldGroup:
+        - key: meta.networkGt
+          type: repeat
+          templateOptions:
+            label: Network Node GT
+          fieldArray:
+            fieldGroupClassName: row
+            fieldGroup:
+              - key: cc
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: Country code
+              - key: ndc
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: Network code
+              - key: rangeStart
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: SN Range Start
+              - key: rangeStop
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: SN Range Stop
+
+    - templateOptions:
+        label: E.214 Mobile GT
+      fieldGroup:
+        - key: meta.e214GT
+          type: repeat
+          templateOptions:
+            label: E.214 Mobile GT
+          fieldArray:
+            fieldGroupClassName: row
+            fieldGroup:
+              - key: gt
+                type: input
+                className: col-md-4
+                templateOptions:
+                  label: E. 214 Mobile Global Title
+              - key: cc
+                type: input
+                className: col-md-4
+                templateOptions:
+                  label: Country code of MGT
+              - key: ndc
+                type: input
+                className: col-md-4
+                templateOptions:
+                  label: Network code of MGT
+    - templateOptions:
+        label: DPC Information
+      fieldGroup:
+        - key: meta.dpc
+          type: repeat
+          templateOptions:
+            label: DPC Information
+          fieldArray:
+            fieldGroupClassName: row
+            fieldGroup:
+              - key: signature
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: Signature
+              - key: type
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: Type
+              - key: dpc
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: International DPC
+              - key: comment
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: Comment

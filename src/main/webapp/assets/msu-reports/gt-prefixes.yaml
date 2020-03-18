@@ -1,0 +1,34 @@
+# CC NC Country Network name TADIG CODE MCC MNC
+title: GT Prefixes
+apiEndpoint: /services/vnpti-msu/api/gt-prefixes
+importApiEndpoint: /services/vnpti-msu/api/data-management/gt-prefixes
+predicate: 'prefix'
+reverse: true
+columns:
+  - prefix
+  - ndc
+  - network.name
+fields:
+  - fieldGroupClassName: row
+    fieldGroup:
+      - key: prefix
+        type: input
+        className: col-md-4
+        templateOptions:
+          label: GT Prefix
+          required: true
+      - key: ndc
+        type: input
+        className: col-md-2
+        templateOptions:
+          label: Country Code
+          description: Mobile Country Code
+      - key: network
+        type: ng-select
+        className: col-md-6
+        templateOptions:
+          label: Network Operator
+          description: Operator this GT Prefix belong to
+          multiple: false
+          apiEndpoint: '/services/vnpti-msu/api/network-operators'
+          val: name

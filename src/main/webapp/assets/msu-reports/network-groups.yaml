@@ -1,0 +1,14 @@
+title: GT Prefixes
+apiEndpoint: /services/vnpti-msu/api/network-groups
+importApiEndpoint: /services/vnpti-msu/api/data-management/network-groups
+predicate: 'name'
+reverse: true
+columns:
+  - name
+fields:
+  - key: name
+    type: input
+    className: col-md-4
+    templateOptions:
+      label: Network Group Name
+      required: true
