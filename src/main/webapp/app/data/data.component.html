@@ -56,7 +56,10 @@
                         </tr>
                         <tr>
                             <th *ngFor="let c of columns">
-                                <input type="text" class="form-control" [name]="c.prop" [(ngModel)]="searchModel[c.prop]">
+                                <input *ngIf="!c.options" type="text" class="form-control" [name]="c.prop" [(ngModel)]="searchModel[c.prop]">
+                                <select *ngIf="c.options" class="custom-select" [name]="c.prop" [(ngModel)]="searchModel[c.prop]">
+                                    <option *ngFor="let o of c.options" [value]="o.value" [innerHTML]="o.label"></option>
+                                </select>
                             </th>
                             <th class="text-right">
                                 <div class="btn-group">
