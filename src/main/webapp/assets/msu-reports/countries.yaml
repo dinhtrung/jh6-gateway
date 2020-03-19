@@ -1,38 +1,85 @@
 title: Countries
 apiEndpoint: /services/vnpti-msu/api/countries
+createOrEditData: Add / Update Country Details
 importApiEndpoint: /services/vnpti-msu/api/data-management/countries
 predicate: 'name'
 reverse: true
 columns:
-  - name
-  - countryCode
+  - prop: name
+    label: Country Name
+    pattern: ci(contains(${ term }))
+  - prop: countryCode
+    label: Country Code
+    pattern: startsWith(${ term })
   - iso2
   - iso3
-  - continent
+  - prop: continent
+    label: Continent
+    options:
+      - value: Africa
+        label: Africa
+      - value: Antarctica
+        label: Antarctica
+      - value: Asia
+        label: Asia
+      - value: Europe
+        label: Europe
+      - value: North America
+        label: North America
+      - value: Oceania
+        label: Oceania
+      - value: South America
+        label: South America
 fields:
   - fieldGroupClassName: row
     fieldGroup:
       - key: name
         type: input
-        className: col-md-4
+        className: col-md-6
         templateOptions:
           label: Country Name
           required: true
       - key: countryCode
         type: input
-        className: col-md-8
+        className: col-md-2
         templateOptions:
           label: Country Code
           description: Mobile Country Code
+      - key: continent
+        type: select
+        className: col-md-4
+        templateOptions:
+          label: Continent
+          options:
+            - value: Africa
+              label: Africa
+            - value: Antarctica
+              label: Antarctica
+            - value: Asia
+              label: Asia
+            - value: Europe
+              label: Europe
+            - value: North America
+              label: North America
+            - value: Oceania
+              label: Oceania
+            - value: South America
+              label: South America
+
       - key: iso2
         type: input
-        className: col-md-4
+        className: col-md-6
         templateOptions:
-          label: ISO 2 Digits
+          label: ISO 2 code
           required: true
+          description: 2 digits ISO code
+          maxLength: 2
+          minLength: 2
       - key: iso3
         type: input
-        className: col-md-4
+        className: col-md-6
         templateOptions:
-          label: ISO 3 Digits
+          label: ISO 3 code
           required: true
+          maxLength: 3
+          minLength: 2
