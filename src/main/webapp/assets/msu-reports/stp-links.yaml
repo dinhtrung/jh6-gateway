@@ -1,5 +1,6 @@
 title: STP Links
 apiEndpoint: /services/vnpti-msu/api/stp-links
+createOrEditData: Manage STP Link
 importApiEndpoint: /services/vnpti-msu/api/data-management/stp-links
 predicate: 'linkName'
 reverse: true
@@ -10,7 +11,19 @@ fields:
     fieldGroup:
       - key: linkName
         type: input
-        className: col-md-4
+        className: col-md-6
         templateOptions:
           label: Link Name
           required: true
+      - key: hub
+        type: ng-select
+        wrappers: [form-field]
+        className: col-md-6
+        templateOptions:
+          label: SCCP Hub
+          description: SCCP Hub this link connect to
+          multiple: true
+          hideSelected: true
+          apiEndpoint: '/services/vnpti-msu/api/sccp-hubs'
+          val: name
+          termPattern: 'ci(contains(${term}))'
