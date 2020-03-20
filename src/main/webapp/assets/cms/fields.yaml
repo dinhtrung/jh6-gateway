@@ -1,0 +1,131 @@
+# WebFIELD Configurations
+title: Fields
+apiEndpoint: /api/nodes
+queryParams:
+  type: FIELD
+createOrEditData: "Add / Update Fields"
+importApiEndpoint: /api/nodes/import
+predicate: 'createdAt'
+reverse: true
+columns:
+  - prop: name
+    label: Name
+    pattern: ci(contains(${ term }))
+  - prop: slug
+    label: Code
+    pattern: startsWith(${ term })
+  - prop: state
+    label: Status
+    options:
+      - value: 200
+        label: Enable
+      - value: 423
+        label: Disabled
+      - value: 502
+        label: Temporary Unavailable
+fields:
+  # Hidden attribute since we use the node table to host this info
+  - key: type
+    type: input
+    hideExpression: true
+    defaultValue: FIELD
+  # Entity information
+  - fieldGroupClassName: row
+    fieldGroup:
+      - key: name
+        type: input
+        className: col-md-4
+        templateOptions:
+          label: Field Label
+          required: true
+      - key: slug
+        type: input
+        className: col-md-2
+        templateOptions:
+          label: Field Key
+          description: The key used to render form. Should be unique per Content Type.
+          required: true
+      - key: state
+        type: select
+        className: col-md-2
+        defaultValue: 200
+        templateOptions:
+          label: Status
+          description: Only FIELDs with status Enable will be accessible by ROLE_USER
+          required: true
+          options:
+            - value: 200
+              label: Enable
+            - value: 423
+              label: Disabled
+            - value: 502
+              label: Temporary Unavailable
+      - key: tags
+        type: ng-select
+        className: col-md-4
+        templateOptions:
+          label: Content Type
+          description: This fields should appear on this content type
+          apiEndpoint: /api/nodes
+          required: true
+          multiple: true
+          hideSelected: true
+          params:
+            type: CONTENT_TYPE
+          key: id
+          val: name
+# Template Options
+  - key: meta
+    fieldGroupClassName: row
+    fieldGroup:
+      - key: type
+        type: select
+        className: col-md-2
+        templateOptions:
+          label: Field Type
+          description: The form control to display
+          options:
+            - value: input
+              label: Input
+            - value: select
+              label: Select
+            - value: remote-form
+              label: Remote Form
+            - value: template
+              label: Template
+            - value: crud-table
+              label: Crud Table
+            - value: button
+              label: Button
+            - value: time
+              label: Time
+            - value: date
+              label: Date
+            - value: datetime
+              label: Datetime
+            - value: card
+              label: Card
+            - value: accordion
+              label: Accordion
+            - value: tabset
+              label: Tabset
+            - value: file-gridfs
+              label: File Gridfs
+            - value: file-upload
+              label: File Upload
+            - value: quill
+              label: Quill
+            - value: slider
+              label: Slider
+            - value: ng-select
+              label: Reference Lookup
+            - value: tags
+              label: Tags
+            - value: repeat
+              label: Repeat
+      - key: description
+        type: input
+        className: col-md-10
+        templateOptions:
+          label: Description
+          description: A help text appear below the text field

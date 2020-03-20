@@ -1,39 +1,17 @@
-# Menu Tree on Top Naviation
-# Menu Tree on Top Naviation
-- name: Data Management
+- name: Dashboards
   icon: cogs
   url: /docs/README
   authority: ROLE_ADMIN
   children:
-    - name: 'Countries'
-      url: '/data/msu-reports/countries'
+    - name: 'Projects'
+      url: '/data/cms/sites'
       icon: 'globe'
       authority: ROLE_ADMIN
-    - name: 'GT Prefixes'
-      url: '/data/msu-reports/gt-prefixes'
+    - name: 'Content Types'
+      url: '/data/cms/content-types'
       icon: 'cogs'
       authority: ROLE_ADMIN
-    - name: 'MAP OpCodes'
-      url: '/data/msu-reports/map-opcodes'
+    - name: 'Fields'
+      url: '/data/cms/fields'
       icon: 'location-arrow'
-      authority: ROLE_ADMIN
-    - name: 'Network Information'
-      url: '/data/msu-reports/network-info'
-      icon: 'desktop'
-      authority: ROLE_ADMIN
-    - name: 'Hub'
-      url: '/data/msu-reports/hubs'
-      icon: 'phone'
-      authority: ROLE_ADMIN
-    - name: 'Network Group'
-      url: '/data/msu-reports/network-groups'
-      icon: 'handshake'
-      authority: ROLE_ADMIN
-    - name: 'CDR'
-      url: '/data/msu-reports/cdr'
-      icon: 'link'
-      authority: ROLE_ADMIN
-    - name: 'STP Links'
-      url: '/data/msu-reports/stp-links'
-      icon: 'rss'
       authority: ROLE_ADMIN
