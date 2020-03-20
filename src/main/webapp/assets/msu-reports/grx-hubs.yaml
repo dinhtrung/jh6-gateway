@@ -1,0 +1,44 @@
+title: GRX Hubs
+apiEndpoint: /services/vnpti-msu/api/hubs
+createOrEditData: Manage GRX Hub Information
+importApiEndpoint: /services/vnpti-msu/api/data-management/grx-hubs
+predicate: 'name'
+reverse: true
+columns:
+  - name
+fields:
+  - key: name
+    type: input
+    className: col-md-4
+    templateOptions:
+      label: Hub Name
+      description: SCPP Carrier Name
+      required: true
+  - key: description
+    type: input
+    className: col-md-8
+    templateOptions:
+      label: Description
+  - key: tags
+    type: tags
+    templateOptions:
+      label: Tags
+  - key: meta
+    fieldGroup:
+      - key: connectInfo
+        type: input
+        templateOptions:
+          label: Connectivity Information
+      - key: connectInfo
+        type: input
+        templateOptions:
+          label: Connectivity Information
+      - key: tadigCodeList
+        type: tags
+        templateOptions:
+          label: MNO TADIG code list
+          description: List of TADIG Code belongs to this hub
+  - key: asNumber
+    type: tags
+    templateOptions:
+      label: AS Number

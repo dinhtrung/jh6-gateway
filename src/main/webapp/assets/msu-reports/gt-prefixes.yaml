@@ -32,3 +32,22 @@ fields:
           multiple: false
           apiEndpoint: '/services/vnpti-msu/api/network-operators'
           val: name
+          termPattern: 'ci(contains(${term}))'
+      - key: _networkTagidcode
+        type: template
+        expressionProperties:
+          templateOptions.innerHTML: 'model.network?.tagidcode && _.template("<strong>TAGID CODE</strong> <code>${ network.tagidcode }</code>")(model)'
+        templateOptions:
+          innerHTML:
+      - key: _networkMcc
+        type: template
+        expressionProperties:
+          templateOptions.innerHTML: 'model.network?.mcc && _.template("<strong>MCC</strong> <code>${ network.mcc }</code>")(model)'
+        templateOptions:
+          innerHTML:
+      - key: _networkMnc
+        type: template
+        expressionProperties:
+          templateOptions.innerHTML: 'model.network?.mnc && _.template("<strong>MNC</strong> <code>${ network.mnc }</code>")(model)'
+        templateOptions:
+          innerHTML:

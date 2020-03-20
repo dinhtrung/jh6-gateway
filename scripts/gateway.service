@@ -1,0 +1,18 @@
+[Unit]
+Description=Microservice Gateway
+After=network-online.target mongod.service
+
+[Service]
+# Append the current environment `deployment` profile into app so it read `./config/application-deployment.yml` file
+Environment=SPRING_PROFILES_ACTIVE=prod,swagger,deployment
+# Configure app name to read data from `config/${spring.application.name}-${spring.profiles.active[0]}` catalog in consul
+Environment=SPRING_APPLICATION_NAME=gateway
+# Deployment working directory
+WorkingDirectory=/srv/gateway
+# Should symlink gateway-xxx.jar to gateway.jar for backup of binary file.
+ExecStart=/usr/bin/java -jar /srv/gateway/gateway.jar
+SuccessExitStatus=143
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

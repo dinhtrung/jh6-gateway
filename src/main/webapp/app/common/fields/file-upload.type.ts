@@ -10,15 +10,17 @@ import { SafePipe } from 'app/common/util/safe.pipe';
   selector: 'jhi-formly-file-upload',
   template: `
     <input type="file" (change)="addFile($event)" class="custom-input" />
-    <div class="file-viewer" *ngIf="to.template" [innerHtml]="getTemplate()"></div>
-    <div class="card-deck" *ngIf="!to.template" style="margin-bottom: 5px">
-      <div class="card">
-        <button type="button" (click)="removeFile()" class="btn btn-danger btn-block">
-          <fa-icon icon="times"></fa-icon>
-          Remove
-        </button>
-        <a [href]="getFileSrc()" [class]="to.className" target="_blank" *ngIf="!to.isImage">{{ formControl.value }}</a>
-        <img [src]="getFileSrc()" [class]="to.className" *ngIf="to.isImage" />
+    <div class="file-container" *ngIf="formControl.value">
+      <div class="file-viewer" *ngIf="to.template" [innerHtml]="getTemplate()"></div>
+      <div class="card-deck" *ngIf="!to.template" style="margin-bottom: 5px">
+        <div class="card">
+          <button type="button" (click)="removeFile()" class="btn btn-danger btn-block">
+            <fa-icon icon="times"></fa-icon>
+            Remove
+          </button>
+          <a [href]="getFileSrc()" [class]="to.className" target="_blank" *ngIf="!to.isImage">{{ formControl.value }}</a>
+          <img [src]="getFileSrc()" [class]="to.className" *ngIf="to.isImage" />
+        </div>
       </div>
     </div>
   `,

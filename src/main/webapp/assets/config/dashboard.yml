@@ -15,16 +15,16 @@
   url: '/data/msu-reports/network-info'
   icon: 'desktop'
   authority: ROLE_ADMIN
-- name: 'SCCP Hub'
-  url: '/data/msu-reports/sccp-hub'
-  icon: 'phone'
-  authority: ROLE_ADMIN
 - name: 'Network Group'
   url: '/data/msu-reports/network-groups'
   icon: 'handshake'
   authority: ROLE_ADMIN
+- name: 'SCCP HUB'
+  url: '/data/msu-reports/sccp-hubs'
+  icon: 'link'
+  authority: ROLE_ADMIN
 - name: 'GRX HUB'
-  url: '/data/msu-reports/grx-hub'
+  url: '/data/msu-reports/grx-hubs'
   icon: 'link'
   authority: ROLE_ADMIN
 - name: 'STP Links'

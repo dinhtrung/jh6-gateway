@@ -1,11 +1,12 @@
 title: Network Operators
 apiEndpoint: /services/vnpti-msu/api/network-operators
+createOrEditData: Manage Network Information Details
 importApiEndpoint: /services/vnpti-msu/api/data-management/network-operators
 predicate: 'name'
 reverse: true
 columns:
   - name
-  - tagidcode
+  - TADIGcode
   - description
   - mcc
   - mnc
@@ -18,12 +19,12 @@ fields:
         templateOptions:
           label: Network Operator Name
           required: true
-      - key: tagidcode
+      - key: tadigcode
         type: input
         className: col-md-4
         templateOptions:
           label: TADIG CODE
-          description: TAGID CODE
+          description: TADIG CODE
       - key: mcc
         type: input
         className: col-md-2
@@ -61,31 +62,13 @@ fields:
         templateOptions:
           label: PDF Files
           apiEndpoint: api/minio
-          fileSrc: '/api/public/download-file?name=${fileId}'
+          fileSrc: '/api/public/static/${fileId}'
           isImage: false
   - key: meta.group
     type: input
     templateOptions:
       label: Network Group
       description: Network Group this Operator belongs to
-  - key: hubs
-    type: ng-select
-    wrappers: [form-field]
-    className: col-md-4
-    templateOptions:
-      label: Hubs
-      description: Hubs this operator belongs to
-      multiple: true
-      hideSelected: true
-      apiEndpoint: '/services/vnpti-msu/api/hubs'
-      val: name
-      termParam: 'query'
-      termPattern: '${term}*'
-  - key: meta.grxProvider
-    type: tags
-    wrappers: [form-field]
-    templateOptions:
-      label: GRX Providers
   - type: tabset
     fieldGroup:
     - templateOptions:
@@ -194,6 +177,7 @@ fields:
                 className: col-md-4
                 templateOptions:
                   label: Network code of MGT
+
     - templateOptions:
         label: DPC Information
       fieldGroup:
@@ -224,3 +208,79 @@ fields:
                 className: col-md-3
                 templateOptions:
                   label: Comment
+    - templateOptions:
+        label: GRX Providers
+      fieldGroup:
+        - key: meta.grxHubs
+          type: repeat
+          templateOptions:
+            label: GRX Hubs
+          fieldArray:
+            fieldGroupClassName: row
+            fieldGroup:
+              - key: hubs
+                type: ng-select
+                wrappers: [form-field]
+                className: col-md-4
+                templateOptions:
+                  label: Hubs
+                  description: Hubs this operator belongs to
+                  multiple: true
+                  hideSelected: true
+                  apiEndpoint: '/services/vnpti-msu/api/grx-hubs'
+                  val: name
+                  termPattern: 'ci(contains(${term}))'
+              - key: direct
+                type: select
+                className: col-md-3
+                defaultValue: false
+                templateOptions:
+                  label: Direct
+                  options:
+                    - value: true
+                      label: Yes
+                    - value: false
+                      label: No
+              - key: circuitId
+                type: tags
+                className: col-md-3
+                templateOptions:
+                  label: Circuit ID
+    - templateOptions:
+        label: SCCP Hubs
+      fieldGroup:
+        - key: meta.sccpHubs
+          type: repeat
+          templateOptions:
+            label: SCCP Hubs
+          fieldArray:
+            fieldGroupClassName: row
+            fieldGroup:
+              - key: hubs
+                type: ng-select
+                wrappers: [form-field]
+                className: col-md-4
+                templateOptions:
+                  label: Hubs
+                  description: Hubs this operator belongs to
+                  multiple: true
+                  hideSelected: true
+                  apiEndpoint: '/services/vnpti-msu/api/sccp-hubs'
+                  val: name
+                  termPattern: 'ci(contains(${term}))'
+              - key: direct
+                type: select
+                className: col-md-3
+                defaultValue: false
+                templateOptions:
+                  label: Direct
+                  options:
+                    - value: true
+                      label: Yes
+                    - value: false
+                      label: No
+              - key: sctpLinks
+                type: tags
+                className: col-md-3
+                templateOptions:
+                  label: SCTP Links

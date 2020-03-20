@@ -1,0 +1,67 @@
+title: SCCP Hubs
+apiEndpoint: /services/vnpti-msu/api/sccp-hubs
+createOrEditData: Manage Hub Information
+importApiEndpoint: /services/vnpti-msu/api/data-management/sccp-hubs
+predicate: 'name'
+reverse: true
+columns:
+  - name
+fields:
+  - key: name
+    type: input
+    className: col-md-4
+    templateOptions:
+      label: Hub Name
+      description: SCPP Carrier Name
+      required: true
+  - key: description
+    type: input
+    className: col-md-8
+    templateOptions:
+      label: Description
+  - key: tags
+    type: tags
+    templateOptions:
+      label: Tags
+  - key: meta
+    fieldGroup:
+      - key: connectInfo
+        type: input
+        templateOptions:
+          label: Connectivity Information
+      - key: connectInfo
+        type: input
+        templateOptions:
+          label: Connectivity Information
+      - key: tadigCodeList
+        type: tags
+        templateOptions:
+          label: MNO TADIG code list
+          description: List of TADIG Code belongs to this hub
+  - key: dpc
+    type: repeat
+    templateOptions:
+      label: DPC Information
+    fieldArray:
+      fieldGroupClassName: row
+      fieldGroup:
+        - key: signature
+          type: input
+          className: col-md-3
+          templateOptions:
+            label: Signature
+        - key: type
+          type: input
+          className: col-md-3
+          templateOptions:
+            label: Type
+        - key: dpc
+          type: input
+          className: col-md-3
+          templateOptions:
+            label: International DPC
+        - key: comment
+          type: input
+          className: col-md-3
+          templateOptions:
+            label: Comment

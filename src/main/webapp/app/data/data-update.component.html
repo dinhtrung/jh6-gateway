@@ -2,7 +2,10 @@
     <div class="col-8">
         <div class="card shadow">
             <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-                <div class="card-header bg-gradient-primary text-white" id="jhi-data-heading" [jhiTranslate]="title"></div>
+                <div class="card-header bg-gradient-primary text-white" id="jhi-data-heading">
+                  <span *ngIf="!title" [jhiTranslate]="'createOrEditData'"></span>
+                  <span *ngIf="title" [innerHtml]="title"></span>
+                </div>
                 <div class="card-body">
                     <jhi-alert-error></jhi-alert-error>
                     <formly-form [model]="model" [fields]="fields" [options]="options" [form]="editForm"></formly-form>
@@ -18,7 +21,7 @@
             </form>
         </div>
     </div>
-    <div class="col-md-4" *ngIf="!debug">
-        <pre>{{ options.formState.mainModel | json }}</pre>
+    <div class="col-md-4" *ngIf="debug">
+        <pre class="bg-white">{{ options.formState.mainModel | json }}</pre>
     </div>
 </div>
