@@ -6,7 +6,7 @@ predicate: 'name'
 reverse: true
 columns:
   - name
-  - TADIGcode
+  - tadigcode
   - description
   - mcc
   - mnc
