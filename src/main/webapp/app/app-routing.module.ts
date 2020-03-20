@@ -38,11 +38,6 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
           path: 'data',
           loadChildren: () => import('./data/data.module').then(m => m.GatewayDataModule)
         },
-        // + demo module
-        {
-          path: 'demo',
-          loadChildren: () => import('./demo/demo.module').then(m => m.DemoModule)
-        },
         ...LAYOUT_ROUTES
       ],
       { enableTracing: DEBUG_INFO_ENABLED }
