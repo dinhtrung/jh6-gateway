@@ -2,23 +2,18 @@ package com.ft.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,19 +29,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.StringPath;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ft.domain.Node;
 import com.ft.domain.QNode;
 import com.ft.repository.NodeRepository;
 import com.ft.security.SecurityUtils;
 import com.ft.service.util.QuerydslPredicateUtil;
 import com.ft.web.rest.errors.BadRequestAlertException;
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCursor;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -88,9 +79,9 @@ public class UserNodeResource {
 			throw new BadRequestAlertException("A new node cannot already have an ID", ENTITY_NAME, "idexists");
 		}
 		String currentLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new BadRequestAlertException("security", ENTITY_NAME, "notLoggedIn"));
-		node.setCreatedAt(ZonedDateTime.now());
+		node.setCreatedAt(Instant.now());
 		node.setCreatedBy(currentLogin);
-		node.setUpdatedAt(ZonedDateTime.now());
+		node.setUpdatedAt(Instant.now());
 		node.setUpdatedBy(currentLogin);
 		node.getTouchedBy().add(currentLogin);
 
@@ -121,7 +112,7 @@ public class UserNodeResource {
 		if (!node.getCreatedBy().equals(currentLogin)) {
 			throw new BadRequestAlertException("Invalid login", ENTITY_NAME, "invalidLogin");
 		}
-		node.setUpdatedAt(ZonedDateTime.now());
+		node.setUpdatedAt(Instant.now());
 		node.setUpdatedBy(currentLogin);
 		node.getTouchedBy().add(currentLogin);
 		Node result = nodeRepository.save(node);

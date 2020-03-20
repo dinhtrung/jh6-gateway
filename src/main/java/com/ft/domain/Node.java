@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -55,7 +55,7 @@ public class Node implements Serializable {
     
     @Field("created_at")
     @CreatedDate
-    private ZonedDateTime createdAt = ZonedDateTime.now();
+    private Instant createdAt = Instant.now();
 
     @Field("created_by")
     @CreatedBy
@@ -63,7 +63,7 @@ public class Node implements Serializable {
 
     @Field("updated_at")
     @LastModifiedDate
-    private ZonedDateTime updatedAt = ZonedDateTime.now();
+    private Instant updatedAt = Instant.now();
 
     @Field("updated_by")
     @LastModifiedBy
@@ -189,15 +189,15 @@ public class Node implements Serializable {
 		this.tags = tags;
 	}
 
-	public ZonedDateTime getCreatedAt() {
+	public Instant getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(ZonedDateTime createdAt) {
+	public void setCreatedAt(Instant createdAt) {
 		this.createdAt = createdAt;
 	}
 	
-	public Node createdAt(ZonedDateTime createdAt) {
+	public Node createdAt(Instant createdAt) {
 		this.createdAt = createdAt;
 		return this;
 	}
@@ -211,15 +211,15 @@ public class Node implements Serializable {
 	}
 	
 
-	public ZonedDateTime getUpdatedAt() {
+	public Instant getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(ZonedDateTime updatedAt) {
+	public void setUpdatedAt(Instant updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 	
-	public Node updatedAt(ZonedDateTime updatedAt) {
+	public Node updatedAt(Instant updatedAt) {
 		this.updatedAt = updatedAt;
 		return this;
 	}
