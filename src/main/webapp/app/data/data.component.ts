@@ -10,6 +10,7 @@ import { Title } from '@angular/platform-browser';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 // + Modal
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { plainToFlattenObject } from 'app/common/util/request-util';
 // + search
 import * as _ from 'lodash';
 // + mobile friendly
@@ -82,19 +83,21 @@ export class DataComponent implements OnInit, OnDestroy {
     console.log('Activated route', this.activatedRoute);
     this.dataService
       .query(
-        _.assign(
-          this.queryParams,
-          {
-            page: this.page - 1,
-            size: this.itemsPerPage,
-            sort: this.sort()
-          },
-          // + support search
-          _.pickBy(
-            _.mapValues(this.searchParams, (pattern, field) =>
-              this.searchModel[field] ? _.template(pattern)(_.assign({}, { term: this.searchModel[field] }, this.searchModel)) : null
-            ),
-            _.identity
+        plainToFlattenObject(
+          _.assign(
+            this.queryParams,
+            {
+              page: this.page - 1,
+              size: this.itemsPerPage,
+              sort: this.sort()
+            },
+            // + support search
+            _.pickBy(
+              _.mapValues(this.searchParams, (pattern, field) =>
+                this.searchModel[field] ? _.template(pattern)(_.assign({}, { term: this.searchModel[field] }, this.searchModel)) : null
+              ),
+              _.identity
+            )
           )
         ),
         this.apiEndpoint

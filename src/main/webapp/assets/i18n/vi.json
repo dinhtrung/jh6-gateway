@@ -1,11 +1,11 @@
 {
   "global": {
-    "title": "Gateway Application",
-    "slogan": "An API Gateway build for Micro Service Architecture"
+    "title": "VNPTI MSU Report",
+    "slogan": "MSU Traffic Report"
   },
   "home": {
-    "title": "Gateway Application",
-    "subtitle": "An API Gateway build for Micro Service Architecture"
+    "title": "VNPTI MSU Report",
+    "subtitle": "MSU Traffic Report"
   },
-  "footer": "© 2020 Company Name"
+  "footer": "© 2020 VNPTI"
 }

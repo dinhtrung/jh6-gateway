@@ -40,7 +40,7 @@
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-                            <th *ngFor="let c of columns; let ci = index;" [jhiSortBy]="c">
+                            <th *ngFor="let c of columns; let ci = index;" [jhiSortBy]="c.prop">
                                 <strong *ngIf="c.jhiTranslate" [jhiTranslate]="c.jhiTranslate"></strong>
                                 <strong *ngIf="!c.jhiTranslate" [innerHtml]="c.label"></strong>
                                 <fa-icon icon="sort"></fa-icon>
