@@ -1,0 +1,32 @@
+<h2 class="card-header">
+    <small [innerHtml]="site.name">Data</small>
+    <span [innerHtml]="contentType.name">Data</span>
+    <div class="btn-group float-right">
+        <button id="jh-create-entity" class="btn btn-primary" [routerLink]="['new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span [jhiTranslate]="'app.create-' + contentType.slug">
+                Create new Data
+            </span>
+        </button>
+        <div class="btn-group" ngbDropdown>
+            <button class="btn btn-secondary dropdown-toggle-split" ngbDropdownToggle></button>
+            <div class="dropdown-menu" ngbDropdownMenu>
+                <button ngbDropdownItem (click)="exportData()">
+                    <fa-icon icon="download"></fa-icon>
+                    <span>Export</span>
+                </button>
+                <button ngbDropdownItem [routerLink]="['import']">
+                    <fa-icon icon="upload"></fa-icon>
+                    <span>Import</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</h2>
+
+
+<pre [innerHTML]="site | json"></pre>
+
+<pre [innerHTML]="contentType | json"></pre>
+
+<pre [innerHTML]="pagingParams | json"></pre>

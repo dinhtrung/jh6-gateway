@@ -9,3 +9,16 @@
 - name: Development
   url: /docs/development
   icon: boxes
+# CMS Features
+- name: Sites
+  url: /data/cms/sites
+  icon: home
+  authority: ROLE_USER
+- name: Content Types
+  url: /data/cms/content-types
+  icon: book
+  authority: ROLE_USER
+- name: Fields
+  url: /data/cms/fields
+  icon: th-list
+  authority: ROLE_USER

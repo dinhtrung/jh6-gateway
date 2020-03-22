@@ -23,6 +23,11 @@ columns:
         label: Disabled
       - value: 502
         label: Temporary Unavailable
+actions:
+  - icon: directions
+    name: Visit
+    url: /spaces/site/${slug}
+    className: success
 fields:
   # Hidden attribute since we use the node table to host this info
   - key: type

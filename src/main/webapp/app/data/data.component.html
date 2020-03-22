@@ -93,7 +93,7 @@
                                         <fa-icon [icon]="'times'"></fa-icon>
                                         <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
                                     </button>
-                                    <button type="button" *ngFor="let a of actions" class="btn btn-{{ a.className }}" [routerLink]="_.replace(a.url, '${id}', row.id)">
+                                    <button type="button" *ngFor="let a of actions" class="btn btn-{{ a.className }}" [routerLink]="_.template(a.url)(row)">
                                         <fa-icon [icon]="a.icon" *ngIf="a.icon"></fa-icon>
                                         <span [jhiTranslate]="a.name" class="d-none d-md-inline"></span>
                                     </button>

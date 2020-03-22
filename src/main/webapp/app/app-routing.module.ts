@@ -39,6 +39,11 @@ const LAYOUT_ROUTES = [navbarRoute, sidebarRoute, ...errorRoute];
           path: 'data',
           loadChildren: () => import('./data/data.module').then(m => m.GatewayDataModule)
         },
+        // + sites
+        {
+          path: 'spaces',
+          loadChildren: () => import('./sites/sites.module').then(m => m.SitesModule)
+        },
         // + demo module
         {
           path: 'demo',
