@@ -10,6 +10,7 @@ import { Title } from '@angular/platform-browser';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 // + Modal
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { plainToFlattenObject } from 'app/common/util/request-util';
 // + search
 import * as _ from 'lodash';
 // + mobile friendly
@@ -32,8 +33,7 @@ export class DataComponent implements OnInit, OnDestroy {
   rows: any[] = [];
   columns: any[] = [];
   columnKeys: string[] = [];
-  columnNames: string[] = [];
-  displayColumns: any = {};
+  columnsMap: any = {};
   // How to display the table
   title = ''; // page title
   prop = ''; // entity namespace
@@ -55,6 +55,7 @@ export class DataComponent implements OnInit, OnDestroy {
   // + search support
   filterOperators: string[] = [];
   searchModel: any;
+  searchParams: any;
   // + delete Modal
   @ViewChild('deleteModal', { static: true }) deleteModal: any;
   // + references
@@ -78,16 +79,26 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   loadAll(): void {
+    // eslint-disable-next-line no-console
+    console.log('Activated route', this.activatedRoute);
     this.dataService
       .query(
-        _.assign(
-          this.queryParams,
-          {
-            page: this.page - 1,
-            size: this.itemsPerPage,
-            sort: this.sort()
-          },
-          this.searchModel
+        plainToFlattenObject(
+          _.assign(
+            this.queryParams,
+            {
+              page: this.page - 1,
+              size: this.itemsPerPage,
+              sort: this.sort()
+            },
+            // + support search
+            _.pickBy(
+              _.mapValues(this.searchParams, (pattern, field) =>
+                this.searchModel[field] ? _.template(pattern)(_.assign({}, { term: this.searchModel[field] }, this.searchModel)) : null
+              ),
+              _.identity
+            )
+          )
         ),
         this.apiEndpoint
       )
@@ -120,15 +131,21 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   clear(): void {
-    this.page = 0;
-    this.router.navigate([
-      '',
-      {
-        page: this.page,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
-    ]);
-    this.loadAll();
+    this.page = 1;
+    this.searchModel = {};
+    const uri = window.location.pathname;
+    this.router.navigateByUrl('/').then(() =>
+      this.router.navigate([uri], {
+        queryParams: _.assign(
+          {},
+          {
+            page: this.page,
+            size: this.itemsPerPage,
+            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+          }
+        )
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -153,11 +170,14 @@ export class DataComponent implements OnInit, OnDestroy {
           this.queryParams = _.get(data.templateFile, 'config.queryParams', {});
           // + fields
           this.fields = _.get(data.templateFile, 'config.fields', []);
-          this.columns = _.get(data.templateFile, 'config.columns', ['id']);
-          this.columnKeys = _.map(this.columns, c => _.get(c, 'prop', c));
-          this.columnNames = _.map(this.columns, c => _.get(c, 'label', c));
+          this.columns = _.map(_.get(data.templateFile, 'config.columns', ['id']), v =>
+            _.isString(v) ? { prop: v, pattern: 'ci(contains(${ term }))', jhiTranslate: v, label: v } : v
+          );
+          this.columnsMap = _.keyBy(this.columns, 'prop');
+          this.columnKeys = _.map(this.columns, 'prop');
+          // modifier for the search stuff
+          this.searchParams = _.mapValues(_.keyBy(this.columns, 'prop'), v => v.pattern || '${term}');
           // TODO: Store the list of display columns under account preferences or session storage
-          _.each(this.columnKeys, c => _.set(this.displayColumns, c, true));
           this.filterOperators = _.get(data.templateFile, 'config.filterOperators');
           // + calculate filtering map for select field, which annotated with `options`
           this.referenceMap = {};
@@ -231,14 +251,6 @@ export class DataComponent implements OnInit, OnDestroy {
   protected onError(errorMessage: string): void {
     this.jhiAlertService.error(errorMessage);
   }
-
-  // Add search modifier
-  setSearchOperator(field: string, operator: string): void {
-    _.set(this.searchModel, field, `${operator}(${_.get(this.searchModel, field)})`);
-  }
-  toggleView(column: string): void {
-    this.displayColumns[column] = !this.displayColumns[column];
-  }
   // + delete confirm
   delete(t: any): void {
     this.modalService.open(this.deleteModal).result.then(
@@ -254,7 +266,7 @@ export class DataComponent implements OnInit, OnDestroy {
   // Render cell value based on current reference map
   renderCell(row: any, col: string): any {
     // {{ _.get(referenceMap, [c, _.get(val, c)], _.get(val, c)) }}
-    const val = _.get(row, col);
+    const val = this.columnsMap[col].template ? _.template(this.columnsMap[col].template)(row) : _.get(row, col);
     if (_.isArray(val)) {
       return _.map(val, v => _.get(this.referenceMap, [col, v], v));
     } else if (_.isPlainObject(val)) {

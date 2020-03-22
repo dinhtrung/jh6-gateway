@@ -1,0 +1,24 @@
+<nav class="nav-sidebar bg-secondary d-none" *ngIf="menuItems?.length > 0">
+    <ng-template ngFor let-item [ngForOf]="menuItems">
+        <div *jhiHasAnyAuthority="['ROLE_ADMIN', _.get(item, 'authority', item.url)]">
+            <a *ngIf="!item.children" class="list-group-item list-group-item-action border-right bg-secondary text-white pl-1" href="javascript:void(0);" [routerLink]="item.url" [ngbTooltip]="item.name">
+                <fa-icon [icon]="item.icon" fixedWidth="true"></fa-icon>
+                <span [innerHtml]="item.name" class="d-none d-xl-inline"></span>
+            </a>
+            <div *ngIf="item.children" ngbDropdown placement="right-top">
+                <a class="list-group-item list-group-item-action border-right bg-secondary text-white pl-1" ngbDropdownToggle href="javascript:void(0);" id="entity-menu" [ngbTooltip]="item.name">
+                    <fa-icon [icon]="item.icon" fixedWidth="true"></fa-icon>
+                    <span [innerHtml]="item.name" class="d-none d-xl-inline"></span>
+                </a>
+                <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
+                    <li *ngFor="let child of item.children" [ngbTooltip]="item.name">
+                        <a class="dropdown-item" href="javascript:void(0);" [routerLink]="child.url" [ngbTooltip]="item.title">
+                            <fa-icon [icon]="child.icon" fixedWidth="true"></fa-icon>
+                            <span class="d-none d-xl-inline">{{child.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </ng-template>
+</nav>

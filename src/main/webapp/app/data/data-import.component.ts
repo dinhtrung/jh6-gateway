@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { SERVER_API_URL } from 'app/app.constants';
 import { JhiDataUtils, JhiAlertService } from 'ng-jhipster';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'jhi-data-import',
@@ -13,6 +14,7 @@ export class DataImportComponent implements OnInit {
   jsonString = '';
   jsonData: any[] = [];
   isSaving = false;
+  apiEndpoint = '';
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -22,7 +24,9 @@ export class DataImportComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this.activatedRoute.data.subscribe(({ templateFile }) => this.apiEndpoint = `api/import/nodes{}`);
+    this.activatedRoute.data.subscribe(
+      ({ templateFile }) => (this.apiEndpoint = _.get(templateFile, 'config.importApiEndpoint', 'api/import/nodes'))
+    );
   }
 
   setFileData(event: any): void {
@@ -39,7 +43,7 @@ export class DataImportComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     this.jsonData = JSON.parse(this.jsonString);
-    this.httpClient.put(SERVER_API_URL + 'api/import/nodes', this.jsonData, { observe: 'response' }).subscribe(
+    this.httpClient.post(SERVER_API_URL + this.apiEndpoint, this.jsonData, { observe: 'response' }).subscribe(
       () => this.onSaveSuccess(),
       (res: HttpErrorResponse) => this.onSaveError(res)
     );

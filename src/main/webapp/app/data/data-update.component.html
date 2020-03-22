@@ -1,13 +1,16 @@
-<div class="container-fluid" *ngIf="isReady">
-    <div class="row">
-        <div class="col-md-9">
+<div class="row justify-content-center" *ngIf="isReady">
+    <div class="col-md-8">
+        <div class="card shadow">
             <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-                <h2 id="jhi-data-heading" [jhiTranslate]="title"></h2>
-                <div>
+                <div class="card-header bg-gradient-primary text-white" id="jhi-data-heading">
+                  <span *ngIf="!title" [jhiTranslate]="'createOrEditData'"></span>
+                  <span *ngIf="title" [innerHtml]="title"></span>
+                </div>
+                <div class="card-body">
                     <jhi-alert-error></jhi-alert-error>
                     <formly-form [model]="model" [fields]="fields" [options]="options" [form]="editForm"></formly-form>
                 </div>
-                <div class="my-3">
+                <div class="card-footer">
                     <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
                         <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
                     </button>
@@ -17,8 +20,8 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-3" *ngIf="debug">
-            <pre>{{ options.formState.mainModel | json }}</pre>
-        </div>
+    </div>
+    <div class="col-md-4" *ngIf="debug">
+        <pre class="bg-white">{{ options.formState.mainModel | json }}</pre>
     </div>
 </div>

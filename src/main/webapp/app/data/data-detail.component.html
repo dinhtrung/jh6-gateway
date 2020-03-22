@@ -1,23 +1,28 @@
 <div class="row justify-content-center" *ngIf="isReady">
-    <div class="col-8">
+    <div class="col-md-8">
         <jhi-alert></jhi-alert>
-        <div *ngIf="model">
-            <h2><span jhiTranslate="gatewayApp.entity.detail.title">Data</span> {{model.id}}</h2>
-            <hr>
-            <jhi-alert-error></jhi-alert-error>
-            <formly-form [model]="model" [fields]="fields" [options]="options"></formly-form>
+        <div *ngIf="model" class="card">
+            <h2 class="card-header"><span jhiTranslate="gatewayApp.entity.detail.title">Data</span> {{model.id}}</h2>
+            <div class="card-body">
+              <jhi-alert-error></jhi-alert-error>
+              <form name="editForm" role="form" novalidate [formGroup]="form" readonly>
+                <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form"></formly-form>
+              </form>
+            </div>
 
-            <button type="submit"
-                    (click)="previousState()"
-                    class="btn btn-info">
-                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-            </button>
+            <div class="card-footer">
+              <button type="submit"
+                      (click)="previousState()"
+                      class="btn btn-info">
+                  <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+              </button>
 
-            <button type="button"
-                    [routerLink]="['/data', svc, prop, model.id, 'edit']"
-                    class="btn btn-primary">
-                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-            </button>
+              <button type="button"
+                      [routerLink]="['/data', svc, prop, model.id, 'edit']"
+                      class="btn btn-primary float-right">
+                  <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+              </button>
+            </div>
         </div>
     </div>
 </div>

@@ -11,7 +11,7 @@ import { SafePipe } from 'app/common/util/safe.pipe';
   template: `
     <input type="file" (change)="addFile($event)" class="custom-input" />
     <div class="file-viewer" *ngIf="to.template" [innerHtml]="getTemplate()"></div>
-    <div class="card-deck" *ngIf="!to.template" style="margin-bottom: 5px">
+    <div class="card-deck" *ngIf="!to.template && formControl.value" style="margin-bottom: 5px">
       <div class="card">
         <button type="button" (click)="removeFile()" class="btn btn-danger btn-block">
           <fa-icon icon="times"></fa-icon>

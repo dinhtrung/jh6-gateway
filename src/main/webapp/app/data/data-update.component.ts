@@ -37,10 +37,10 @@ export class DataUpdateComponent implements OnInit {
   };
 
   constructor(
+    private accountService: AccountService,
+    private dataService: EntityService,
     private titleService: Title,
-    protected accountService: AccountService,
-    protected dataService: EntityService,
-    protected activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +49,7 @@ export class DataUpdateComponent implements OnInit {
       this.accountService.identity().pipe(tap(account => (this.options.formState.account = account))),
       this.activatedRoute.data.pipe(
         tap(({ templateFile, model }) => {
-          this.title = _.get(templateFile, 'title', 'createOrEditData');
+          this.title = _.get(templateFile, 'config.createOrEditData', 'createOrEditData');
           this.titleService.setTitle(this.title);
           // this.languageHelper.updateTitle(this.title);
           this.svc = templateFile.svc;
@@ -78,19 +78,19 @@ export class DataUpdateComponent implements OnInit {
     }
   }
 
-  protected subscribeToSaveResponse(result: Observable<HttpResponse<any>>): void {
+  private subscribeToSaveResponse(result: Observable<HttpResponse<any>>): void {
     result.subscribe(
       () => this.onSaveSuccess(),
       () => this.onSaveError()
     );
   }
 
-  protected onSaveSuccess(): void {
+  private onSaveSuccess(): void {
     this.isSaving = false;
     this.previousState();
   }
 
-  protected onSaveError(): void {
+  private onSaveError(): void {
     this.isSaving = false;
   }
 }
