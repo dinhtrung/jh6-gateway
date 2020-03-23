@@ -55,8 +55,7 @@ fields:
           multiple: false
           apiEndpoint: '/services/vnpti-msu/api/countries'
           val: name
-          termParam: 'query'
-          termPattern: '${term}*'
+          termPattern: 'ci(contains(${term}))'
 
       - key: description
         type: input

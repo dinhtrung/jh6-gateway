@@ -15,6 +15,7 @@ export class DataImportComponent implements OnInit {
   jsonData: any[] = [];
   isSaving = false;
   apiEndpoint = '';
+  responseType = 'json';
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -24,9 +25,10 @@ export class DataImportComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(
-      ({ templateFile }) => (this.apiEndpoint = _.get(templateFile, 'config.importApiEndpoint', 'api/import/nodes'))
-    );
+    this.activatedRoute.data.subscribe(({ templateFile }) => {
+      this.apiEndpoint = _.get(templateFile, 'config.importApiEndpoint', 'api/import/nodes');
+      this.responseType = _.get(templateFile, 'config.importApiResponseType', 'json');
+    });
   }
 
   setFileData(event: any): void {
@@ -42,11 +44,21 @@ export class DataImportComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    this.jsonData = JSON.parse(this.jsonString);
-    this.httpClient.post(SERVER_API_URL + this.apiEndpoint, this.jsonData, { observe: 'response' }).subscribe(
-      () => this.onSaveSuccess(),
-      (res: HttpErrorResponse) => this.onSaveError(res)
-    );
+    if (this.responseType === 'json') {
+      this.jsonData = JSON.parse(this.jsonString);
+      this.httpClient
+        .post(SERVER_API_URL + this.apiEndpoint, this.jsonData, { observe: 'response', responseType: this.responseType })
+        .subscribe(
+          () => this.onSaveSuccess(),
+          (res: HttpErrorResponse) => this.onSaveError(res)
+        );
+    } else {
+      // blob
+      this.httpClient.post(SERVER_API_URL + this.apiEndpoint, this.jsonString, { observe: 'response', responseType: 'blob' }).subscribe(
+        () => this.onSaveSuccess(),
+        (res: HttpErrorResponse) => this.onSaveError(res)
+      );
+    }
   }
 
   protected onSaveSuccess(): void {

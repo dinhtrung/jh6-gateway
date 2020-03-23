@@ -1,9 +1,20 @@
 # CC NC Country Network name TADIG CODE MCC MNC
 title: GT Prefixes
 apiEndpoint: /services/vnpti-msu/api/gt-prefixes
-importApiEndpoint: /services/vnpti-msu/api/data-management/gt-prefixes
+importApiEndpoint: /services/vnpti-msu/api/import-csv/gt-prefixes
+importApiResponseType: 'blob'
 predicate: 'prefix'
 reverse: true
+tasks:
+  - name: Export CSV
+    fileUrl: /services/vnpti-msu/api/export-csv/gt-prefixes
+    fileName: 'gt_prefixes.csv'
+    icon: file-csv
+  - name: Truncate Data
+    icon: dumpster
+    apiEndpoint: /services/vnpti-msu/api/data-management/gt-prefixes
+    method: DELETE
+    successMsg: Successfully truncate all GT Prefixes
 columns:
   - prop: network.name
     label: Network Name

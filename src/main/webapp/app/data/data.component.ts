@@ -321,6 +321,22 @@ export class DataComponent implements OnInit, OnDestroy {
           () => this.alertService.success(task.successMsg || 'Successfully perform task'),
           () => this.alertService.error(task.errorMsg || 'Failed to perform task')
         );
+    } else if (task.fileUrl) {
+      this.httpClient
+        .request(task.method || 'GET', task.fileUrl, {
+          params: task.params,
+          body: task.body,
+          observe: 'response',
+          responseType: 'blob'
+        })
+        .pipe(
+          filter((res: HttpResponse<any>) => res.ok),
+          map((res: HttpResponse<any>) => res.body || {})
+        )
+        .subscribe(
+          blob => saveAs(blob, task.fileName || 'download'),
+          () => this.alertService.error(task.errorMsg || 'Failed to download file')
+        );
     }
   }
 }
