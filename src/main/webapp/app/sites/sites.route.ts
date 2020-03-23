@@ -19,64 +19,63 @@ import { Observable, of } from 'rxjs';
 import { filter, map, concatMap } from 'rxjs/operators';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
+import * as _ from 'lodash';
 
 // + resolve markdown documentation
 @Injectable({ providedIn: 'root' })
-export class SiteResolver implements Resolve<string> {
+export class SiteResolver implements Resolve<any> {
   constructor(private service: HttpClient) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
     return this.service
       .get(SERVER_API_URL + 'api/nodes', { params: createRequestOption({ slug: route.params['site'], type: 'SITE' }), observe: 'response' })
       .pipe(
-        filter((response: HttpResponse<string>) => response.ok),
-        map((content: HttpResponse<string>) => content.body || []),
+        filter((response: HttpResponse<any>) => response.ok),
+        map((content: HttpResponse<any>) => content.body || []),
         filter(res => res.length > 0),
         map(res => res[0])
       );
   }
 }
 @Injectable({ providedIn: 'root' })
-export class ContentTypeResolve implements Resolve<string> {
+export class ContentTypeResolve implements Resolve<any> {
   constructor(private service: HttpClient) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
-    if (route.params.site && route.params.type) {
-      // + retrieve sites first
-      return this.service
-        .get(SERVER_API_URL + 'api/nodes', { params: createRequestOption({ slug: route.params.site, type: 'SITE' }), observe: 'response' })
-        .pipe(
-          filter((response: HttpResponse<string>) => response.ok),
-          map((content: HttpResponse<string>) => content.body || []),
-          filter(res => res.length > 0),
-          map(res => res[0]),
-          // retrieve content types of this site
-          concatMap(site =>
-            this.service
-              .get(SERVER_API_URL + 'api/nodes', {
-                params: createRequestOption({ slug: route.params['type'], type: 'CONTENT_TYPE', tags: site.id }),
-                observe: 'response'
-              })
-              .pipe(
-                filter((response: HttpResponse<string>) => response.ok),
-                map((content: HttpResponse<string>) => content.body || []),
-                filter(res => res.length > 0),
-                map(res => _.set(res[0], 'site', site)),
-                concatMap(contentType =>
-                  this.service
-                    .get(SERVER_API_URL + 'api/nodes', {
-                      params: createRequestOption({ tags: contentType.id, type: 'FIELD' }),
-                      observe: 'response'
-                    })
-                    .pipe(
-                      filter((response: HttpResponse<string>) => response.ok),
-                      map((content: HttpResponse<string>) => _.set(contentType, 'fields', content.body || []))
-                    )
-                )
+    // + retrieve sites first
+    return this.service
+      .get(SERVER_API_URL + 'api/nodes', { params: createRequestOption({ slug: route.params.site, type: 'SITE' }), observe: 'response' })
+      .pipe(
+        filter((response: HttpResponse<any>) => response.ok),
+        map((content: HttpResponse<any>) => content.body || []),
+        filter(res => res.length > 0),
+        map(res => res[0]),
+        // retrieve content types of this site
+        concatMap(site =>
+          this.service
+            .get(SERVER_API_URL + 'api/nodes', {
+              params: createRequestOption({ slug: route.params['type'], type: 'CONTENT_TYPE', tags: site.id }),
+              observe: 'response'
+            })
+            .pipe(
+              filter((response: HttpResponse<any>) => response.ok),
+              map((content: HttpResponse<any>) => content.body || []),
+              filter(res => res.length > 0),
+              map(res => _.set(res[0], 'site', site)),
+              concatMap(contentType =>
+                this.service
+                  .get(SERVER_API_URL + 'api/nodes', {
+                    params: createRequestOption({ tags: contentType.id, type: 'FIELD' }),
+                    observe: 'response'
+                  })
+                  .pipe(
+                    filter((response: HttpResponse<any>) => response.ok),
+                    map((content: HttpResponse<any>) => _.set(contentType, 'fields', content.body || []))
+                  )
               )
-          )
-        );
-    }
+            )
+        )
+      );
   }
 }
 

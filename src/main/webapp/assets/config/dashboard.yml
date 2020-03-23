@@ -9,6 +9,13 @@
 - name: Development
   url: /docs/development
   icon: boxes
+- name: Styles
+  url: /docs/themer
+  icon: tachometer-alt
+- name: White Label
+  url: /app-management/forms/i18n/en
+  icon: cogs
+  authority: ROLE_USER
 # CMS Features
 - name: Sites
   url: /data/cms/sites

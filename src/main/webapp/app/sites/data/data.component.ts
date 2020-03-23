@@ -1,39 +1,305 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { EntityService } from 'app/common/model/entity.service';
-import { filter, map } from 'rxjs/operators';
+import { AccountService } from 'app/core/auth/account.service';
+import { Title } from '@angular/platform-browser';
+import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
+// + Modal
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { plainToFlattenObject } from 'app/common/util/request-util';
+// + search
 import * as _ from 'lodash';
+// + mobile friendly
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'jhi-data',
   templateUrl: './data.component.html',
   styleUrls: ['./data.component.scss']
 })
-export class DataComponent implements OnInit {
+export class DataComponent implements OnInit, OnDestroy {
   _ = _;
-  site: any;
-  templateFile: any;
-  pagingParams: any;
-  contentType: any;
+  isMobile: boolean;
+  isReady = false;
+  currentAccount: any;
+  // + data
+  tasks: any[] = []; // List of available task from this UI
+  actions: any[] = []; // List of available options for each row
+  fields: any;
+  rows: any[] = [];
   columns: any[] = [];
-  constructor(private activatedRoute: ActivatedRoute, private entityService: EntityService) {}
+  columnKeys: string[] = [];
+  columnsMap: any = {};
+  // How to display the table
+  title = ''; // page title
+  prop = ''; // entity namespace
+  svc = ''; // service namespace
+  contentType: any;
+  apiEndpoint = '';
+  queryParams: any;
+  // + states
+  error: any;
+  success: any;
+  eventSubscriber: any;
+  // + pagination
+  links: any;
+  totalItems: any;
+  itemsPerPage: any;
+  page: any;
+  predicate: any;
+  previousPage: any;
+  reverse: any;
+  // + search support
+  filterOperators: string[] = [];
+  searchModel: any;
+  searchParams: any;
+  // + delete Modal
+  @ViewChild('deleteModal', { static: true }) deleteModal: any;
+  // + references
+  referenceMap: any = {};
+  referenceEndpoint: any = {};
+
+  constructor(
+    private titleService: Title,
+    private deviceService: DeviceDetectorService,
+    protected dataService: EntityService,
+    protected parseLinks: JhiParseLinks,
+    protected jhiAlertService: JhiAlertService,
+    protected accountService: AccountService,
+    protected activatedRoute: ActivatedRoute,
+    protected router: Router,
+    protected modalService: NgbModal,
+    protected eventManager: JhiEventManager
+  ) {
+    this.itemsPerPage = ITEMS_PER_PAGE;
+    this.isMobile = this.deviceService.isMobile();
+  }
+
+  loadAll(): void {
+    // eslint-disable-next-line no-console
+    console.log('Activated route', this.activatedRoute);
+    this.dataService
+      .query(
+        plainToFlattenObject(
+          _.assign(
+            this.queryParams,
+            {
+              page: this.page - 1,
+              size: this.itemsPerPage,
+              sort: this.sort()
+            },
+            // + support search
+            _.pickBy(
+              _.mapValues(this.searchParams, (pattern, field) =>
+                this.searchModel[field] ? _.template(pattern)(_.assign({}, { term: this.searchModel[field] }, this.searchModel)) : null
+              ),
+              _.identity
+            )
+          )
+        ),
+        this.apiEndpoint
+      )
+      .subscribe(
+        (res: HttpResponse<any[]>) => this.paginate(res.body || [], res.headers),
+        (res: HttpErrorResponse) => this.onError(res.message)
+      );
+  }
+
+  loadPage(page: number): void {
+    if (page !== this.previousPage) {
+      this.previousPage = page;
+      this.transition();
+    }
+  }
+
+  transition(): void {
+    this.router.navigate([], {
+      queryParams: _.assign(
+        {},
+        {
+          page: this.page,
+          size: this.itemsPerPage,
+          sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+        },
+        this.searchModel
+      )
+    });
+    this.loadAll();
+  }
+
+  clear(): void {
+    this.page = 1;
+    this.searchModel = {};
+    const uri = window.location.pathname;
+    this.router.navigateByUrl('/').then(() =>
+      this.router.navigate([uri], {
+        queryParams: _.assign(
+          {},
+          {
+            page: this.page,
+            size: this.itemsPerPage,
+            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+          }
+        )
+      })
+    );
+  }
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ contentType, pagingParams }) => {
-      this.site = contentType.site;
-      this.pagingParams = pagingParams;
-      this.contentType = contentType;
-      this.loadColumns(templateFile);
+    this.isReady = false;
+    combineLatest(
+      this.activatedRoute.data.pipe(
+        map(({ contentType, pagingParams }) => {
+          this.contentType = contentType;
+          // + pagination parameters
+          this.page = pagingParams.page;
+          this.previousPage = pagingParams.page;
+          this.reverse = _.get(contentType, 'ascending', pagingParams.ascending);
+          this.predicate = _.get(contentType, 'predicate', pagingParams.predicate);
+          // + prop and yaml
+          this.prop = contentType.slug;
+          this.svc = contentType.site.slug;
+          this.title = _.get(contentType, 'name', 'app.title.' + this.prop);
+          this.titleService.setTitle(this.title);
+          // + apiEndpoint and params
+          this.tasks = _.get(contentType, 'tasks', []);
+          this.actions = _.get(contentType, 'actions', []);
+          this.apiEndpoint = _.get(contentType, 'apiEndpoint', contentType.apiEndpoint);
+          this.queryParams = _.get(contentType, 'queryParams', {});
+          // + fields
+          this.fields = _.get(contentType, 'fields', []);
+          this.columns = _.map(_.get(contentType, 'fields', ['id']), v =>
+            _.isString(v) ? { prop: v, pattern: 'ci(contains(${ term }))', jhiTranslate: v, label: v } : v
+          );
+          this.columnsMap = _.keyBy(this.columns, 'prop');
+          this.columnKeys = _.map(this.columns, 'prop');
+          // modifier for the search stuff
+          this.searchParams = _.mapValues(_.keyBy(this.columns, 'prop'), v => v.pattern || '${term}');
+          // TODO: Store the list of display columns under account preferences or session storage
+          this.filterOperators = _.get(contentType, 'filterOperators');
+          // + calculate filtering map for select field, which annotated with `options`
+          this.referenceMap = {};
+          _.each(
+            _.filter(this.columns, i => _.get(i, 'options')),
+            i => _.each(i.options, o => _.set(this.referenceMap, [i.prop, o.value], o.label))
+          );
+          // + calculate reference for ng-select
+          this.referenceEndpoint = {};
+          _.each(
+            _.filter(this.columns, i => _.get(i, 'apiEndpoint')),
+            field => (this.referenceEndpoint[field.prop] = _.pick(field, ['apiEndpoint', 'params', 'key', 'val']))
+          );
+        })
+      ),
+      this.activatedRoute.queryParams.pipe(map(params => (this.searchModel = _.omit(params, ['size', 'sort', 'page']))))
+    ).subscribe(() => this.loadAll());
+    this.accountService.identity().subscribe(account => (this.currentAccount = account));
+    this.registerChangeInData();
+  }
+
+  ngOnDestroy(): void {
+    if (this.eventSubscriber) {
+      this.eventManager.destroy(this.eventSubscriber);
+    }
+  }
+
+  trackId(index: number, item: any): string {
+    return item.id;
+  }
+
+  registerChangeInData(): void {
+    this.eventSubscriber = this.eventManager.subscribe('dataListModification', () => this.loadAll());
+  }
+
+  sort(): string[] {
+    const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
+    if (this.predicate !== 'id') {
+      result.push('id');
+    }
+    return result;
+  }
+
+  protected paginate(data: any[], headers: HttpHeaders): void {
+    this.links = this.parseLinks.parse(headers.get('link') || '');
+    this.totalItems = parseInt(headers.get('X-Total-Count') || '0', 10);
+    this.rows = data;
+    this.loadReferences();
+    this.isReady = true;
+  }
+
+  protected loadReferences(): void {
+    // + load reference remote entities based on apiEndpoint
+    _.each(this.referenceEndpoint, (templateOptions, fieldKey) => {
+      const ids = _.uniq(
+        _.flatMap(
+          _.map(this.rows, i => _.get(i, fieldKey)).filter(i => !_.isEmpty(i)),
+          values => (_.isArray(values) ? _.values(values) : values)
+        )
+      );
+      const q = _.get(templateOptions, 'params', {});
+      _.set(q, templateOptions.key, ids);
+      this.dataService
+        .query(q, templateOptions.apiEndpoint)
+        .subscribe(refData =>
+          _.each(refData.body, i => _.set(this.referenceMap, [fieldKey, _.get(i, templateOptions.key)], _.get(i, templateOptions.val)))
+        );
     });
   }
 
-  loadColumns(contentType: any): void {
-    this.entityService
-      .query({ type: 'FIELD', tags: contentType.id, state: 200 }, 'api/nodes')
-      .pipe(
-        filter(res => res.ok),
-        map(res => res.body || [])
+  protected onError(errorMessage: string): void {
+    this.jhiAlertService.error(errorMessage);
+  }
+  // + delete confirm
+  delete(t: any): void {
+    this.modalService.open(this.deleteModal).result.then(
+      () =>
+        this.dataService.delete(t.id, this.apiEndpoint).subscribe(
+          () => this.loadAll(),
+          err => this.onError(err.error.title)
+        ),
+      () => this.modalService.dismissAll()
+    );
+  }
+
+  // Render cell value based on current reference map
+  renderCell(row: any, col: string): any {
+    // {{ _.get(referenceMap, [c, _.get(val, c)], _.get(val, c)) }}
+    const val = this.columnsMap[col].template ? _.template(this.columnsMap[col].template)(row) : _.get(row, col);
+    if (_.isArray(val)) {
+      return _.map(val, v => _.get(this.referenceMap, [col, v], v));
+    } else if (_.isPlainObject(val)) {
+      return JSON.stringify(val);
+    }
+    return _.get(this.referenceMap, [col, val], val);
+  }
+
+  // + export data
+  exportData(): void {
+    this.dataService
+      .query(
+        _.assign(
+          this.queryParams,
+          {
+            page: this.page - 1,
+            size: 10000,
+            sort: this.sort()
+          },
+          this.searchModel
+        ),
+        this.apiEndpoint
       )
-      .subscribe(columns => (this.columns = columns));
+      .subscribe(res => this.saveDataToFile(res.body || []));
+  }
+  // + save array of json to file
+  saveDataToFile(data: any[]): void {
+    const blob = new Blob([JSON.stringify(data)], {
+      type: 'application/json'
+    });
+    saveAs(blob, this.prop + '.json');
   }
 }

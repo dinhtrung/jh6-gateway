@@ -7,6 +7,11 @@ createOrEditData: "Add / Update Content Type"
 importApiEndpoint: /api/nodes/import
 predicate: 'createdAt'
 reverse: true
+actions:
+  - icon: file-download
+    name: Export YAML
+    url: /spaces/site/${slug}
+    className: success
 columns:
   - prop: name
     label: Name

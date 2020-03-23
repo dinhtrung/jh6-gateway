@@ -9,6 +9,7 @@ import { tap } from 'rxjs/operators';
 // + Form Builder
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import * as jsyaml from 'js-yaml';
 import { AccountService } from 'app/core/auth/account.service';
 import { EntityService } from 'app/common/model/entity.service';
 import { Title } from '@angular/platform-browser';
@@ -26,6 +27,7 @@ export class DataUpdateComponent implements OnInit {
   isSaving = false;
   model: any = {};
   fields: FormlyFieldConfig[] = [];
+  yaml = '';
   contentType: any;
   debug = DEBUG_INFO_ENABLED;
   apiEndpoint = '';
@@ -57,7 +59,11 @@ export class DataUpdateComponent implements OnInit {
           // this.languageHelper.updateTitle(this.title);
           this.apiEndpoint = contentType.meta.apiEndpoint || 'api/nodes';
           // + form rendering
-          this.fields = (contentType.fields || []).map(v => _.extend({}, v.meta, { key: v.slug }));
+          const fields = (contentType.fields || []).map((v: any) =>
+            _.extend(_.set(v.meta, 'templateOptions.label', v.name), { key: v.slug })
+          );
+          this.fields = fields;
+          this.yaml = jsyaml.dump(fields);
           this.options.formState.mainModel = this.model;
         })
       )
