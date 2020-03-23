@@ -15,6 +15,16 @@ fields:
       label: Hub Name
       description: SCPP Carrier Name
       required: true
+  - key: direct
+    type: checkbox
+    templateOptions:
+      label: Direct
+      description: Check if we have direct connect to this hub
+  - key: stplinks
+    type: tags
+    templateOptions:
+      label: STP Links
+      description: List of STP Links on this SCCP Hub
   - key: description
     type: input
     className: col-md-8

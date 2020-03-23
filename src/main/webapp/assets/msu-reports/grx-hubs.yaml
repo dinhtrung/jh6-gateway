@@ -15,6 +15,16 @@ fields:
       label: Hub Name
       description: SCPP Carrier Name
       required: true
+  - key: direct
+    type: checkbox
+    templateOptions:
+      label: Direct
+      description: Check if we have direct connect to this hub
+  - key: circuitIds
+    type: tags
+    templateOptions:
+      label: Circuit ID
+      description: List of Circuit ID on this GRX Hub
   - key: description
     type: input
     className: col-md-8
