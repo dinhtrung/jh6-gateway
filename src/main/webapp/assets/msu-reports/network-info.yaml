@@ -216,78 +216,29 @@ fields:
                 templateOptions:
                   label: Comment
     - templateOptions:
-        label: GRX Providers
+        label: Hubs
       fieldGroup:
         - key: meta.grxHubs
-          type: repeat
+          type: ng-select
+          wrappers: [form-field]
+          className: col-md-4
           templateOptions:
             label: GRX Hubs
-          fieldArray:
-            fieldGroupClassName: row
-            fieldGroup:
-              - key: hubs
-                type: ng-select
-                wrappers: [form-field]
-                className: col-md-4
-                templateOptions:
-                  label: Hubs
-                  description: Hubs this operator belongs to
-                  multiple: true
-                  hideSelected: true
-                  apiEndpoint: '/services/vnpti-msu/api/grx-hubs'
-                  val: name
-                  termPattern: 'ci(contains(${term}))'
-              - key: direct
-                type: select
-                className: col-md-3
-                defaultValue: false
-                templateOptions:
-                  label: Direct
-                  options:
-                    - value: true
-                      label: Yes
-                    - value: false
-                      label: No
-              - key: circuitId
-                type: tags
-                className: col-md-3
-                templateOptions:
-                  label: Circuit ID
-    - templateOptions:
-        label: SCCP Hubs
-      fieldGroup:
+            description: Hubs this operator belongs to
+            multiple: true
+            hideSelected: true
+            apiEndpoint: '/services/vnpti-msu/api/grx-hubs'
+            val: name
+            termPattern: 'ci(contains(${term}))'
         - key: meta.sccpHubs
-          type: repeat
+          type: ng-select
+          wrappers: [form-field]
+          className: col-md-4
           templateOptions:
             label: SCCP Hubs
-          fieldArray:
-            fieldGroupClassName: row
-            fieldGroup:
-              - key: hubs
-                type: ng-select
-                wrappers: [form-field]
-                className: col-md-4
-                templateOptions:
-                  label: Hubs
-                  description: Hubs this operator belongs to
-                  multiple: true
-                  hideSelected: true
-                  apiEndpoint: '/services/vnpti-msu/api/sccp-hubs'
-                  val: name
-                  termPattern: 'ci(contains(${term}))'
-              - key: direct
-                type: select
-                className: col-md-3
-                defaultValue: false
-                templateOptions:
-                  label: Direct
-                  options:
-                    - value: true
-                      label: Yes
-                    - value: false
-                      label: No
-              - key: sctpLinks
-                type: tags
-                className: col-md-3
-                templateOptions:
-                  label: SCTP Links
+            description: Hubs this operator belongs to
+            multiple: true
+            hideSelected: true
+            apiEndpoint: '/services/vnpti-msu/api/sccp-hubs'
+            val: name
+            termPattern: 'ci(contains(${term}))'
