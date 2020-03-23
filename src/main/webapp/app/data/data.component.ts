@@ -302,7 +302,7 @@ export class DataComponent implements OnInit, OnDestroy {
     saveAs(blob, this.prop + '.json');
   }
 
-  // + perform task
+  // + perform task and action
   performTask(task: any): void {
     if (task.url) {
       this.router.navigateByUrl(task.url);
@@ -321,6 +321,22 @@ export class DataComponent implements OnInit, OnDestroy {
         .subscribe(
           () => this.alertService.success(task.successMsg || 'Successfully perform task'),
           () => this.alertService.error(task.errorMsg || 'Failed to perform task')
+        );
+    } else if (task.fileUrl) {
+      this.httpClient
+        .request(task.method || 'GET', task.fileUrl, {
+          params: task.params,
+          body: task.body,
+          observe: 'response',
+          responseType: 'blob'
+        })
+        .pipe(
+          filter((res: HttpResponse<any>) => res.ok),
+          map((res: HttpResponse<any>) => res.body || {})
+        )
+        .subscribe(
+          blob => saveAs(blob, task.fileName || 'download'),
+          () => this.alertService.error(task.errorMsg || 'Failed to download file')
         );
     }
   }
@@ -346,6 +362,24 @@ export class DataComponent implements OnInit, OnDestroy {
         .subscribe(
           () => this.alertService.success(action.successMsg || 'Successfully perform task'),
           () => this.alertService.error(action.errorMsg || 'Failed to perform task')
+        );
+    } else if (action.fileUrl) {
+      const params = action.params ? createRequestOption(JSON.parse(_.template(JSON.stringify(action.params))(row))) : undefined;
+      const body = action.body ? JSON.parse(_.template(JSON.stringify(action.body))(row)) : undefined;
+      this.httpClient
+        .request(action.method || 'GET', action.fileUrl, {
+          params,
+          body,
+          observe: 'response',
+          responseType: 'blob'
+        })
+        .pipe(
+          filter((res: HttpResponse<any>) => res.ok),
+          map((res: HttpResponse<any>) => res.body || {})
+        )
+        .subscribe(
+          blob => saveAs(blob, action.fileName || 'download'),
+          () => this.alertService.error(action.errorMsg || 'Failed to download file')
         );
     }
   }
