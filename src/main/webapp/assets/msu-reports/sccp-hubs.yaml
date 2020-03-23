@@ -6,6 +6,7 @@ predicate: 'name'
 reverse: true
 columns:
   - name
+  - description
 fields:
   - key: name
     type: input

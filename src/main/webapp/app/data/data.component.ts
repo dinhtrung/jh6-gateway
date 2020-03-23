@@ -307,10 +307,15 @@ export class DataComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl(task.url);
     } else if (task.apiEndpoint) {
       this.httpClient
-        .request(task.method || 'GET', task.apiEndpoint, _.assign(task.options || {}, { observe: 'response' }))
+        .request(task.method || 'GET', task.apiEndpoint, {
+          params: task.params,
+          body: task.body,
+          observe: 'response',
+          responseType: 'json'
+        })
         .pipe(
-          filter(res => res.ok),
-          map(res => res.body)
+          filter((res: HttpResponse<any>) => res.ok),
+          map((res: HttpResponse<any>) => res.body || {})
         )
         .subscribe(
           () => this.alertService.success(task.successMsg || 'Successfully perform task'),

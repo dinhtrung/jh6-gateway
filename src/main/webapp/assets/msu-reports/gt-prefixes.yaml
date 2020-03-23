@@ -7,10 +7,10 @@ reverse: true
 columns:
   - prop: network.name
     label: Network Name
-    pattern: ci(startsWith(${ term }))
+    pattern: ci(contains(${ term }))
   - prop: network.tadigcode
     label: TADIGCODE
-    pattern: ci(startsWith(${ term }))
+    pattern: ci(contains(${ term }))
   - prop: network.mcc
     label: Mobile Country Code
   - prop: network.mnc
@@ -19,13 +19,13 @@ columns:
     label: Network Destination Code
   - prop: network.country.name
     label: Country Name
-    pattern: ci(startsWith(${ term }))
+    pattern: ci(contains(${ term }))
   - prop: network.country.countryCode
     label: Country Code
-    pattern: ci(startsWith(${ term }))
+    pattern: ci(contains(${ term }))
   - prop: prefix
     label: GT Prefix
-    pattern: startsWith(${ term })
+    pattern: contains(${ term })
 fields:
   - fieldGroupClassName: row
     fieldGroup:

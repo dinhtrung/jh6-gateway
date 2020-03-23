@@ -5,9 +5,9 @@
 
     <groupId>com.ft</groupId>
     <artifactId>gateway</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.0.4-RELEASE</version>
     <packaging>jar</packaging>
-    <name>Gateway</name>
+    <name>VNPTI MSU Report</name>
 
     <repositories>
         <!-- jhipster-needle-maven-repository -->

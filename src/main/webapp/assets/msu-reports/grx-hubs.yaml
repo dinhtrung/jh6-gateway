@@ -1,11 +1,12 @@
 title: GRX Hubs
-apiEndpoint: /services/vnpti-msu/api/hubs
+apiEndpoint: /services/vnpti-msu/api/grx-hubs
 createOrEditData: Manage GRX Hub Information
 importApiEndpoint: /services/vnpti-msu/api/data-management/grx-hubs
 predicate: 'name'
 reverse: true
 columns:
   - name
+  - description
 fields:
   - key: name
     type: input
