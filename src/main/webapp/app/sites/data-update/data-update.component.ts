@@ -9,6 +9,7 @@ import { tap } from 'rxjs/operators';
 // + Form Builder
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import * as jsyaml from 'js-yaml';
 import { AccountService } from 'app/core/auth/account.service';
 import { EntityService } from 'app/common/model/entity.service';
 import { Title } from '@angular/platform-browser';
@@ -16,7 +17,8 @@ import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 
 @Component({
   selector: 'jhi-data-update',
-  templateUrl: './data-update.component.html'
+  templateUrl: './data-update.component.html',
+  styleUrls: ['./data-update.component.scss']
 })
 export class DataUpdateComponent implements OnInit {
   _ = _;
@@ -25,8 +27,8 @@ export class DataUpdateComponent implements OnInit {
   isSaving = false;
   model: any = {};
   fields: FormlyFieldConfig[] = [];
-  prop = '';
-  svc = '';
+  yaml = '';
+  contentType: any;
   debug = DEBUG_INFO_ENABLED;
   apiEndpoint = '';
   editForm = new FormGroup({});
@@ -48,17 +50,20 @@ export class DataUpdateComponent implements OnInit {
     combineLatest(
       this.accountService.identity().pipe(tap(account => (this.options.formState.account = account))),
       this.activatedRoute.data.pipe(
-        tap(({ templateFile, model }) => {
-          this.title = _.get(templateFile, 'config.createOrEditData', 'createOrEditData');
+        tap(({ contentType, model }) => {
+          this.contentType = contentType;
+          this.model = model;
+
+          this.title = 'Create or Edit ' + contentType.name;
           this.titleService.setTitle(this.title);
           // this.languageHelper.updateTitle(this.title);
-          this.svc = templateFile.svc;
-          this.prop = templateFile.prop;
-          // + apiEndpoint and params
-          this.apiEndpoint = _.get(templateFile, 'config.apiEndpoint', templateFile.apiEndpoint);
+          this.apiEndpoint = contentType.meta.apiEndpoint || 'api/nodes';
           // + form rendering
-          this.fields = _.get(templateFile, 'config.fields', []);
-          this.model = model;
+          const fields = (contentType.fields || []).map((v: any) =>
+            _.extend(_.set(v.meta, 'templateOptions.label', v.name), { key: v.slug })
+          );
+          this.fields = fields;
+          this.yaml = jsyaml.dump(fields);
           this.options.formState.mainModel = this.model;
         })
       )

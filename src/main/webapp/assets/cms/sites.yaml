@@ -1,7 +1,7 @@
 # Website Configurations
 title: Sites
 apiEndpoint: /api/nodes
-params:
+queryParams:
   type: SITE
 createOrEditData: "Add / Update Site"
 importApiEndpoint: /api/nodes/import
@@ -23,6 +23,11 @@ columns:
         label: Disabled
       - value: 502
         label: Temporary Unavailable
+actions:
+  - icon: directions
+    name: Visit
+    url: /spaces/site/${slug}
+    className: success
 fields:
   # Hidden attribute since we use the node table to host this info
   - key: type

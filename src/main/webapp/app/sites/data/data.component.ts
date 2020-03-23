@@ -19,7 +19,8 @@ import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'jhi-data',
-  templateUrl: './data.component.html'
+  templateUrl: './data.component.html',
+  styleUrls: ['./data.component.scss']
 })
 export class DataComponent implements OnInit, OnDestroy {
   _ = _;
@@ -38,6 +39,7 @@ export class DataComponent implements OnInit, OnDestroy {
   title = ''; // page title
   prop = ''; // entity namespace
   svc = ''; // service namespace
+  contentType: any;
   apiEndpoint = '';
   queryParams: any;
   // + states
@@ -152,25 +154,26 @@ export class DataComponent implements OnInit, OnDestroy {
     this.isReady = false;
     combineLatest(
       this.activatedRoute.data.pipe(
-        map(data => {
+        map(({ contentType, pagingParams }) => {
+          this.contentType = contentType;
           // + pagination parameters
-          this.page = data.pagingParams.page;
-          this.previousPage = data.pagingParams.page;
-          this.reverse = _.get(data.templateFile, 'config.ascending', data.pagingParams.ascending);
-          this.predicate = _.get(data.templateFile, 'config.predicate', data.pagingParams.predicate);
+          this.page = pagingParams.page;
+          this.previousPage = pagingParams.page;
+          this.reverse = _.get(contentType, 'ascending', pagingParams.ascending);
+          this.predicate = _.get(contentType, 'predicate', pagingParams.predicate);
           // + prop and yaml
-          this.prop = data.templateFile.prop;
-          this.svc = data.templateFile.svc;
-          this.title = _.get(data.templateFile, 'config.title', 'app.title.' + this.prop);
+          this.prop = contentType.slug;
+          this.svc = contentType.site.slug;
+          this.title = _.get(contentType, 'name', 'app.title.' + this.prop);
           this.titleService.setTitle(this.title);
           // + apiEndpoint and params
-          this.tasks = _.get(data.templateFile, 'config.tasks', []);
-          this.actions = _.get(data.templateFile, 'config.actions', []);
-          this.apiEndpoint = _.get(data.templateFile, 'config.apiEndpoint', data.templateFile.apiEndpoint);
-          this.queryParams = _.get(data.templateFile, 'config.queryParams', {});
+          this.tasks = _.get(contentType, 'tasks', []);
+          this.actions = _.get(contentType, 'actions', []);
+          this.apiEndpoint = _.get(contentType, 'apiEndpoint', contentType.apiEndpoint);
+          this.queryParams = _.get(contentType, 'queryParams', {});
           // + fields
-          this.fields = _.get(data.templateFile, 'config.fields', []);
-          this.columns = _.map(_.get(data.templateFile, 'config.columns', ['id']), v =>
+          this.fields = _.get(contentType, 'fields', []);
+          this.columns = _.map(_.get(contentType, 'fields', ['id']), v =>
             _.isString(v) ? { prop: v, pattern: 'ci(contains(${ term }))', jhiTranslate: v, label: v } : v
           );
           this.columnsMap = _.keyBy(this.columns, 'prop');
@@ -178,7 +181,7 @@ export class DataComponent implements OnInit, OnDestroy {
           // modifier for the search stuff
           this.searchParams = _.mapValues(_.keyBy(this.columns, 'prop'), v => v.pattern || '${term}');
           // TODO: Store the list of display columns under account preferences or session storage
-          this.filterOperators = _.get(data.templateFile, 'config.filterOperators');
+          this.filterOperators = _.get(contentType, 'filterOperators');
           // + calculate filtering map for select field, which annotated with `options`
           this.referenceMap = {};
           _.each(

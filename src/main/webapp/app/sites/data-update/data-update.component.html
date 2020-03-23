@@ -22,6 +22,6 @@
         </div>
     </div>
     <div class="col-md-4" *ngIf="debug">
-        <pre class="bg-white">{{ options.formState.mainModel | json }}</pre>
+        <pre class="bg-white" [innerHtml]="yaml"></pre>
     </div>
 </div>
