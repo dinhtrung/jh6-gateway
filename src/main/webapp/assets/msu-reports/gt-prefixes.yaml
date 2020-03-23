@@ -5,24 +5,30 @@ importApiEndpoint: /services/vnpti-msu/api/data-management/gt-prefixes
 predicate: 'prefix'
 reverse: true
 columns:
-  - prefix
-  - ndc
-  - network.name
+  - prop: network.name
+    label: Network Name
+    pattern: ci(startsWith(${ term }))
+  - prop: network.tadigcode
+    label: TADIGCODE
+    pattern: ci(startsWith(${ term }))
+  - prop: network.mcc
+    label: Mobile Country Code
+  - prop: network.mnc
+    label: Mobile Network Code
+  - prop: ndc
+    label: Network Destination Code
+  - prop: network.country.name
+    label: Country Name
+    pattern: ci(startsWith(${ term }))
+  - prop: network.country.countryCode
+    label: Country Code
+    pattern: ci(startsWith(${ term }))
+  - prop: prefix
+    label: GT Prefix
+    pattern: startsWith(${ term })
 fields:
   - fieldGroupClassName: row
     fieldGroup:
-      - key: prefix
-        type: input
-        className: col-md-4
-        templateOptions:
-          label: GT Prefix
-          required: true
-      - key: ndc
-        type: input
-        className: col-md-2
-        templateOptions:
-          label: Country Code
-          description: Mobile Country Code
       - key: network
         type: ng-select
         className: col-md-6
@@ -33,21 +39,18 @@ fields:
           apiEndpoint: '/services/vnpti-msu/api/network-operators'
           val: name
           termPattern: 'ci(contains(${term}))'
-      - key: _networkTagidcode
-        type: template
-        expressionProperties:
-          templateOptions.innerHTML: 'model.network?.tagidcode && _.template("<strong>TAGID CODE</strong> <code>${ network.tagidcode }</code>")(model)'
+      - key: ndc
+        type: input
+        className: col-md-6
         templateOptions:
-          innerHTML:
-      - key: _networkMcc
-        type: template
-        expressionProperties:
-          templateOptions.innerHTML: 'model.network?.mcc && _.template("<strong>MCC</strong> <code>${ network.mcc }</code>")(model)'
-        templateOptions:
-          innerHTML:
-      - key: _networkMnc
-        type: template
-        expressionProperties:
-          templateOptions.innerHTML: 'model.network?.mnc && _.template("<strong>MNC</strong> <code>${ network.mnc }</code>")(model)'
-        templateOptions:
-          innerHTML:
+          label: NDC
+          description: Network Destination Code
+          required: true
+          maxlength: 6
+  - key: _info
+    type: template
+    expressionProperties:
+      templateOptions.innerHTML: 'model.network && model.ndc && model.network.country && _.set(model, "prefix", model.network.country.countryCode + model.ndc) && _.template("<ul><li><strong>GT Prefix:</strong> ${prefix}</li><li><strong>Country Code:</strong> ${ network.country.countryCode }</li><li><strong>Country Name:</strong> ${ network.country.name }</li><li><strong>TADIG Code:</strong> ${ network.tadigcode }</li><li><strong>Mobile Country Code:</strong> ${ network.mcc }</li><li><strong>Mobile Network Code:</strong> ${ network.mnc }</li></ul>")(model)'
+    templateOptions:
+      label: Information
+      innerHTML:

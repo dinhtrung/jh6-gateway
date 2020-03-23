@@ -7,7 +7,7 @@ import { plainToFlattenObject } from 'app/common/util/request-util';
 // + ng-select
 import { Subject, of, concat } from 'rxjs';
 import { FieldType } from '@ngx-formly/core';
-import { distinctUntilChanged, filter, debounceTime, switchMap, tap, catchError, map } from 'rxjs/operators';
+import { distinctUntilChanged, filter, debounceTime, switchMap, catchError, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 @Component({
@@ -35,7 +35,6 @@ import * as _ from 'lodash';
       [typeahead]="search$"
       [multiple]="to.multiple"
       [hideSelected]="to.hideSelected"
-      [loading]="isLoading"
       [bindLabel]="to.val"
       [bindValue]="to.key"
       [groupBy]="to.groupBy"
@@ -50,7 +49,6 @@ import * as _ from 'lodash';
       [multiple]="to.multiple"
       (focus)="search$.next()"
       [hideSelected]="to.hideSelected"
-      [loading]="isLoading"
       [bindLabel]="to.val"
       [bindValue]="to.key"
       [groupBy]="to.groupBy"
@@ -65,7 +63,6 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
   };
   onDestroy$ = new Subject<void>();
   options$: any;
-  isLoading = false;
   search$ = new Subject<string>();
 
   constructor(public httpClient: HttpClient) {
@@ -87,7 +84,6 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
         this.search$.pipe(
           debounceTime(200),
           distinctUntilChanged(),
-          tap(() => (this.isLoading = true)),
           filter((term: string) =>
             this.to.termLength ? term.length >= this.to.termLength : this.to.termPattern === false || !_.isEmpty(term)
           ),
@@ -95,8 +91,7 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
             this.loadSeachResult(term).pipe(
               filter((res: HttpResponse<any[]>) => res.ok),
               map((res: HttpResponse<any[]>) => this.parseResult(res.body || [])), // The original array
-              catchError(() => of([])), // empty list on error
-              tap(() => (this.isLoading = false))
+              catchError(() => of([])) // empty list on error
             )
           )
         )
@@ -119,8 +114,7 @@ export class NgselectTypeComponent extends FieldType implements OnInit, OnDestro
       })
       .pipe(
         map(res => this.parseResult(res.body)), // The original array
-        catchError(() => of([])), // empty list on error
-        tap(() => (this.isLoading = false))
+        catchError(() => of([])) // empty list on error
       );
   }
 

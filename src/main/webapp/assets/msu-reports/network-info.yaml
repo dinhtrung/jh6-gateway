@@ -4,6 +4,14 @@ createOrEditData: Manage Network Information Details
 importApiEndpoint: /services/vnpti-msu/api/data-management/network-operators
 predicate: 'name'
 reverse: true
+tasks:
+  - name: Synchronize
+    apiEndpoint: /services/vnpti-msu/api/data-management/network-operators/synchronize
+    # method: PUT
+    # options:
+    #   body: {}
+    icon: sync
+    successMsg: Successfully synchronize network info
 columns:
   - name
   - tadigcode

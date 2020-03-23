@@ -19,7 +19,7 @@
                         <fa-icon icon="upload"></fa-icon>
                         <span>Import</span>
                     </button>
-                    <button type="button" *ngFor="let t of tasks" class="btn btn-secondary" [routerLink]="t.url">
+                    <button ngbDropdownItem *ngFor="let t of tasks" (click)="performTask(t)">
                         <fa-icon [icon]="t.icon" *ngIf="t.icon"></fa-icon>
                         <span [jhiTranslate]="t.name" class="d-none d-md-inline"></span>
                     </button>

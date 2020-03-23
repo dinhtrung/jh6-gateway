@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpHeaders, HttpResponse, HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { EntityService } from 'app/common/model/entity.service';
 import { AccountService } from 'app/core/auth/account.service';
@@ -65,9 +65,10 @@ export class DataComponent implements OnInit, OnDestroy {
   constructor(
     private titleService: Title,
     private deviceService: DeviceDetectorService,
+    private httpClient: HttpClient,
     protected dataService: EntityService,
     protected parseLinks: JhiParseLinks,
-    protected jhiAlertService: JhiAlertService,
+    protected alertService: JhiAlertService,
     protected accountService: AccountService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -83,15 +84,15 @@ export class DataComponent implements OnInit, OnDestroy {
     console.log('Activated route', this.activatedRoute);
     this.dataService
       .query(
-        plainToFlattenObject(
-          _.assign(
-            this.queryParams,
-            {
-              page: this.page - 1,
-              size: this.itemsPerPage,
-              sort: this.sort()
-            },
-            // + support search
+        _.assign(
+          this.queryParams,
+          {
+            page: this.page - 1,
+            size: this.itemsPerPage,
+            sort: this.sort()
+          },
+          // + support search
+          plainToFlattenObject(
             _.pickBy(
               _.mapValues(this.searchParams, (pattern, field) =>
                 this.searchModel[field] ? _.template(pattern)(_.assign({}, { term: this.searchModel[field] }, this.searchModel)) : null
@@ -249,7 +250,7 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   protected onError(errorMessage: string): void {
-    this.jhiAlertService.error(errorMessage);
+    this.alertService.error(errorMessage);
   }
   // + delete confirm
   delete(t: any): void {
@@ -298,5 +299,23 @@ export class DataComponent implements OnInit, OnDestroy {
       type: 'application/json'
     });
     saveAs(blob, this.prop + '.json');
+  }
+
+  // + perform task and action
+  performTask(task: any): void {
+    if (task.url) {
+      this.router.navigateByUrl(task.url);
+    } else if (task.apiEndpoint) {
+      this.httpClient
+        .request(task.method || 'GET', task.apiEndpoint, _.assign(task.options || {}, { observe: 'response' }))
+        .pipe(
+          filter(res => res.ok),
+          map(res => res.body)
+        )
+        .subscribe(
+          () => this.alertService.success(task.successMsg || 'Successfully perform task'),
+          () => this.alertService.error(task.errorMsg || 'Failed to perform task')
+        );
+    }
   }
 }
