@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { EntityService } from 'app/common/model/entity.service';
 import { AccountService } from 'app/core/auth/account.service';
@@ -11,6 +11,7 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 // + Modal
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { plainToFlattenObject } from 'app/common/util/request-util';
+import { createRequestOption } from 'app/shared/util/request-util';
 // + search
 import * as _ from 'lodash';
 // + mobile friendly
@@ -67,14 +68,15 @@ export class DataComponent implements OnInit, OnDestroy {
   constructor(
     private titleService: Title,
     private deviceService: DeviceDetectorService,
-    protected dataService: EntityService,
-    protected parseLinks: JhiParseLinks,
-    protected jhiAlertService: JhiAlertService,
-    protected accountService: AccountService,
-    protected activatedRoute: ActivatedRoute,
-    protected router: Router,
-    protected modalService: NgbModal,
-    protected eventManager: JhiEventManager
+    private httpClient: HttpClient,
+    private dataService: EntityService,
+    private parseLinks: JhiParseLinks,
+    private alertService: JhiAlertService,
+    private accountService: AccountService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private modalService: NgbModal,
+    private eventManager: JhiEventManager
   ) {
     this.itemsPerPage = ITEMS_PER_PAGE;
     this.isMobile = this.deviceService.isMobile();
@@ -252,7 +254,7 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   protected onError(errorMessage: string): void {
-    this.jhiAlertService.error(errorMessage);
+    this.alertService.error(errorMessage);
   }
   // + delete confirm
   delete(t: any): void {
