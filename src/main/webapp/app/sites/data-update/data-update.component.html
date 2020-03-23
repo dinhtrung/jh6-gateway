@@ -22,6 +22,19 @@
         </div>
     </div>
     <div class="col-md-4" *ngIf="debug">
-        <pre class="bg-white" [innerHtml]="yaml"></pre>
+      <div class="col-md-4" *ngIf="debug">
+        <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" [closeOthers]="true">
+          <ngb-panel title="Main Model">
+            <ng-template ngbPanelContent>
+              <pre class="bg-white">{{ options.formState.mainModel | json }}</pre>
+            </ng-template>
+          </ngb-panel>
+          <ngb-panel title="Form YAML">
+            <ng-template ngbPanelContent>
+              <pre class="bg-white" [innerHTML]="yaml"></pre>
+            </ng-template>
+          </ngb-panel>
+        </ngb-accordion>
+      </div>
     </div>
 </div>

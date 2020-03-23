@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { EntityService } from 'app/common/model/entity.service';
 import { AccountService } from 'app/core/auth/account.service';
@@ -11,6 +11,7 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 // + Modal
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { plainToFlattenObject } from 'app/common/util/request-util';
+import { createRequestOption } from 'app/shared/util/request-util';
 // + search
 import * as _ from 'lodash';
 // + mobile friendly
@@ -65,14 +66,15 @@ export class DataComponent implements OnInit, OnDestroy {
   constructor(
     private titleService: Title,
     private deviceService: DeviceDetectorService,
-    protected dataService: EntityService,
-    protected parseLinks: JhiParseLinks,
-    protected jhiAlertService: JhiAlertService,
-    protected accountService: AccountService,
-    protected activatedRoute: ActivatedRoute,
-    protected router: Router,
-    protected modalService: NgbModal,
-    protected eventManager: JhiEventManager
+    private httpClient: HttpClient,
+    private dataService: EntityService,
+    private parseLinks: JhiParseLinks,
+    private alertService: JhiAlertService,
+    private accountService: AccountService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private modalService: NgbModal,
+    private eventManager: JhiEventManager
   ) {
     this.itemsPerPage = ITEMS_PER_PAGE;
     this.isMobile = this.deviceService.isMobile();
@@ -249,7 +251,7 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   protected onError(errorMessage: string): void {
-    this.jhiAlertService.error(errorMessage);
+    this.alertService.error(errorMessage);
   }
   // + delete confirm
   delete(t: any): void {
@@ -298,5 +300,53 @@ export class DataComponent implements OnInit, OnDestroy {
       type: 'application/json'
     });
     saveAs(blob, this.prop + '.json');
+  }
+
+  // + perform task
+  performTask(task: any): void {
+    if (task.url) {
+      this.router.navigateByUrl(task.url);
+    } else if (task.apiEndpoint) {
+      this.httpClient
+        .request(task.method || 'GET', task.apiEndpoint, {
+          params: task.params,
+          body: task.body,
+          observe: 'response',
+          responseType: 'json'
+        })
+        .pipe(
+          filter((res: HttpResponse<any>) => res.ok),
+          map((res: HttpResponse<any>) => res.body || {})
+        )
+        .subscribe(
+          () => this.alertService.success(task.successMsg || 'Successfully perform task'),
+          () => this.alertService.error(task.errorMsg || 'Failed to perform task')
+        );
+    }
+  }
+
+  // + perform action
+  performAction(action: any, row: any): void {
+    if (action.url) {
+      this.router.navigateByUrl(_.template(action.url)(row));
+    } else if (action.apiEndpoint) {
+      const params = action.params ? createRequestOption(JSON.parse(_.template(JSON.stringify(action.params))(row))) : undefined;
+      const body = action.body ? JSON.parse(_.template(JSON.stringify(action.body))(row)) : undefined;
+      this.httpClient
+        .request(action.method || 'GET', action.apiEndpoint, {
+          params,
+          body,
+          observe: 'response',
+          responseType: 'json'
+        })
+        .pipe(
+          filter((res: HttpResponse<any>) => res.ok),
+          map((res: HttpResponse<any>) => res.body || {})
+        )
+        .subscribe(
+          () => this.alertService.success(action.successMsg || 'Successfully perform task'),
+          () => this.alertService.error(action.errorMsg || 'Failed to perform task')
+        );
+    }
   }
 }

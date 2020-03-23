@@ -19,7 +19,7 @@
                         <fa-icon icon="upload"></fa-icon>
                         <span>Import</span>
                     </button>
-                    <button type="button" *ngFor="let t of tasks" class="btn btn-secondary" [routerLink]="t.url">
+                    <button ngbDropdownItem *ngFor="let t of tasks" (click)="performTask(t)">
                         <fa-icon [icon]="t.icon" *ngIf="t.icon"></fa-icon>
                         <span [jhiTranslate]="t.name" class="d-none d-md-inline"></span>
                     </button>
@@ -93,7 +93,7 @@
                                         <fa-icon [icon]="'times'"></fa-icon>
                                         <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
                                     </button>
-                                    <button type="button" *ngFor="let a of actions" class="btn btn-{{ a.className }}" [routerLink]="_.template(a.url)(row)">
+                                    <button type="button" *ngFor="let a of actions" class="btn btn-{{ a.className }}" (click)="performAction(a, row)">
                                         <fa-icon [icon]="a.icon" *ngIf="a.icon"></fa-icon>
                                         <span [jhiTranslate]="a.name" class="d-none d-md-inline"></span>
                                     </button>

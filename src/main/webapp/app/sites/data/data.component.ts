@@ -302,4 +302,52 @@ export class DataComponent implements OnInit, OnDestroy {
     });
     saveAs(blob, this.prop + '.json');
   }
+
+  // + perform task
+  performTask(task: any): void {
+    if (task.url) {
+      this.router.navigateByUrl(task.url);
+    } else if (task.apiEndpoint) {
+      this.httpClient
+        .request(task.method || 'GET', task.apiEndpoint, {
+          params: task.params,
+          body: task.body,
+          observe: 'response',
+          responseType: 'json'
+        })
+        .pipe(
+          filter((res: HttpResponse<any>) => res.ok),
+          map((res: HttpResponse<any>) => res.body || {})
+        )
+        .subscribe(
+          () => this.alertService.success(task.successMsg || 'Successfully perform task'),
+          () => this.alertService.error(task.errorMsg || 'Failed to perform task')
+        );
+    }
+  }
+
+  // + perform action
+  performAction(action: any, row: any): void {
+    if (action.url) {
+      this.router.navigateByUrl(_.template(action.url)(row));
+    } else if (action.apiEndpoint) {
+      const params = action.params ? createRequestOption(JSON.parse(_.template(JSON.stringify(action.params))(row))) : undefined;
+      const body = action.body ? JSON.parse(_.template(JSON.stringify(action.body))(row)) : undefined;
+      this.httpClient
+        .request(action.method || 'GET', action.apiEndpoint, {
+          params,
+          body,
+          observe: 'response',
+          responseType: 'json'
+        })
+        .pipe(
+          filter((res: HttpResponse<any>) => res.ok),
+          map((res: HttpResponse<any>) => res.body || {})
+        )
+        .subscribe(
+          () => this.alertService.success(action.successMsg || 'Successfully perform task'),
+          () => this.alertService.error(action.errorMsg || 'Failed to perform task')
+        );
+    }
+  }
 }
