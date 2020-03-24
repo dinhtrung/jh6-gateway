@@ -46,13 +46,11 @@ export class DataImportComponent implements OnInit {
     this.isSaving = true;
     if (this.responseType === 'json') {
       this.jsonData = JSON.parse(this.jsonString);
-      this.httpClient
-        .post(SERVER_API_URL + this.apiEndpoint, this.jsonData, { observe: 'response', responseType: this.responseType })
-        .subscribe(
-          () => this.onSaveSuccess(),
-          (res: HttpErrorResponse) => this.onSaveError(res)
-        );
-    } else {
+      this.httpClient.post(SERVER_API_URL + this.apiEndpoint, this.jsonData, { observe: 'response', responseType: 'json' }).subscribe(
+        () => this.onSaveSuccess(),
+        (res: HttpErrorResponse) => this.onSaveError(res)
+      );
+    } else if (this.responseType === 'blob') {
       // blob
       this.httpClient.post(SERVER_API_URL + this.apiEndpoint, this.jsonString, { observe: 'response', responseType: 'blob' }).subscribe(
         () => this.onSaveSuccess(),

@@ -1,0 +1,68 @@
+title: MSU Details Info
+apiEndpoint: /services/vnpti-msu/api/msu
+createOrEditData: Edit MSU Details
+importApiEndpoint: /services/vnpti-msu/api/data-management/msu
+predicate: 'name'
+reverse: true
+columns:
+  - periodEnd
+  - duration
+  - sample
+  - corner
+  - line
+  - callingGT
+  - calledGT
+  - opc
+  - dpc
+  - opcode
+  - link
+  - msu
+fields:
+  - key: periodEnd
+    type: input
+    templateOptions:
+      label: PeriodEnd
+  - key: duration
+    type: input
+    templateOptions:
+      label: Duration
+  - key: sample
+    type: input
+    templateOptions:
+      label: Sample
+  - key: corner
+    type: input
+    templateOptions:
+      label: Corner
+  - key: line
+    type: input
+    templateOptions:
+      label: Line
+  - key: callingGT
+    type: input
+    templateOptions:
+      label: CallingGT
+  - key: calledGT
+    type: input
+    templateOptions:
+      label: CalledGT
+  - key: opc
+    type: input
+    templateOptions:
+      label: Opc
+  - key: dpc
+    type: input
+    templateOptions:
+      label: Dpc
+  - key: opcode
+    type: input
+    templateOptions:
+      label: Opcode
+  - key: link
+    type: input
+    templateOptions:
+      label: Link
+  - key: msu
+    type: input
+    templateOptions:
+      label: Msu

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { HttpErrorResponse, HttpHeaders, HttpResponse, HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 // + Modal
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { plainToFlattenObject } from 'app/common/util/request-util';
+import { createRequestOption } from 'app/shared/util/request-util';
 // + search
 import * as _ from 'lodash';
 // + mobile friendly
@@ -66,14 +67,14 @@ export class DataComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private deviceService: DeviceDetectorService,
     private httpClient: HttpClient,
-    protected dataService: EntityService,
-    protected parseLinks: JhiParseLinks,
-    protected alertService: JhiAlertService,
-    protected accountService: AccountService,
-    protected activatedRoute: ActivatedRoute,
-    protected router: Router,
-    protected modalService: NgbModal,
-    protected eventManager: JhiEventManager
+    private dataService: EntityService,
+    private parseLinks: JhiParseLinks,
+    private alertService: JhiAlertService,
+    private accountService: AccountService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private modalService: NgbModal,
+    private eventManager: JhiEventManager
   ) {
     this.itemsPerPage = ITEMS_PER_PAGE;
     this.isMobile = this.deviceService.isMobile();
@@ -336,6 +337,49 @@ export class DataComponent implements OnInit, OnDestroy {
         .subscribe(
           blob => saveAs(blob, task.fileName || 'download'),
           () => this.alertService.error(task.errorMsg || 'Failed to download file')
+        );
+    }
+  }
+
+  // + perform action
+  performAction(action: any, row: any): void {
+    if (action.url) {
+      this.router.navigateByUrl(_.template(action.url)(row));
+    } else if (action.apiEndpoint) {
+      const params = action.params ? createRequestOption(JSON.parse(_.template(JSON.stringify(action.params))(row))) : undefined;
+      const body = action.body ? JSON.parse(_.template(JSON.stringify(action.body))(row)) : undefined;
+      this.httpClient
+        .request(action.method || 'GET', action.apiEndpoint, {
+          params,
+          body,
+          observe: 'response',
+          responseType: 'json'
+        })
+        .pipe(
+          filter((res: HttpResponse<any>) => res.ok),
+          map((res: HttpResponse<any>) => res.body || {})
+        )
+        .subscribe(
+          () => this.alertService.success(action.successMsg || 'Successfully perform task'),
+          () => this.alertService.error(action.errorMsg || 'Failed to perform task')
+        );
+    } else if (action.fileUrl) {
+      const params = action.params ? createRequestOption(JSON.parse(_.template(JSON.stringify(action.params))(row))) : undefined;
+      const body = action.body ? JSON.parse(_.template(JSON.stringify(action.body))(row)) : undefined;
+      this.httpClient
+        .request(action.method || 'GET', action.fileUrl, {
+          params,
+          body,
+          observe: 'response',
+          responseType: 'blob'
+        })
+        .pipe(
+          filter((res: HttpResponse<any>) => res.ok),
+          map((res: HttpResponse<any>) => res.body || {})
+        )
+        .subscribe(
+          blob => saveAs(blob, action.fileName || 'download'),
+          () => this.alertService.error(action.errorMsg || 'Failed to download file')
         );
     }
   }
