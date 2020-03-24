@@ -5,7 +5,7 @@
 
     <groupId>com.ft</groupId>
     <artifactId>gateway</artifactId>
-    <version>1.0.7-RELEASE</version>
+    <version>1.0.9-RELEASE</version>
     <packaging>jar</packaging>
     <name>VNPTI MSU Report</name>
 

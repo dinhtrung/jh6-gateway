@@ -8,71 +8,83 @@ columns:
   - name
   - description
 fields:
-  - key: name
-    type: input
-    className: col-md-4
-    templateOptions:
-      label: Hub Name
-      description: SCPP Carrier Name
-      required: true
-  - key: direct
-    type: checkbox
-    templateOptions:
-      label: Direct
-      description: Check if we have direct connect to this hub
-  - key: stplinks
-    type: tags
-    templateOptions:
-      label: STP Links
-      description: List of STP Links on this SCCP Hub
-  - key: description
-    type: input
-    className: col-md-8
-    templateOptions:
-      label: Description
-  - key: tags
-    type: tags
-    templateOptions:
-      label: Tags
-  - key: meta
+  - fieldGroupClassName: row
     fieldGroup:
-      - key: connectInfo
+      - key: name
         type: input
+        className: col-md-4
         templateOptions:
-          label: Connectivity Information
-      - key: connectInfo
-        type: input
-        templateOptions:
-          label: Connectivity Information
-      - key: tadigCodeList
+          label: Hub Name
+          description: SCCP Carrier Name
+          required: true
+      - key: tags
         type: tags
+        className: col-md-8
         templateOptions:
-          label: MNO TADIG code list
-          description: List of TADIG Code belongs to this hub
-  - key: dpc
-    type: repeat
-    templateOptions:
-      label: DPC Information
-    fieldArray:
-      fieldGroupClassName: row
+          label: Tags
+      - key: description
+        type: input
+        className: col-md-12
+        templateOptions:
+          label: Description
+
+  - type: tabset
+    fieldGroup:
+    - templateOptions:
+        label: STP Links
       fieldGroup:
-        - key: signature
-          type: input
-          className: col-md-3
+        - key: direct
+          type: checkbox
           templateOptions:
-            label: Signature
-        - key: type
-          type: input
-          className: col-md-3
+            label: Direct
+            description: Check if we have direct connect to this hub
+        - key: stplinks
+          type: tags
+          hideExpression: "!model.direct"
           templateOptions:
-            label: Type
+            label: STP Links
+            description: List of STP Links on this SCCP Hub
+    - templateOptions:
+        label: DPC Information
+      fieldGroup:
         - key: dpc
-          type: input
-          className: col-md-3
+          type: repeat
           templateOptions:
-            label: International DPC
-        - key: comment
+            label: DPC Information
+          fieldArray:
+            fieldGroupClassName: row
+            fieldGroup:
+              - key: signature
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: Signature
+              - key: type
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: Type
+              - key: dpc
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: International DPC
+              - key: comment
+                type: input
+                className: col-md-3
+                templateOptions:
+                  label: Comment
+
+    - templateOptions:
+        label:  Other Information
+      key: meta
+      fieldGroup:
+        - key: connectInfo
           type: input
-          className: col-md-3
           templateOptions:
-            label: Comment
+            label: Connectivity Information
+        - key: tadigCodeList
+          type: tags
+          templateOptions:
+            label: MNO TADIG code list
+            description: List of TADIG Code belongs to this hub

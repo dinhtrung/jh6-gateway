@@ -8,48 +8,56 @@ columns:
   - name
   - description
 fields:
-  - key: name
-    type: input
-    className: col-md-4
-    templateOptions:
-      label: Hub Name
-      description: SCPP Carrier Name
-      required: true
-  - key: direct
-    type: checkbox
-    templateOptions:
-      label: Direct
-      description: Check if we have direct connect to this hub
-  - key: circuitIds
-    type: tags
-    templateOptions:
-      label: Circuit ID
-      description: List of Circuit ID on this GRX Hub
-  - key: description
-    type: input
-    className: col-md-8
-    templateOptions:
-      label: Description
-  - key: tags
-    type: tags
-    templateOptions:
-      label: Tags
-  - key: meta
+  - fieldGroupClassName: row
     fieldGroup:
-      - key: connectInfo
+      - key: name
         type: input
+        className: col-md-4
         templateOptions:
-          label: Connectivity Information
-      - key: connectInfo
-        type: input
-        templateOptions:
-          label: Connectivity Information
-      - key: tadigCodeList
+          label: GRX Hub Name
+          description: GRX Carrier Name
+          required: true
+      - key: tags
         type: tags
+        className: col-md-8
         templateOptions:
-          label: MNO TADIG code list
-          description: List of TADIG Code belongs to this hub
-  - key: asNumber
-    type: tags
-    templateOptions:
-      label: AS Number
+          label: Tags
+      - key: description
+        type: input
+        className: col-md-12
+        templateOptions:
+          label: Description
+
+  - type: tabset
+    fieldGroup:
+    - templateOptions:
+        label: Circuit IDs
+      fieldGroup:
+        - key: direct
+          type: checkbox
+          templateOptions:
+            label: Direct
+            description: Check if we have direct connect to this hub
+        - key: circuitIds
+          type: tags
+          hideExpression: "!model.direct"
+          templateOptions:
+            label: Circuit ID
+            description: List of Circuit ID on this GRX Hub
+        - key: asNumber
+          type: tags
+          templateOptions:
+            label: AS Number
+    - templateOptions:
+        label: Other Information
+      key: meta
+      fieldGroup:
+        - key: connectInfo
+          type: input
+          templateOptions:
+            label: Connectivity Information
+        - key: tadigCodeList
+          type: tags
+          templateOptions:
+            label: MNO TADIG code list
+            description: List of TADIG Code belongs to this hub

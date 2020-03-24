@@ -218,7 +218,7 @@ fields:
     - templateOptions:
         label: Hubs
       fieldGroup:
-        - key: meta.grxHubs
+        - key: grxHubs
           type: ng-select
           wrappers: [form-field]
           className: col-md-4
@@ -230,7 +230,7 @@ fields:
             apiEndpoint: '/services/vnpti-msu/api/grx-hubs'
             val: name
             termPattern: 'ci(contains(${term}))'
-        - key: meta.sccpHubs
+        - key: sccpHubs
           type: ng-select
           wrappers: [form-field]
           className: col-md-4
