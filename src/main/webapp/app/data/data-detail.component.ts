@@ -6,6 +6,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { FormGroup } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'jhi-data-detail',
@@ -14,6 +15,7 @@ import { FormGroup } from '@angular/forms';
 export class DataDetailComponent implements OnInit, AfterContentChecked {
   _ = _;
   isReady = false;
+  title = '';
   model: any;
   columns: any[] = [];
   prop = '';
@@ -27,7 +29,7 @@ export class DataDetailComponent implements OnInit, AfterContentChecked {
   };
   form = new FormGroup({});
 
-  constructor(protected activatedRoute: ActivatedRoute, private accountService: AccountService) {}
+  constructor(private titleService: Title, private activatedRoute: ActivatedRoute, private accountService: AccountService) {}
 
   ngOnInit(): void {
     this.isReady = false;
@@ -37,11 +39,18 @@ export class DataDetailComponent implements OnInit, AfterContentChecked {
         tap(({ templateFile, model }) => {
           this.svc = templateFile.svc;
           this.prop = templateFile.prop;
+          this.model = model;
+          this.options.formState.mainModel = this.model;
+          // namespace
+          this.svc = templateFile.svc;
+          this.prop = templateFile.prop;
+          // + allow use template placeholders
+          this.title = _.template(_.get(templateFile, 'config.title.view', 'viewData'))(this.model);
+          this.titleService.setTitle(this.title);
+
           this.fields = _.get(templateFile, 'config.details', _.get(templateFile, 'config.fields', this.generateDefaultFields()));
           // eslint-disable-next-line no-console
           console.log('done processing field');
-          this.model = model;
-          this.options.formState.mainModel = this.model;
         })
       )
     ).subscribe(() => (this.isReady = true));

@@ -126,5 +126,19 @@ export const dataRoute: Routes = [
       pageTitle: 'data.title'
     },
     canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':svc/:prop/:id/copy',
+    component: DataUpdateComponent,
+    resolve: {
+      templateFile: TemplateFilenameResolve,
+      model: DataResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'data.title',
+      copy: true
+    },
+    canActivate: [UserRouteAccessService]
   }
 ];

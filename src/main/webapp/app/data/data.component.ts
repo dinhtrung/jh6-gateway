@@ -52,7 +52,7 @@ export class DataComponent implements OnInit, OnDestroy {
   page: any;
   predicate: any;
   previousPage: any;
-  reverse: any;
+  ascending: any;
   // + search support
   filterOperators: string[] = [];
   searchModel: any;
@@ -85,15 +85,16 @@ export class DataComponent implements OnInit, OnDestroy {
     console.log('Activated route', this.activatedRoute);
     this.dataService
       .query(
-        plainToFlattenObject(
-          _.assign(
-            this.queryParams,
-            {
-              page: this.page - 1,
-              size: this.itemsPerPage,
-              sort: this.sort()
-            },
-            // + support search
+        _.assign(
+          {},
+          this.queryParams,
+          {
+            page: this.page - 1,
+            size: this.itemsPerPage,
+            sort: this.sort()
+          },
+          // + support search
+          plainToFlattenObject(
             _.pickBy(
               _.mapValues(this.searchParams, (pattern, field) =>
                 this.searchModel[field] ? _.template(pattern)(_.assign({}, { term: this.searchModel[field] }, this.searchModel)) : null
@@ -124,7 +125,7 @@ export class DataComponent implements OnInit, OnDestroy {
         {
           page: this.page,
           size: this.itemsPerPage,
-          sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+          sort: this.predicate + ',' + (this.ascending ? 'asc' : 'desc')
         },
         this.searchModel
       )
@@ -143,7 +144,7 @@ export class DataComponent implements OnInit, OnDestroy {
           {
             page: this.page,
             size: this.itemsPerPage,
-            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+            sort: this.predicate + ',' + (this.ascending ? 'asc' : 'desc')
           }
         )
       })
@@ -158,12 +159,12 @@ export class DataComponent implements OnInit, OnDestroy {
           // + pagination parameters
           this.page = data.pagingParams.page;
           this.previousPage = data.pagingParams.page;
-          this.reverse = _.get(data.templateFile, 'config.ascending', data.pagingParams.ascending);
+          this.ascending = _.get(data.templateFile, 'config.ascending', data.pagingParams.ascending);
           this.predicate = _.get(data.templateFile, 'config.predicate', data.pagingParams.predicate);
           // + prop and yaml
           this.prop = data.templateFile.prop;
           this.svc = data.templateFile.svc;
-          this.title = _.get(data.templateFile, 'config.title', 'app.title.' + this.prop);
+          this.title = _.get(data.templateFile, 'config.title.index', 'app.title.' + this.prop);
           this.titleService.setTitle(this.title);
           // + apiEndpoint and params
           this.tasks = _.get(data.templateFile, 'config.tasks', []);
@@ -216,7 +217,7 @@ export class DataComponent implements OnInit, OnDestroy {
   }
 
   sort(): string[] {
-    const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
+    const result = [this.predicate + ',' + (this.ascending ? 'asc' : 'desc')];
     if (this.predicate !== 'id') {
       result.push('id');
     }
@@ -346,10 +347,11 @@ export class DataComponent implements OnInit, OnDestroy {
     if (action.url) {
       this.router.navigateByUrl(_.template(action.url)(row));
     } else if (action.apiEndpoint) {
+      const apiEndpoint = _.template(action.apiEndpoint)(row);
       const params = action.params ? createRequestOption(JSON.parse(_.template(JSON.stringify(action.params))(row))) : undefined;
       const body = action.body ? JSON.parse(_.template(JSON.stringify(action.body))(row)) : undefined;
       this.httpClient
-        .request(action.method || 'GET', action.apiEndpoint, {
+        .request(action.method || 'GET', apiEndpoint, {
           params,
           body,
           observe: 'response',

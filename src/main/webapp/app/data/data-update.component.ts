@@ -48,18 +48,22 @@ export class DataUpdateComponent implements OnInit {
     combineLatest(
       this.accountService.identity().pipe(tap(account => (this.options.formState.account = account))),
       this.activatedRoute.data.pipe(
-        tap(({ templateFile, model }) => {
-          this.title = _.get(templateFile, 'config.createOrEditData', 'createOrEditData');
-          this.titleService.setTitle(this.title);
-          // this.languageHelper.updateTitle(this.title);
+        tap(({ templateFile, model, copy }) => {
+          // data model
+          this.model = copy ? _.omit(model, 'id') : model;
+          this.options.formState.mainModel = this.model;
+          // namespace
           this.svc = templateFile.svc;
           this.prop = templateFile.prop;
+          // + allow use template placeholders
+          this.title = _.template(_.get(templateFile, this.model.id ? 'config.title.update' : 'config.title.create', 'createOrEditData'))(
+            this.model
+          );
+          this.titleService.setTitle(this.title);
           // + apiEndpoint and params
           this.apiEndpoint = _.get(templateFile, 'config.apiEndpoint', templateFile.apiEndpoint);
           // + form rendering
           this.fields = _.get(templateFile, 'config.fields', []);
-          this.model = model;
-          this.options.formState.mainModel = this.model;
         })
       )
     ).subscribe(() => (this.isReady = true));
