@@ -1,5 +1,10 @@
 # WebFIELD Configurations
-title: Fields
+title:
+  index: Fields
+  create: Create new Field
+  update: Update Field ${name}
+  delete: Delete Field ${name}
+  view: <small>Field</small> ${name}
 apiEndpoint: /api/nodes
 queryParams:
   type: FIELD

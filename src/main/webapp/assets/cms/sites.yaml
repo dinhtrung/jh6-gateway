@@ -1,9 +1,13 @@
 # Website Configurations
-title: Sites
+title:
+  index: Sites
+  create: Create new Site
+  update: Update Site ${name}
+  delete: Delete site ${name}
+  view: <small>Site</small> ${name}
 apiEndpoint: /api/nodes
 queryParams:
   type: SITE
-createOrEditData: "Add / Update Site"
 importApiEndpoint: /api/nodes/import
 predicate: 'createdAt'
 reverse: true

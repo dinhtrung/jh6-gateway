@@ -58,6 +58,7 @@ export class DataComponent implements OnInit, OnDestroy {
   searchModel: any;
   searchParams: any;
   // + delete Modal
+  deleteTitle = '';
   @ViewChild('deleteModal', { static: true }) deleteModal: any;
   // + references
   referenceMap: any = {};
@@ -166,6 +167,7 @@ export class DataComponent implements OnInit, OnDestroy {
           this.svc = data.templateFile.svc;
           this.title = _.get(data.templateFile, 'config.title.index', 'app.title.' + this.prop);
           this.titleService.setTitle(this.title);
+          this.deleteTitle = _.get(data.templateFile, 'config.title.delete', 'app.delete.' + this.prop);
           // + apiEndpoint and params
           this.tasks = _.get(data.templateFile, 'config.tasks', []);
           this.actions = _.get(data.templateFile, 'config.actions', []);

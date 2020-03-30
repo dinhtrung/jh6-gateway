@@ -1,5 +1,10 @@
 # WebCONTENT_TYPE Configurations
-title: Content Types
+title:
+  index: Content Types
+  create: Create new Content Type
+  update: Update Content Type ${name}
+  delete: Delete Content Type ${name}
+  view: <small>Content Type</small> ${name}
 apiEndpoint: /api/nodes
 queryParams:
   type: CONTENT_TYPE

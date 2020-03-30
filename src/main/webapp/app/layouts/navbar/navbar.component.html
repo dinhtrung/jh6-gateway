@@ -1,7 +1,7 @@
-<nav class="navbar navbar-dark navbar-expand-md bg-dark fixed-top">
+<nav class="navbar navbar-dark navbar-expand-md bg-gradient-dark fixed-top">
     <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
         <span class="logo-img"></span>
-        <span jhiTranslate="global.title" class="navbar-title">Gateway</span> <span class="navbar-version">{{ version }}</span>
+        <span jhiTranslate="global.title" class="navbar-title d-none d-md-inline">Gateway</span> <span class="navbar-version d-none d-lg-inline">{{ version }}</span>
     </a>
     <a class="navbar-toggler d-lg-none" href="javascript:void(0);" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" (click)="toggleNavbar()">
         <fa-icon icon="bars"></fa-icon>
