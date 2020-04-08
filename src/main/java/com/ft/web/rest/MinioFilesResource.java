@@ -5,12 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLConnection;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -26,10 +24,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.util.StreamUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.InvalidMediaTypeException;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,13 +41,15 @@ import com.ft.config.MinioConfiguration;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.minio.ErrorCode;
 import io.minio.MinioClient;
+import io.minio.ObjectStat;
+import io.minio.PutObjectOptions;
 import io.minio.errors.ErrorResponseException;
 import io.minio.errors.InsufficientDataException;
 import io.minio.errors.InternalException;
-import io.minio.errors.InvalidArgumentException;
 import io.minio.errors.InvalidBucketNameException;
 import io.minio.errors.InvalidResponseException;
-import io.minio.errors.NoResponseException;
+import io.minio.errors.RegionConflictException;
+import io.minio.messages.Item;
 
 @ConditionalOnProperty(prefix = "minio", name = { "endpoint", "bucket-name" })
 @Controller
@@ -82,17 +79,16 @@ public class MinioFilesResource {
      * @throws Exception
      */
     @GetMapping("/minio/{bucketName}")
-    public ResponseEntity<List<Map<String, Object>>> browseFiles(@PathVariable String bucketName) throws Exception {
-    	List<Map<String, Object>> results = StreamUtils.createStreamFromIterator(minioClient.listObjects(bucketName).iterator())
+    public ResponseEntity<List<Item>> browseFiles(@PathVariable String bucketName) throws Exception {
+    	List<Item> results = StreamUtils.createStreamFromIterator(minioClient.listObjects(bucketName).iterator())
     	.map(result -> {
-    		try { 
-    			return result.get(); 
-    		} catch (Exception e) { 
-    			return null; 
+    		try {
+    			return result.get();
+    		} catch (Exception e) {
+    			return null;
     		}
-    	})
-    	.filter(d -> d != null)
-    	.map(item -> item.entrySet().stream().collect(Collectors.toMap(Entry::getKey, Entry::getValue))).collect(Collectors.toList());
+    	}).filter(i -> i != null)
+    	.collect(Collectors.toList());
     	
     	return ResponseEntity.ok(results);
     }
@@ -148,8 +144,12 @@ public class MinioFilesResource {
      * @throws RegionConflictException
      */
     @PostMapping("/minio/{bucketName}")
-	public ResponseEntity<String> putMinioWithBucket(@PathVariable String bucketName, @RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "alt", required = false) String alt, @RequestParam("file") MultipartFile file)
+	public ResponseEntity<String> putMinioWithBucket(
+			@PathVariable String bucketName,
+			@RequestParam(value = "name", required = false) String name,
+			@RequestParam(value = "alt", required = false) String alt, 
+			@RequestParam("file") MultipartFile file
+	)
 			throws Exception {
     	name = (name == null ? file.getOriginalFilename() : name);
     	String basename = FilenameUtils.getBaseName(name).replaceAll("\\W+", "");
@@ -164,7 +164,7 @@ public class MinioFilesResource {
     	}
     	log.debug("REST request to save Image : {}", name);
     	try (InputStream is = file.getInputStream()) {
-    		minioClient.putObject(bucketName, name , is, file.getContentType());
+    		minioClient.putObject(bucketName, name , is, new PutObjectOptions(file.getSize(), -1));
     		is.close();
     	} catch (Exception e) {
     		log.error("cannot open input stream", e);
@@ -201,6 +201,7 @@ public class MinioFilesResource {
 			@RequestParam("file") MultipartFile file,
 			@RequestParam Map<String, String> params)
 		throws Exception {
+    	name = (name == null ? file.getOriginalFilename() : name);
     	bucketName = bucketName == null ? minioConfig.getBucketName() : bucketName;
     	String basename = FilenameUtils.getBaseName(name).replaceAll("\\W+", "");
     	String ext = FilenameUtils.getExtension(name);
@@ -214,7 +215,7 @@ public class MinioFilesResource {
     	}
     	log.debug("REST request to save file : {}", name);
     	try (InputStream is = file.getInputStream()) {
-    		minioClient.putObject(bucketName, name , is, file.getContentType());
+    		minioClient.putObject(bucketName, name , is, new PutObjectOptions(file.getSize(), -1));
     		is.close();
     	} catch (Exception e) {
     		log.error("cannot open input stream", e);
@@ -225,6 +226,44 @@ public class MinioFilesResource {
                 .body(name);
 	}
     
+    /**
+     * Download a file from Minio back to client
+     * @param name
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/public/download-file")
+    public ResponseEntity<InputStreamResource> downloadObject(@RequestParam String name) throws Exception {
+    	ObjectStat objStat = minioClient.statObject(minioConfig.getBucketName(), name);
+    	
+    	log.debug("REST request to download file: {} type {}", name, objStat.contentType());
+    	return ResponseEntity.ok()
+    			.header(HttpHeaders.CONTENT_TYPE, objStat.contentType())
+    			.header("Content-Disposition", "attachment; filename=" + name)
+    			.header(HttpHeaders.ETAG, objStat.etag())
+    			.body(new InputStreamResource(minioClient.getObject(minioConfig.getBucketName(), name)));
+    }
+    
+    @GetMapping("/public/static/{name}")
+    public ResponseEntity<InputStreamResource> downloadStatic(@PathVariable String name) throws Exception {
+    	return downloadObject(name);
+    }
+    
+    @RequestMapping(path = "/public/static/{name}", method = { RequestMethod.POST, RequestMethod.PUT })
+    public ResponseEntity<String> uploadFile(@PathVariable String name, @RequestBody String body, HttpServletRequest request) throws Exception {
+    	String bucketName = minioConfig.getBucketName();
+    	if (!minioClient.bucketExists(bucketName)) {
+    		minioClient.makeBucket(bucketName);
+    	}
+    	ByteArrayInputStream bais = new ByteArrayInputStream(body.getBytes());
+		minioClient.putObject(bucketName, name , bais, new PutObjectOptions(bais.available(), -1));
+		bais.close();
+		log.debug("REST request to save object : {}", name);
+		return ResponseEntity.created(new URI("api/public/static/" + name))
+                .headers(HeaderUtil.createAlert(applicationName,  "minio.created", name))
+                .body(name);
+    }
+
     /**
      * Generate a 302 redirect to temporary file URL
      * @param name
@@ -255,61 +294,5 @@ public class MinioFilesResource {
 		}
 		return false;
 	}
-	
-	
-	@GetMapping("/public/download-file")
-    public ResponseEntity<InputStreamResource> downloadObject(@RequestParam String name) throws Exception {
-    	log.debug("REST request to download file: {}", name);
-    	String mimeType = URLConnection.guessContentTypeFromName(name);
-    	BodyBuilder result = ResponseEntity.ok();
-    	try {
-    		MediaType mediaType = MediaType.parseMediaType(mimeType);
-    		result.header(HttpHeaders.CONTENT_TYPE, mediaType.toString());
-    	}
-    	catch (InvalidMediaTypeException e) {
-		}
-    	return result.body(new InputStreamResource(minioClient.getObject(minioConfig.getBucketName(), name)));
-    }
-    
-    @GetMapping("/public/static/{name}")
-    public ResponseEntity<InputStreamResource> downloadStatic(@PathVariable String name) throws Exception {
-    	return downloadObject(name);
-    }
-    
-    @GetMapping("/public/static/{bucket}/{name}")
-    public ResponseEntity<InputStreamResource> downloadBucketFile(@PathVariable String bucket, @PathVariable String name) throws Exception {
-    	log.debug("REST request to download file: {}", name);
-    	String mimeType = URLConnection.guessContentTypeFromName(name);
-    	return ResponseEntity.ok()
-    			.header(HttpHeaders.CONTENT_TYPE, MediaType.parseMediaType(mimeType).toString())
-    			.body(new InputStreamResource(minioClient.getObject(bucket, name)));
-    }
-    /**
-     * Then to upload them
-     * @param name
-     * @param body
-     * @param request
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(path = "/public/static/{name}", method = { RequestMethod.POST, RequestMethod.PUT })
-    public ResponseEntity<String> uploadFile(@PathVariable String name, @RequestBody String body, HttpServletRequest request) throws Exception {
-        return uploadFileBucket(minioConfig.getBucketName(), name, body, request);
-    }
-    
-    @RequestMapping(path = "/public/static/{bucket}{name}", method = { RequestMethod.POST, RequestMethod.PUT })
-    public ResponseEntity<String> uploadFileBucket(@PathVariable String bucket, @PathVariable String name, @RequestBody String body, HttpServletRequest request) throws Exception {
-        String contentType = request.getContentType();
-        if (!minioClient.bucketExists(bucket)) {
-                minioClient.makeBucket(bucket);
-        }
-        ByteArrayInputStream bais = new ByteArrayInputStream(body.getBytes());
-                minioClient.putObject(bucket, name , bais, bais.available(), contentType);
-                log.debug("REST request to save object : {}", name);
-                return ResponseEntity.created(new URI("api/public/static/" + name))
-                .headers(HeaderUtil.createAlert(applicationName,  "minio.created", name))
-                .body(name);
-    }
-
     
 }
