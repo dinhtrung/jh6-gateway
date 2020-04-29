@@ -71,7 +71,7 @@ export const dataRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      defaultSort: '_id,asc',
+      defaultSort: 'id,asc',
       pageTitle: 'data.title'
     },
     canActivate: [UserRouteAccessService]
